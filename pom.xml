@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.trackerforce</groupId>
+	<artifactId>trackerforce-services</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+	<name>Trackerforce Services</name>
+	<url></url>
+	
+	<developers>
+		<developer>
+			<name>Roger Floriano</name>
+			<email>trackerforce.project@gmail.com</email>
+			<organization>Trackerforce</organization>
+			<organizationUrl>https://www.linkedin.com/company/trackerforce</organizationUrl>
+		</developer>
+ 	</developers>
+
+	<modules>
+		<module>trackerforce-common</module>
+		<module>trackerforce-common-tenancy</module>
+		<module>trackerforce-identity</module>
+		<module>trackerforce-management</module>
+		<module>trackerforce-session</module>
+	</modules>
+
+	<build>
+		<plugins>
+		</plugins>
+	</build>
+
+</project>
