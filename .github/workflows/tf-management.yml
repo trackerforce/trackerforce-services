@@ -5,12 +5,12 @@ on:
     branches:
       - master
 	paths:
-      - trackerforce-management/**
+      - 'trackerforce-management/**'
   pull_request:
     branches:
       - master
     paths:
-	  - trackerforce-management/**
+	  - 'trackerforce-management/**'
 
 jobs:
   build:
