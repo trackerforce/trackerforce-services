@@ -17,18 +17,19 @@ import com.trackerforce.identity.repository.AuthAccessRepository;
 public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 	
 	@Autowired
-	private AuthenticationManager authenticationManager;
+	AuthenticationManager authenticationManager;
 	
 	@Autowired
-	private AuthAccessRepository authAccessRepository;
+	AuthAccessRepository authAccessRepository;
 	
 	@Autowired
 	private JwtTokenService jwtTokenUtil;
 	
 	public AuthAccess authenticateAccess(JwtRequest authRequest) throws ServiceException {
-		authenticate(authRequest);
+//		authenticate(authRequest);
 		
-		AuthAccess authAccess = authAccessRepository.findByUserName(authRequest.getUsername());
+//		AuthAccess authAccess = authAccessRepository.findByUserName(authRequest.getUsername());
+		AuthAccess authAccess = new AuthAccess();
 		authAccess.setToken(jwtTokenUtil.generateToken(authRequest.getUsername()));
 		
 		return authAccess;

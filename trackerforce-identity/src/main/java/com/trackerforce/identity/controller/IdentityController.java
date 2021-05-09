@@ -22,7 +22,7 @@ public class IdentityController {
 	@Autowired
 	private AuthenticationService authorizationService;
 	
-	@PostMapping(value = "/authenticate")
+	@PostMapping(value = "/v1/authenticate")
 	public ResponseEntity<?> login(@RequestBody JwtRequest authRequest) {
 		try {
 			AuthAccess authAccess = authorizationService.authenticateAccess(authRequest);

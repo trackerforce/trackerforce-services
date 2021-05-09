@@ -34,7 +34,7 @@ public class TenantInterceptor implements HandlerInterceptor {
 		
 		final Optional<String> tenant = Optional.ofNullable(request.getHeader(TENANT_HEADER));
 		
-		if (tenant.isPresent() && !StringUtils.isEmpty(tenant.get())) {
+		if (tenant.isPresent() && StringUtils.hasText(tenant.get())) {
 			request.setAttribute(ORGANIZATION_ID, tenant.get().replace(DEDICATED_IDENTIFIER, Strings.EMPTY));
 			if (tenant.get().contains(DEDICATED_IDENTIFIER)) {
 				request.setAttribute(TENANT_ID, tenant.get().replace(DEDICATED_IDENTIFIER, Strings.EMPTY));

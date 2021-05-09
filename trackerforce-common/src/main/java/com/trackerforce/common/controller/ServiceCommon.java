@@ -27,7 +27,7 @@ public class ServiceCommon {
 	@Deprecated
 	@RequestMapping(value = "/check/auth")
 	public ResponseEntity<TokenResponse> auth(@RequestParam("user") String user) {
-		if (StringUtils.isEmpty(user)) {
+		if (!StringUtils.hasText(user)) {
 			return ResponseEntity.badRequest().build();
 		}
 		
