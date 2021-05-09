@@ -11,6 +11,11 @@ import org.springframework.data.annotation.LastModifiedDate;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+/**
+ * Defines basic document structure
+ * 
+ * @author Roger Floriano (petruki)
+ */
 @JsonInclude(Include.NON_NULL)	
 public abstract class AbstractDocument {
 	
