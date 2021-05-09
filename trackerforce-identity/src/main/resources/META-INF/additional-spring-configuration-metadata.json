@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "service.jwt.secret",
+    "type": "java.lang.String",
+    "description": "JWT secret"
+  },
+  {
+    "name": "service.jwt.expire",
+    "type": "java.lang.String",
+    "description": "JWT expiration time"
+  },
+  {
+    "name": "service.endpoint.allowed-addresses",
+    "type": "java.lang.String",
+    "description": "Address allowed to be accessed without authentication"
+  },
+  {
+    "name": "service.endpoint.healthchecker",
+    "type": "java.lang.String",
+    "description": "Resource name to check service availability"
+  }
+]}

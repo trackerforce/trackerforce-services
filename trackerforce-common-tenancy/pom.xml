@@ -4,10 +4,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.trackerforce</groupId>
+		<artifactId>trackerforce-services</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath />
+	</parent>
 
-	<groupId>com.trackerforce</groupId>
 	<artifactId>trackerforce-common-tenancy</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	
 	<name>Trackerforce Common MongoDB Multi Tenancy Module</name>
@@ -29,21 +34,8 @@
 		<url></url>
 	</scm>
 	
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.3.RELEASE</version>
-		<relativePath />
-	</parent>
-
 	<properties>
-		<java.version>8</java.version>
-		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		
 		<trackerforce-common.version>0.0.1-SNAPSHOT</trackerforce-common.version>
-		<powermock-module-junit4.version>2.0.2</powermock-module-junit4.version>
 	</properties>
 
 	<dependencies>
@@ -57,12 +49,5 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
-		
-		<dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock-module-junit4.version}</version>
-            <scope>test</scope>
-        </dependency>
 	</dependencies>
 </project>

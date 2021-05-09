@@ -1,16 +1,19 @@
 package com.trackerforce.common.service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtTokenService {
@@ -35,7 +38,11 @@ public class JwtTokenService {
 	}
 	
 	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+		return Jwts.parserBuilder()
+				.setSigningKey(secret.getBytes())
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
 	}
 	
 	private Boolean isTokenExpired(String token) {
@@ -49,13 +56,12 @@ public class JwtTokenService {
 	}
 
 	private String doGenerateToken(Map<String, Object> claims, String subject) {
-		final long now = System.currentTimeMillis();
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date(now))
-                .setExpiration(new Date(now + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
+		final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+		return Jwts.builder()
+				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 60 * 1000))
+				.setSubject(subject)
+				.signWith(key)
+				.compact();
 	}
 	
 	public Boolean validateToken(String token, String subject) {

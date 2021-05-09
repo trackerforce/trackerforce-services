@@ -15,7 +15,7 @@ import com.mongodb.client.MongoClients;
 @ConditionalOnProperty(name = "spring.boot.multitenant.mongodb.enabled", havingValue = "true", matchIfMissing = true)
 public class MultitenantMongoDbConfiguration {
 	
-	@Value("${spring.data.mongodb.connection-string}")
+	@Value("${spring.data.mongodb.uri}")
 	private String connectionString;
 	
 	@Value("${spring.data.mongodb.tenant-prefix:${spring.data.mongodb.database}}-")

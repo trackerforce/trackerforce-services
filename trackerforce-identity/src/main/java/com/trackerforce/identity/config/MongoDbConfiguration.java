@@ -13,7 +13,7 @@ import com.mongodb.client.MongoClients;
 @Configuration
 public class MongoDbConfiguration extends AbstractMongoClientConfiguration {
 	
-	@Value("${spring.data.mongodb.connection-string}")
+	@Value("${spring.data.mongodb.uri}")
 	private String connectionString;
 	
 	@Value("${spring.data.mongodb.database}")
