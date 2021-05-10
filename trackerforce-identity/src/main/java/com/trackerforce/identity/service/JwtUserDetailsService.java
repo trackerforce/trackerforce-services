@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.trackerforce.identity.model.AuthAccess;
+import com.trackerforce.identity.model.request.JwtRequest;
 import com.trackerforce.identity.repository.AuthAccessRepository;
 
 @Service
@@ -23,18 +24,18 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		AuthAccess user = authAccessRepository.findByUserName(username);
-		if (user == null) {
+		final var user = authAccessRepository.findByUsername(username);
+		
+		if (user == null)
 			throw new UsernameNotFoundException("User not found with username: " + username);
-		}
-		return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),
+			
+		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
 				new ArrayList<>());
 	}
 
 	public AuthAccess save(AuthAccess user) {
-		AuthAccess newUser = new AuthAccess();
-		newUser.setUserName(user.getUserName());
-		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+		final var jwt =new JwtRequest(user.getUsername(), bcryptEncoder.encode(user.getPassword()));
+		final var newUser = new AuthAccess(jwt);
 		return authAccessRepository.save(newUser);
 	}
 }

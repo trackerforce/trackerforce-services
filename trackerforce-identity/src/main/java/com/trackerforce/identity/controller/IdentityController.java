@@ -1,5 +1,7 @@
 package com.trackerforce.identity.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -8,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trackerforce.common.model.response.ErrorResponse;
-import com.trackerforce.common.service.exception.ServiceException;
-import com.trackerforce.identity.model.AuthAccess;
+import com.trackerforce.identity.model.request.AccessRequest;
 import com.trackerforce.identity.model.request.JwtRequest;
 import com.trackerforce.identity.service.AuthenticationService;
 
@@ -20,16 +20,16 @@ import com.trackerforce.identity.service.AuthenticationService;
 public class IdentityController {
 	
 	@Autowired
-	private AuthenticationService authorizationService;
+	AuthenticationService authorizationService;
 	
 	@PostMapping(value = "/v1/authenticate")
-	public ResponseEntity<?> login(@RequestBody JwtRequest authRequest) {
-		try {
-			AuthAccess authAccess = authorizationService.authenticateAccess(authRequest);
-			return ResponseEntity.ok(authAccess);
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}
+	public ResponseEntity<Map<String, Object>> authenticate(@RequestBody JwtRequest authRequest) {
+		return ResponseEntity.ok(authorizationService.authenticateAccess(authRequest));
+	}
+	
+	@PostMapping(value = "/v1/register")
+	public ResponseEntity<?> saveUser(@RequestBody AccessRequest accessRequest) {
+		return ResponseEntity.ok(authorizationService.registerAccess(accessRequest));
 	}
 
 }

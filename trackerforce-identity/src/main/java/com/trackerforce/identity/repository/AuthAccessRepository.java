@@ -8,6 +8,6 @@ import com.trackerforce.identity.model.AuthAccess;
 @Repository
 public interface AuthAccessRepository extends CrudRepository<AuthAccess, Integer> {
 	
-	AuthAccess findByUserName(String userName);
+	AuthAccess findByUsername(String username);
 	
 }

@@ -9,6 +9,7 @@ import java.util.function.Function;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -50,18 +51,24 @@ public class JwtTokenService {
 		return expiration.before(new Date());
 	}
 	
-	public String generateToken(String subject) {
+	public String[] generateToken(String subject) {
 		Map<String, Object> claims = new HashMap<>();
 		return doGenerateToken(claims, subject);
 	}
-
-	private String doGenerateToken(Map<String, Object> claims, String subject) {
+	
+	private String[] doGenerateToken(Map<String, Object> claims, String subject) {
 		final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-		return Jwts.builder()
+		final String token = Jwts.builder()
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 60 * 1000))
 				.setSubject(subject)
 				.signWith(key)
 				.compact();
+		
+		return new String[] { token, generateRefreshToken(token) };
+	}
+	
+	private String generateRefreshToken(String token) {
+		return new BCryptPasswordEncoder().encode(token.split("\\.")[2]);
 	}
 	
 	public Boolean validateToken(String token, String subject) {

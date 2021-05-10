@@ -32,7 +32,7 @@ public class ServiceCommon {
 		}
 		
 		final TokenResponse tokenResponse = new TokenResponse();
-		tokenResponse.setToken(jwtTokenUtil.generateToken(user));
+		tokenResponse.setToken(jwtTokenUtil.generateToken(user)[0]);
 		return ResponseEntity.ok(tokenResponse);
 	}
 
