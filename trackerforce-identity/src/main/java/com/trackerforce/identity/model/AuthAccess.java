@@ -14,10 +14,11 @@ public class AuthAccess extends AbstractIdentityDocument {
 	@JsonIgnore
 	private String password;
 	
-	private String token;
-	
 	@JsonIgnore
 	private String refreshToken;
+	
+	@JsonIgnore
+	private String tokenHash;
 	
 	private boolean owner;
 	
@@ -49,14 +50,6 @@ public class AuthAccess extends AbstractIdentityDocument {
 		this.password = password;
 	}
 
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
 	public String getRefreshToken() {
 		return refreshToken;
 	}
@@ -79,6 +72,14 @@ public class AuthAccess extends AbstractIdentityDocument {
 
 	public void setAccessType(String accessType) {
 		this.accessType = accessType;
+	}
+
+	public String getTokenHash() {
+		return tokenHash;
+	}
+
+	public void setTokenHash(String tokenHash) {
+		this.tokenHash = tokenHash;
 	}
 
 }

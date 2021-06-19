@@ -2,14 +2,19 @@ package com.trackerforce.identity.controller;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trackerforce.identity.model.AuthAccess;
 import com.trackerforce.identity.model.request.AccessRequest;
 import com.trackerforce.identity.model.request.JwtRequest;
 import com.trackerforce.identity.service.AuthenticationService;
@@ -30,6 +35,22 @@ public class IdentityController {
 	@PostMapping(value = "/v1/register")
 	public ResponseEntity<?> saveUser(@RequestBody AccessRequest accessRequest) {
 		return ResponseEntity.ok(authorizationService.registerAccess(accessRequest));
+	}
+	
+	@PostMapping(value = "/v1/logout")
+	public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request, HttpServletResponse response) {
+		authorizationService.logoff(request, response);
+		return ResponseEntity.ok().build();
+	}
+	
+	@GetMapping(value = "/v1/me")
+	public ResponseEntity<AuthAccess> getAuthenticated(HttpServletRequest request) {
+		return ResponseEntity.ok(authorizationService.getAuthenticated(request));
+	}
+	
+	@GetMapping(value = "/v1/valid")
+	public ResponseEntity<Boolean> isValid(HttpServletRequest request) {
+		return ResponseEntity.ok(authorizationService.getAuthenticated(request) != null);
 	}
 
 }

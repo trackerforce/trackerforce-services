@@ -20,7 +20,7 @@ import io.jsonwebtoken.security.Keys;
 public class JwtTokenService {
 
 	@Value("${service.jwt.expire}")
-	public int JWT_TOKEN_VALIDITY;
+	private int JWT_TOKEN_VALIDITY;
 
 	@Value("${service.jwt.secret}")
 	private String secret;

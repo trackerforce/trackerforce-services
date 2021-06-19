@@ -18,5 +18,10 @@
     "name": "service.endpoint.healthchecker",
     "type": "java.lang.String",
     "description": "Resource name to check service availability"
+  },
+  {
+    "name": "service.identity.url",
+    "type": "java.lang.String",
+    "description": "IAM endpoint"
   }
 ]}
