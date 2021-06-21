@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.trackerforce.common.service.exception.ServiceException;
-import com.trackerforce.management.model.ComponentHelper;
 import com.trackerforce.management.model.Task;
+import com.trackerforce.management.model.request.TaskRequest;
 import com.trackerforce.management.model.type.TaskType;
 import com.trackerforce.management.repository.TaskRepositoryDao;
 
@@ -21,17 +21,11 @@ public class TaskService extends AbstractBusinessService<Task> {
 	@Autowired
 	private ComponentHelperService componentHelperService;
 	
-	public Task createTask(final String description, final String type, 
-			final ComponentHelper helperContent) throws ServiceException {
-		
-		Task task = new Task();
-		task.setDescription(description);
-		task.setType(type);
-		
+	public Task createTask(final TaskRequest taskRequest) throws ServiceException {
+		var task = taskRequest.getTask();
 		this.validate(task);
 		
-		final Optional<ComponentHelper> helperContentOptional = Optional.ofNullable(helperContent);
-		
+		var helperContentOptional = Optional.ofNullable(taskRequest.getHelper());
 		if (helperContentOptional.isPresent())
 			task.setHelper(componentHelperService.createHelper(
 					helperContentOptional.get().getContent(), helperContentOptional.get().getRenderType()));

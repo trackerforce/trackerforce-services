@@ -4,10 +4,12 @@ import com.trackerforce.management.service.exception.InvalidTaskTypeException;
 
 public enum TaskType {
 	
-	FILE("File"),
-	MULTIFILE("Multi-file"),
+	TEXT("Text"),
+	MULTILINE_TEXT("MultilineText"),
+	NUMBER("Number"),
 	CHECK("Checkbox"),
-	MULTISELECTION("Multi-selection");
+	DRILLDOWN("Drilldown"),
+	FILE("File");
 	
 	private String name;
 	

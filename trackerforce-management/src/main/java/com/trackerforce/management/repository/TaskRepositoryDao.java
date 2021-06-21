@@ -43,7 +43,7 @@ public class TaskRepositoryDao extends AbstractProjectedDao<Task> {
 		
 		final List<Procedure> parentProcedures = mongoTemplate.find(query, Procedure.class);
 		for (Procedure procedure : parentProcedures) {
-			procedure.getChildTasks().removeIf(t -> t.getId().equals(id));
+			procedure.getTasks().removeIf(t -> t.getId().equals(id));
 		}
 		
 		procedureRepository.saveAll(parentProcedures);

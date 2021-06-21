@@ -9,13 +9,21 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "procedures")
 public class Procedure extends AbstractBusinessDocument {
 	
+	/**
+	 * Procedure topic name
+	 */
 	private String name;
 	
-	@DBRef
-	private List<Procedure> childProcedures = Collections.emptyList();
+	/**
+	 * Generated code that is used to automated resolvers
+	 */
+	private String code;
 	
 	@DBRef
-	private List<Task> childTasks = Collections.emptyList();
+	private List<Task> tasks = Collections.emptyList();
+	
+	@DBRef
+	private Checkpoint checkpoint;
 
 	public String getName() {
 		return name;
@@ -24,21 +32,25 @@ public class Procedure extends AbstractBusinessDocument {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public List<Procedure> getChildProcedures() {
-		return childProcedures;
+	
+	public String getCode() {
+		return code;
 	}
 
-	public void setChildProcedures(List<Procedure> childProcedures) {
-		this.childProcedures = childProcedures;
+	public List<Task> getTasks() {
+		return tasks;
 	}
 
-	public List<Task> getChildTasks() {
-		return childTasks;
+	public void setTasks(List<Task> childTasks) {
+		this.tasks = childTasks;
 	}
 
-	public void setChildTasks(List<Task> childTasks) {
-		this.childTasks = childTasks;
+	public Checkpoint getCheckpoint() {
+		return checkpoint;
+	}
+
+	public void setCheckpoint(Checkpoint checkpoint) {
+		this.checkpoint = checkpoint;
 	}
 
 }
