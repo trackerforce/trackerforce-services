@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * 
  * @author Roger Floriano (petruki)
  */
-@JsonInclude(Include.NON_NULL)	
+@JsonInclude(Include.NON_NULL)
 public abstract class AbstractDocument {
 	
 	@Id

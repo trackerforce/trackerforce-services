@@ -1,39 +1,17 @@
 package com.trackerforce.management.model;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.trackerforce.management.model.type.CheckpointType;
-
-@Document(collection = "checkpoints")
-public class Checkpoint extends AbstractBusinessDocument {
+/**
+ *	Checkpoints are triggered every time a procedure is updated.
+ *	The componentes filled such as Agent, Department and Resolver are
+ *	notified when this event occurs.
+ */
+public class Checkpoint {
 	
-	/**
-	 * {@link CheckpointType}
-	 */
-	private String type;
-	
-	/**
-	 * When Manual, an Agent is notified
-	 */
 	private String agentId;
 	
-	/**
-	 * When Manual, a Department is notified
-	 */
 	private String departmentId;
 	
-	/**
-	 * When Auto, a Resolver is triggered with a given payload
-	 */
 	private String resolverUri;
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
 	
 	public String getAgentId() {
 		return agentId;

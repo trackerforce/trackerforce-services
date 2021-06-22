@@ -1,14 +1,14 @@
-package com.trackerforce.management.model;
+package com.trackerforce.common.tenant.model;
 
-import org.springframework.data.mongodb.core.mapping.DBRef;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.trackerforce.common.model.AbstractDocument;
 
+@JsonInclude(Include.NON_NULL)
 public abstract class AbstractBusinessDocument extends AbstractDocument {
 	
 	private String description;
 	
-	@DBRef
 	private ComponentHelper helper;
 
 	public String getDescription() {

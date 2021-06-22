@@ -1,8 +1,8 @@
 package com.trackerforce.management.service;
 
 import com.trackerforce.common.service.exception.ServiceException;
+import com.trackerforce.common.tenant.model.AbstractBusinessDocument;
 import com.trackerforce.common.tenant.service.AbstractTenantService;
-import com.trackerforce.management.model.AbstractBusinessDocument;
 
 public abstract class AbstractBusinessService<T extends AbstractBusinessDocument> 
 	extends AbstractTenantService<T> {

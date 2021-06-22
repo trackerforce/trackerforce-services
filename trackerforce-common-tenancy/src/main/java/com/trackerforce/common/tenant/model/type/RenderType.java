@@ -1,6 +1,6 @@
-package com.trackerforce.management.model.type;
+package com.trackerforce.common.tenant.model.type;
 
-import com.trackerforce.management.service.exception.InvalidRenderTypeException;
+import com.trackerforce.common.tenant.service.exception.InvalidRenderTypeException;
 
 public enum RenderType {
 

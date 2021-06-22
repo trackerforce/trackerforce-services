@@ -3,13 +3,15 @@ package com.trackerforce.management.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.service.exception.ServiceException;
+import com.trackerforce.common.tenant.model.type.TaskType;
 import com.trackerforce.management.model.Task;
 import com.trackerforce.management.model.request.TaskRequest;
-import com.trackerforce.management.model.type.TaskType;
 import com.trackerforce.management.repository.TaskRepositoryDao;
 
 @Service
@@ -18,17 +20,14 @@ public class TaskService extends AbstractBusinessService<Task> {
 	@Autowired
 	private TaskRepositoryDao taskDao;
 	
-	@Autowired
-	private ComponentHelperService componentHelperService;
-	
 	public Task createTask(final TaskRequest taskRequest) throws ServiceException {
 		var task = taskRequest.getTask();
 		this.validate(task);
 		
 		var helperContentOptional = Optional.ofNullable(taskRequest.getHelper());
-		if (helperContentOptional.isPresent())
-			task.setHelper(componentHelperService.createHelper(
-					helperContentOptional.get().getContent(), helperContentOptional.get().getRenderType()));
+		if (helperContentOptional.isPresent()) {
+			task.setHelper(taskRequest.getHelper());
+		}
 		
 		return this.create(task);
 	}
@@ -57,7 +56,11 @@ public class TaskService extends AbstractBusinessService<Task> {
 		if (outputOptional.isPresent())
 			return this.taskDao.findByIdProjectedBy(id, Task.class, outputOptional.get().split(","));
 		
-		return this.taskDao.findByIdProjectedBy(id, Task.class);
+		var task = this.taskDao.findByIdProjectedBy(id, Task.class);
+		if (task == null)
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+		
+		return task;
 	}
 
 }

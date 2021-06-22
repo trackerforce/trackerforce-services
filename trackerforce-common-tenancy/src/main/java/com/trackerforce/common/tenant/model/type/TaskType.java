@@ -1,6 +1,6 @@
-package com.trackerforce.management.model.type;
+package com.trackerforce.common.tenant.model.type;
 
-import com.trackerforce.management.service.exception.InvalidTaskTypeException;
+import com.trackerforce.common.tenant.service.exception.InvalidTaskTypeException;
 
 public enum TaskType {
 	
@@ -8,6 +8,7 @@ public enum TaskType {
 	MULTILINE_TEXT("MultilineText"),
 	NUMBER("Number"),
 	CHECK("Checkbox"),
+	RADIO("Radio"),
 	DRILLDOWN("Drilldown"),
 	FILE("File");
 	

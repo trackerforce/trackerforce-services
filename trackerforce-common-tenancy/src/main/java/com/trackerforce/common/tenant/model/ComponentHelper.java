@@ -1,11 +1,6 @@
-package com.trackerforce.management.model;
+package com.trackerforce.common.tenant.model;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.trackerforce.management.model.type.RenderType;
-
-@Document(collection = "helpers")
-public class ComponentHelper extends AbstractBusinessDocument {
+public class ComponentHelper {
 	
 	private String content;
 	

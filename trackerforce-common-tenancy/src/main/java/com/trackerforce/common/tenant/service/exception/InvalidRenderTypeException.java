@@ -1,9 +1,9 @@
-package com.trackerforce.management.service.exception;
+package com.trackerforce.common.tenant.service.exception;
 
 import java.util.Arrays;
 
 import com.trackerforce.common.service.exception.ServiceException;
-import com.trackerforce.management.model.type.RenderType;
+import com.trackerforce.common.tenant.model.type.RenderType;
 
 @SuppressWarnings("serial")
 public class InvalidRenderTypeException extends ServiceException {

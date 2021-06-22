@@ -1,9 +1,9 @@
-package com.trackerforce.management.service.exception;
+package com.trackerforce.common.tenant.service.exception;
 
 import java.util.Arrays;
 
 import com.trackerforce.common.service.exception.ServiceException;
-import com.trackerforce.management.model.type.TaskType;
+import com.trackerforce.common.tenant.model.type.TaskType;
 
 @SuppressWarnings("serial")
 public class InvalidTaskTypeException extends ServiceException {

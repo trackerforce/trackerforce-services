@@ -1,5 +1,9 @@
-package com.trackerforce.management.model;
+package com.trackerforce.common.tenant.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL)
 public class TaskOption {
 	
 	private String value;

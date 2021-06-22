@@ -1,6 +1,6 @@
 package com.trackerforce.management.model.request;
 
-import com.trackerforce.management.model.ComponentHelper;
+import com.trackerforce.common.tenant.model.ComponentHelper;
 import com.trackerforce.management.model.Task;
 
 public class TaskRequest {
