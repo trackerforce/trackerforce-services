@@ -10,25 +10,26 @@ public abstract class AbstractProcedure extends AbstractBusinessDocument {
 	/**
 	 * Procedure topic name
 	 */
-	private String name;
+	protected String name;
+	
+	/**
+	 * Link to Procedure Management details
+	 */
+	protected String procedureMngmtId;
 	
 	@DBRef
-	private List<AbstractTask> tasks = Collections.emptyList();
+	protected List<AbstractTask> tasks = Collections.emptyList();
 
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 	
 	public List<AbstractTask> getTasks() {
 		return tasks;
 	}
 
-	public void setTasks(List<AbstractTask> childTasks) {
-		this.tasks = childTasks;
+	public String getProcedureMngmtId() {
+		return procedureMngmtId;
 	}
-
+	
 }

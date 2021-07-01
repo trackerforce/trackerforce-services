@@ -12,9 +12,9 @@ public abstract class AbstractTask extends AbstractBusinessDocument {
 	/**
 	 * {@link TaskType}
 	 */
-	private String type;
+	protected String type;
 	
-	private List<TaskOption> options;
+	protected List<TaskOption> options;
 
 	public AbstractTask(String type, String description, List<TaskOption> options) {
 		setDescription(description);
@@ -26,16 +26,8 @@ public abstract class AbstractTask extends AbstractBusinessDocument {
 		return type;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public List<TaskOption> getOptions() {
 		return options;
-	}
-
-	public void setOptions(List<TaskOption> options) {
-		this.options = options;
 	}
 
 }
