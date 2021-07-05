@@ -20,9 +20,6 @@ public class TaskRepositoryDao extends AbstractProjectedDao<Task> {
 	@Autowired
 	private ProcedureRepository procedureRepository;
 	
-	@Autowired
-	private ComponentRepository componentRepository;
-	
 	public void delete(final Task task) {
 		disassociateTaskProcedureByTaskId(task.getId());
 		taskRepository.delete(task);
@@ -49,8 +46,8 @@ public class TaskRepositoryDao extends AbstractProjectedDao<Task> {
 		procedureRepository.saveAll(parentProcedures);
 	}
 
-	public ComponentRepository getComponentRepository() {
-		return componentRepository;
+	public TaskRerpository getTaskRepository() {
+		return taskRepository;
 	}
 	
 }

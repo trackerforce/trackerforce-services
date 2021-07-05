@@ -4,6 +4,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.trackerforce.management.model.Task;
 
-interface TaskRerpository extends MongoRepository<Task, String> {
+public interface TaskRerpository extends MongoRepository<Task, String> {
 	
 }

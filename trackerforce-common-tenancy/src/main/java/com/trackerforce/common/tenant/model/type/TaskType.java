@@ -4,13 +4,13 @@ import com.trackerforce.common.tenant.service.exception.InvalidTaskTypeException
 
 public enum TaskType {
 	
-	TEXT("Text"),
-	MULTILINE_TEXT("MultilineText"),
-	NUMBER("Number"),
-	CHECK("Checkbox"),
-	RADIO("Radio"),
-	DRILLDOWN("Drilldown"),
-	FILE("File");
+	TEXT("TEXT"),
+	MULTILINE_TEXT("MULTILINE_TEXT"),
+	NUMBER("NUMBER"),
+	CHECK("CHECK"),
+	RADIO("RADIO"),
+	DRILLDOWN("DRILLDOWN"),
+	FILE("FILE");
 	
 	private String name;
 	

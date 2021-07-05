@@ -4,15 +4,17 @@ import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.trackerforce.common.tenant.model.AbstractProcedure;
+
 /**
  *	Cases are business model that contains all necessary procedures and tasks to accomplish
- *	a single request.
+ *	a single user/customer request.
  */
 @Document(collection = "cases")
 public class Case extends AbstractSessionDocument {
 	
 	private String protocol;
 	
-	private List<Object> procedures;
+	private List<AbstractProcedure> procedures;
 
 }

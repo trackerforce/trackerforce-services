@@ -4,9 +4,9 @@ import com.trackerforce.common.tenant.service.exception.InvalidRenderTypeExcepti
 
 public enum RenderType {
 
-	MARKDOWN("Markdown"),
+	MARKDOWN("MARKDOWN"),
 	HTML("HTML"),
-	PLAINTEXT("Plain-text");
+	PLAINTEXT("PLAINTEXT");
 	
 	private String name;
 	

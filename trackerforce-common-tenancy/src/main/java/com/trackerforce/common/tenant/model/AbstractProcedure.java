@@ -13,7 +13,9 @@ public abstract class AbstractProcedure extends AbstractBusinessDocument {
 	protected String name;
 	
 	/**
-	 * Link to Procedure Management details
+	 * Link to Procedure Management details.
+	 * Session cases can only have access to the procedure in/out and
+	 * all the routing configurations are placed at te Procedure Management component.
 	 */
 	protected String procedureMngmtId;
 	
