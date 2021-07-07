@@ -20,18 +20,23 @@ public class TaskRepositoryDao extends AbstractProjectedDao<Task> {
 	@Autowired
 	private ProcedureRepository procedureRepository;
 	
+	/**
+	 * {@link TaskRepositoryDao#deleteById(String)}
+	 * 
+	 * @param task Task Id
+	 */
 	public void delete(final Task task) {
-		disassociateTaskProcedureByTaskId(task.getId());
-		taskRepository.delete(task);
+		this.deleteById(task.getId());
 	}
 	
+	/**
+	 * Remove Task from all associated Procedures and then delete it.
+	 * 
+	 * @param id Task Id
+	 */
 	public void deleteById(final String id) {
 		disassociateTaskProcedureByTaskId(id);
 		taskRepository.deleteById(id);
-	}
-	
-	public Task save(final Task task) {
-		return this.taskRepository.save(task);
 	}
 	
 	public void disassociateTaskProcedureByTaskId(final String id) {
