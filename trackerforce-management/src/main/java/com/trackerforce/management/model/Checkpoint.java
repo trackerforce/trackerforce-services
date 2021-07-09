@@ -1,10 +1,14 @@
 package com.trackerforce.management.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  *	Checkpoints are triggered every time a procedure is updated.
  *	The componentes filled such as Agent, Department and Resolver are
  *	notified when this event occurs.
  */
+@JsonInclude(Include.NON_NULL)
 public class Checkpoint {
 	
 	private String agentId;

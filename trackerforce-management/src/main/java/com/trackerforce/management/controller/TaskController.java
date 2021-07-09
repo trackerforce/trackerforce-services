@@ -31,7 +31,7 @@ public class TaskController {
 	@PostMapping(value = "/v1/create")
 	public ResponseEntity<?> create(@RequestBody TaskRequest taskRequest) {
 		try {
-			return ResponseEntity.ok(taskService.createTask(taskRequest));
+			return ResponseEntity.ok(taskService.create(taskRequest));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}
@@ -47,7 +47,7 @@ public class TaskController {
 		return ResponseEntity.ok(taskService.findAllProjectedBy(description, sortBy, output, page, size));
 	}
 	
-	@GetMapping(value = "/v1/find/{id}")
+	@GetMapping(value = "/v1/{id}")
 	public ResponseEntity<?> findOne(@PathVariable(value="id") String id, String output) {
 		return ResponseEntity.ok(taskService.findByIdProjectedBy(id, output));
 	}
@@ -57,7 +57,7 @@ public class TaskController {
 			@PathVariable(value="id") String id, 
 			@RequestBody Map<String, Object> updates) {
 		try {
-			return ResponseEntity.ok(taskService.updateTask(id, updates));
+			return ResponseEntity.ok(taskService.update(id, updates));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}
@@ -65,7 +65,7 @@ public class TaskController {
 	
 	@DeleteMapping(value = "/v1/{id}")
 	public ResponseEntity<?> delete(@PathVariable(value="id") String id) {
-		taskService.deleteTask(id);
+		taskService.delete(id);
 		return ResponseEntity.ok().build();
 	}
 

@@ -3,7 +3,6 @@ package com.trackerforce.management.model;
 import java.util.Collections;
 import java.util.List;
 
-import org.bson.types.Binary;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,8 +16,6 @@ public class Agent extends AbstractDocument {
 	private String email;
 	
 	private String department;
-	
-	private Binary avatar;
 	
 	private boolean active = true;
 	
@@ -49,14 +46,6 @@ public class Agent extends AbstractDocument {
 
 	public void setDepartment(String department) {
 		this.department = department;
-	}
-
-	public Binary getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(Binary avatar) {
-		this.avatar = avatar;
 	}
 
 	public boolean isActive() {

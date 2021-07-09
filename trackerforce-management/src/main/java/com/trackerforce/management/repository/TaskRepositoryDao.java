@@ -23,7 +23,7 @@ public class TaskRepositoryDao extends AbstractProjectedDao<Task> {
 	/**
 	 * {@link TaskRepositoryDao#deleteById(String)}
 	 * 
-	 * @param task Task Id
+	 * @param task Task
 	 */
 	public void delete(final Task task) {
 		this.deleteById(task.getId());

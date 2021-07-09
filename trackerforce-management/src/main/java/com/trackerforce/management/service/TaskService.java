@@ -29,7 +29,7 @@ public class TaskService extends AbstractBusinessService<Task> {
 		super.create(entity);
 		return taskDao.getTaskRepository().save(entity);
 	}
-
+	
 	@Override
 	protected void validate(final Task entity) throws ServiceException {
 		try {
@@ -45,19 +45,18 @@ public class TaskService extends AbstractBusinessService<Task> {
 		}
 	}
 
-	public Task createTask(final TaskRequest taskRequest) throws ServiceException {
+	public Task create(final TaskRequest taskRequest) throws ServiceException {
 		var task = taskRequest.getTask();
 		this.validate(task);
 
 		var helperContentOptional = Optional.ofNullable(taskRequest.getHelper());
-		if (helperContentOptional.isPresent()) {
+		if (helperContentOptional.isPresent())
 			task.setHelper(taskRequest.getHelper());
-		}
 
 		return this.create(task);
 	}
 
-	public Task updateTask(final String id, final Map<String, Object> updates) 
+	public Task update(final String id, final Map<String, Object> updates) 
 			throws ServiceException {
 
 		var promise = taskDao.getTaskRepository().findById(id);
@@ -73,7 +72,7 @@ public class TaskService extends AbstractBusinessService<Task> {
 		return taskDao.getTaskRepository().save(task);
 	}
 
-	public void deleteTask(final String id) {
+	public void delete(final String id) {
 		taskDao.deleteById(id);
 	}
 
