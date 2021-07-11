@@ -1,9 +1,12 @@
 package com.trackerforce.management.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +31,17 @@ public class ProcedureController {
 	public ResponseEntity<?> create(@RequestBody ProcedureRequest procedureRequest) {
 		try {
 			return ResponseEntity.ok(procedureService.create(procedureRequest));
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
+	}
+	
+	@PatchMapping(value = "/v1/{id}")
+	public ResponseEntity<?> update(
+			@PathVariable(value="id") String id, 
+			@RequestBody Map<String, Object> updates) {
+		try {
+			return ResponseEntity.ok(procedureService.update(id, updates));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}

@@ -1,5 +1,6 @@
 package com.trackerforce.common.tenant.service;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,20 @@ public abstract class AbstractTenantService<T extends AbstractDocument> {
 	private HttpServletRequest request;
 	
 	/**
+	 * Validates whether there is invalid update attributes
+	 * 
+	 * @param updates body request
+	 * @param allowed attributes
+	 * @throws InvalidServiceUpdateException
+	 */
+	private void validateUpdate(final Map<String, Object> updates, final String[] allowed) 
+			throws InvalidServiceUpdateException {
+		for (String update : updates.keySet())
+			if (!Arrays.stream(allowed).anyMatch(key -> key.equals(update)))
+				throw new InvalidServiceUpdateException(update);
+	}
+	
+	/**
 	 * Link component with organization owner
 	 * 
 	 * @param entity Entity to be linked
@@ -43,20 +58,24 @@ public abstract class AbstractTenantService<T extends AbstractDocument> {
 	 * @return updated entity
 	 * @throws InvalidServiceUpdateException if something went wrong while assigning a new value to entity
 	 */
-	protected <Y> Y update(final Y entity, Map<String, Object> updates) throws InvalidServiceUpdateException {
+	protected <Y> Y update(
+			final Y entity, 
+			final Map<String, Object> updates,
+			final String[] allowed) throws InvalidServiceUpdateException {
+		this.validateUpdate(updates, allowed);
 		final var ignored = "id";
 		
 		for (String key : updates.keySet()) {
 			var field = ReflectionUtils.findField(entity.getClass(), key);
 			
 			if (field == null || ignored.equals(key))
-				throw new InvalidServiceUpdateException(key, entity.getClass());
+				throw new InvalidServiceUpdateException(key);
 
 			try {
 				field.setAccessible(true);
 				field.set(entity, updates.get(key));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
-				throw new InvalidServiceUpdateException(key, entity.getClass(), e);
+				throw new InvalidServiceUpdateException(key, e);
 			} finally {
 				field.setAccessible(false);
 			}	
@@ -66,9 +85,10 @@ public abstract class AbstractTenantService<T extends AbstractDocument> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected <Y> Y update(final Y entity, Object updates) throws InvalidServiceUpdateException {
+	protected <Y> Y update(final Y entity, Object updates, final String[] allowed) 
+			throws InvalidServiceUpdateException {
 		var wrapper = (Map<String, Object>) updates;
-		return update(entity, wrapper);
+		return update(entity, wrapper, allowed);
 	}
 
 }

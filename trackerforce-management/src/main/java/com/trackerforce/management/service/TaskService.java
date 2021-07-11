@@ -20,6 +20,9 @@ import com.trackerforce.management.repository.TaskRepositoryDao;
 
 @Service
 public class TaskService extends AbstractBusinessService<Task> {
+	
+	private static final String[] ALLOWED_TASK_UPDATE = { "description", "type", "options" };
+	private static final String[] ALLOWED_HELPER_UPDATE = { "content", "renderType" };
 
 	@Autowired
 	private TaskRepositoryDao taskDao;
@@ -64,9 +67,11 @@ public class TaskService extends AbstractBusinessService<Task> {
 		if (!promise.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
 
-		var task = super.update(promise.get(), updates.get("task"));
+		var task = super.update(promise.get(), updates.get("task"), ALLOWED_TASK_UPDATE);
+		
 		if (updates.containsKey("helper"))
-			task.setHelper(super.update(task.getHelper(), updates.get("helper")));
+			task.setHelper(super.update(task.getHelper(), 
+					updates.get("helper"), ALLOWED_HELPER_UPDATE));
 
 		this.validate(task);
 		return taskDao.getTaskRepository().save(task);

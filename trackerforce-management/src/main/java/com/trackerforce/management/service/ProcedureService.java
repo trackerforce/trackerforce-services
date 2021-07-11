@@ -1,5 +1,6 @@
 package com.trackerforce.management.service;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,10 @@ import com.trackerforce.management.repository.TaskRepositoryDao;
 
 @Service
 public class ProcedureService extends AbstractBusinessService<Procedure> {
+	
+	private static final String[] ALLOWED_PROC_UPDATE = { "name", "description", "helper" };
+	private static final String[] ALLOWED_HELPER_UPDATE = { "content", "renderType" };
+	private static final String[] ALLOWED_CP_UPDATE = { "agentId" };
 
 	@Autowired
 	private ProcedureRepositoryDao procedureDao;
@@ -55,6 +60,28 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 			procedure.setHelper(procedureRequest.getHelper());
 
 		return this.create(procedure);
+	}
+	
+	public Procedure update(final String id, final Map<String, Object> updates) 
+			throws ServiceException {
+
+		var promise = procedureDao.getProcedureRepository().findById(id);
+
+		if (!promise.isPresent())
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Procedure not found");
+
+		var procedure = super.update(promise.get(), updates.get("procedure"), ALLOWED_PROC_UPDATE);
+		
+		if (updates.containsKey("checkpoint"))
+			procedure.setCheckpoint(super.update(procedure.getCheckpoint(), 
+					updates.get("checkpoint"), ALLOWED_CP_UPDATE));
+		
+		if (updates.containsKey("helper"))
+			procedure.setHelper(super.update(procedure.getHelper(), 
+					updates.get("helper"), ALLOWED_HELPER_UPDATE));
+
+		this.validate(procedure);
+		return procedureDao.getProcedureRepository().save(procedure);
 	}
 	
 	public Task updateTasks(final String id, final String taskId, boolean add) {
