@@ -1,9 +1,8 @@
 package com.trackerforce.management.service;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -21,19 +20,18 @@ import com.trackerforce.management.repository.TaskRepositoryDao;
 public class ProcedureService extends AbstractBusinessService<Procedure> {
 	
 	private static final String[] ALLOWED_PROC_UPDATE = { "name", "description", "helper" };
-	private static final String[] ALLOWED_HELPER_UPDATE = { "content", "renderType" };
 	private static final String[] ALLOWED_CP_UPDATE = { "agentId" };
 
-	@Autowired
 	private ProcedureRepositoryDao procedureDao;
 	
-	@Autowired
 	private TaskRepositoryDao taskDao;
-
-	@Override
-	protected Procedure create(final Procedure entity) {
-		super.create(entity);
-		return procedureDao.getProcedureRepository().save(entity);
+	
+	public ProcedureService(
+			TaskRepositoryDao taskDao,
+			ProcedureRepositoryDao procedureDao) {
+		super(procedureDao, Procedure.class, "procedure");
+		this.procedureDao = procedureDao;
+		this.taskDao = taskDao;
 	}
 
 	@Override
@@ -53,35 +51,18 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 
 	public Procedure create(final ProcedureRequest procedureRequest) throws ServiceException {
 		var procedure = procedureRequest.getProcedure();
-		this.validate(procedure);
-
-		var helperContentOptional = Optional.ofNullable(procedureRequest.getHelper());
-		if (helperContentOptional.isPresent())
-			procedure.setHelper(procedureRequest.getHelper());
-
-		return this.create(procedure);
+		return super.create(procedure, procedureRequest.getHelper());
 	}
 	
 	public Procedure update(final String id, final Map<String, Object> updates) 
 			throws ServiceException {
-
 		var promise = procedureDao.getProcedureRepository().findById(id);
-
-		if (!promise.isPresent())
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Procedure not found");
-
-		var procedure = super.update(promise.get(), updates.get("procedure"), ALLOWED_PROC_UPDATE);
+		var allowed = new HashMap<String, String[]>();
+		allowed.put(entityName, ALLOWED_PROC_UPDATE);
+		allowed.put("checkpoint", ALLOWED_CP_UPDATE);
+		allowed.put("helper", ALLOWED_HELPER_UPDATE);
 		
-		if (updates.containsKey("checkpoint"))
-			procedure.setCheckpoint(super.update(procedure.getCheckpoint(), 
-					updates.get("checkpoint"), ALLOWED_CP_UPDATE));
-		
-		if (updates.containsKey("helper"))
-			procedure.setHelper(super.update(procedure.getHelper(), 
-					updates.get("helper"), ALLOWED_HELPER_UPDATE));
-
-		this.validate(procedure);
-		return procedureDao.getProcedureRepository().save(procedure);
+		return super.update(promise, updates, allowed);
 	}
 	
 	public Task updateTasks(final String id, final String taskId, boolean add) {
@@ -125,5 +106,5 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 	public void delete(final String id) {
 		procedureDao.deleteById(id);
 	}
-
+	
 }

@@ -18,7 +18,7 @@ import com.trackerforce.common.tenant.service.exception.InvalidServiceUpdateExce
  * @author Roger Floriano
  * @since 2020-07-22
  *
- * @param <T>
+ * @param <T AbstractDocument>
  */
 public abstract class AbstractTenantService<T extends AbstractDocument> {
 	
@@ -43,11 +43,9 @@ public abstract class AbstractTenantService<T extends AbstractDocument> {
 	 * Link component with organization owner
 	 * 
 	 * @param entity Entity to be linked
-	 * @return Created component
 	 */
-	protected T create(final T entity) {
+	protected void linkOrganization(final T entity) {
 		entity.setOrganizationId(request.getAttribute(TenantInterceptor.ORGANIZATION_ID).toString());
-		return entity;
 	}
 	
 	/**

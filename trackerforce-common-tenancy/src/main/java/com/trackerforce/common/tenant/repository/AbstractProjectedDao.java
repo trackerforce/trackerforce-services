@@ -17,7 +17,25 @@ public abstract class AbstractProjectedDao<T extends AbstractDocument> {
 
 	@Autowired
 	protected MongoTemplate mongoTemplate;
+	
+	/**
+	 * Helper operation to save documents from the ProjectedDao
+	 * 
+	 * @param entity
+	 * @return Saved entity
+	 */
+	public T save(T entity) {
+		return mongoTemplate.save(entity);
+	}
 
+	/**
+	 * Find one element by Id
+	 * 
+	 * @param id
+	 * @param entityClass
+	 * @param fields
+	 * @return
+	 */
 	public T findByIdProjectedBy(final String id, Class<T> entityClass, String... fields) {
 		Query query = Query.query(Criteria.where("id").is(id));
 		Arrays.stream(fields).forEach(field -> query.fields().include(field.trim()));
