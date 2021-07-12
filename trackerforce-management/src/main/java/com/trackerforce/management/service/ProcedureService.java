@@ -1,6 +1,7 @@
 package com.trackerforce.management.service;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.service.exception.ServiceException;
+import com.trackerforce.common.tenant.model.AbstractTask;
 import com.trackerforce.common.tenant.model.type.RenderType;
 import com.trackerforce.management.model.Procedure;
 import com.trackerforce.management.model.Task;
@@ -65,17 +67,30 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 		return super.update(promise, updates, allowed);
 	}
 	
+	public LinkedList<AbstractTask> reorderTask(final String id, int from, int to) {
+		final var procedurePromise = procedureDao.getProcedureRepository().findById(id);
+		
+		if (!procedurePromise.isPresent())
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Procedure not found");
+		
+		final var procedure = procedurePromise.get();
+		final var task = procedure.getTasks().get(from);
+		procedure.getTasks().remove(from);
+		procedure.getTasks().add(to, task);
+		
+		procedureDao.getProcedureRepository().save(procedure);
+		return procedure.getTasks();
+	}
+	
 	public Task updateTasks(final String id, final String taskId, boolean add) {
 		final var procedurePromise = procedureDao.getProcedureRepository().findById(id);
 		final var taskPromise = taskDao.getTaskRepository().findById(taskId);
 		
 		if (!procedurePromise.isPresent())
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, 
-					"Procedure not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Procedure not found");
 		
 		if (!taskPromise.isPresent())
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, 
-					"Task not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
 		
 		if (add)
 			return addTask(procedurePromise.get(), taskPromise.get());
@@ -88,7 +103,7 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
 					"Task already added to Procedure");
 		
-		procedure.getTasks().add(task);
+		procedure.getTasks().push(task);
 		procedureDao.getProcedureRepository().save(procedure);
 		return task;
 	}

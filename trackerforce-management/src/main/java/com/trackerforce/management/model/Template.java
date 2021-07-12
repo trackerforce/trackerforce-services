@@ -1,6 +1,6 @@
 package com.trackerforce.management.model;
 
-import java.util.List;
+import java.util.LinkedList;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,7 +12,7 @@ public class Template  extends AbstractBusinessDocument {
 	
 	private String name;
 	
-	private List<AbstractProcedure> procedures;
+	private LinkedList<AbstractProcedure> procedures;
 
 	public String getName() {
 		return name;
@@ -22,12 +22,11 @@ public class Template  extends AbstractBusinessDocument {
 		this.name = name;
 	}
 
-	public List<AbstractProcedure> getProcedures() {
+	public LinkedList<AbstractProcedure> getProcedures() {
+		if (procedures == null)
+			procedures = new LinkedList<>();
+		
 		return procedures;
-	}
-
-	public void setProcedures(List<AbstractProcedure> procedures) {
-		this.procedures = procedures;
 	}
 	
 }

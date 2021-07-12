@@ -1,7 +1,6 @@
 package com.trackerforce.common.tenant.model;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.LinkedList;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
@@ -20,13 +19,16 @@ public abstract class AbstractProcedure extends AbstractBusinessDocument {
 	protected String procedureMngmtId;
 	
 	@DBRef
-	protected List<AbstractTask> tasks = Collections.emptyList();
+	protected LinkedList<AbstractTask> tasks;
 
 	public String getName() {
 		return name;
 	}
 	
-	public List<AbstractTask> getTasks() {
+	public LinkedList<AbstractTask> getTasks() {
+		if (tasks == null)
+			tasks = new LinkedList<>();
+		
 		return tasks;
 	}
 
