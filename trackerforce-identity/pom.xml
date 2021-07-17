@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.trackerforce</groupId>
 		<artifactId>trackerforce-services</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -34,7 +34,7 @@
 	</scm>
 
 	<properties>
-		<trackerforce-common.version>0.0.1-SNAPSHOT</trackerforce-common.version>
+		<trackerforce-common.version>0.0.2-SNAPSHOT</trackerforce-common.version>
 	</properties>
 	
 	<profiles>

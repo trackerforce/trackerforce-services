@@ -3,13 +3,9 @@ package com.trackerforce.common.tenant.service;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ReflectionUtils;
 
 import com.trackerforce.common.model.AbstractDocument;
-import com.trackerforce.common.tenant.interceptor.TenantInterceptor;
 import com.trackerforce.common.tenant.service.exception.InvalidServiceUpdateException;
 
 /**
@@ -21,9 +17,6 @@ import com.trackerforce.common.tenant.service.exception.InvalidServiceUpdateExce
  * @param <T AbstractDocument>
  */
 public abstract class AbstractTenantService<T extends AbstractDocument> {
-	
-	@Autowired
-	private HttpServletRequest request;
 	
 	/**
 	 * Validates whether there is invalid update attributes
@@ -37,15 +30,6 @@ public abstract class AbstractTenantService<T extends AbstractDocument> {
 		for (String update : updates.keySet())
 			if (!Arrays.stream(allowed).anyMatch(key -> key.equals(update)))
 				throw new InvalidServiceUpdateException(update);
-	}
-	
-	/**
-	 * Link component with organization owner
-	 * 
-	 * @param entity Entity to be linked
-	 */
-	protected void linkOrganization(final T entity) {
-		entity.setOrganizationId(request.getAttribute(TenantInterceptor.ORGANIZATION_ID).toString());
 	}
 	
 	/**

@@ -1,16 +1,11 @@
 package com.trackerforce.identity.model;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.trackerforce.common.model.AbstractDocument;
-
-@Document(collection = "organizations")
-public class Organization extends AbstractDocument {
+public class Organization {
 	
 	private String name;
 	
-	private boolean dedicated = false;
-
+	private String alias;
+	
 	public String getName() {
 		return name;
 	}
@@ -19,12 +14,12 @@ public class Organization extends AbstractDocument {
 		this.name = name;
 	}
 
-	public boolean isDedicated() {
-		return dedicated;
+	public String getAlias() {
+		return alias;
 	}
 
-	public void setDedicated(boolean dedicated) {
-		this.dedicated = dedicated;
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 }

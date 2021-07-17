@@ -2,7 +2,6 @@ package com.trackerforce.identity.service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,11 +20,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.config.JwtRequestFilter;
+import com.trackerforce.common.config.RequestHeader;
 import com.trackerforce.common.service.JwtTokenService;
 import com.trackerforce.identity.model.AuthAccess;
 import com.trackerforce.identity.model.request.AccessRequest;
 import com.trackerforce.identity.model.request.JwtRequest;
 import com.trackerforce.identity.repository.AuthAccessRepository;
+
+import io.jsonwebtoken.Claims;
 
 @Service
 public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
@@ -54,7 +56,8 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		authenticate(authRequest);
 		
 		final var authAccess = authAccessRepository.findByUsername(authRequest.getUsername());
-		final var jwt = jwtTokenUtil.generateToken(authAccess.getUsername());
+		final var jwt = jwtTokenUtil.generateToken(authAccess.getUsername(), 
+				authAccess.getOrganization().getAlias());
 		
 		Map<String, Object> response = new HashMap<>();
 		response.put(ACCESS, authAccess);
@@ -71,8 +74,16 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
 		var authAccess = authAccessRepository.findByUsername(authentication.getName());
 		
-		Optional<String> token = JwtRequestFilter.getJwtFromRequest(request);
+		if (authAccess == null)
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+		
+		var token = JwtRequestFilter.getJwtFromRequest(request);
 		if (!token.isPresent() || !bcrypt.matches(token.get(), authAccess.getTokenHash()))
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+		
+		var tenant = request.getHeader(RequestHeader.TENANT_HEADER.toString());
+		var orgAlias = jwtTokenUtil.getClaimFromToken(token.get(), Claims::getAudience);
+		if (!StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 		
 		return authAccess;
@@ -97,6 +108,10 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 
 	@Override
 	protected void validate(AuthAccess entity) {
+		if  (!entity.hasValidOrganization())
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST, "Invalid Organization values");
+		
 		if (!StringUtils.hasText(entity.getUsername()) || 
 				!StringUtils.hasText(entity.getPassword()))
 			throw new ResponseStatusException(

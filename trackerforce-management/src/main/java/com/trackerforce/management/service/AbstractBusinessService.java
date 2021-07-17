@@ -62,8 +62,6 @@ public abstract class AbstractBusinessService<T extends AbstractBusinessDocument
 	 * @throws ServiceException if validation has errors
 	 */
 	public T create(final T entity, final ComponentHelper helper) throws ServiceException {
-		super.linkOrganization(entity);
-		
 		var helperContentOptional = Optional.ofNullable(helper);
 		if (helperContentOptional.isPresent())
 			entity.setHelper(helperContentOptional.get());

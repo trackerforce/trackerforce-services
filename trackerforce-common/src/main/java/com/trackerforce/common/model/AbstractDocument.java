@@ -33,8 +33,6 @@ public abstract class AbstractDocument {
 	
 	@LastModifiedBy
 	private String updatedBy;
-	
-	private String organizationId;
 
 	public String getId() {
 		return id;
@@ -75,15 +73,7 @@ public abstract class AbstractDocument {
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
-
-	public String getOrganizationId() {
-		return organizationId;
-	}
-
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
-	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -112,7 +102,7 @@ public abstract class AbstractDocument {
 	@Override
 	public String toString() {
 		return "AbstractDocument [id=" + id + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", createdBy="
-				+ createdBy + ", updatedBy=" + updatedBy + ", organizationId=" + organizationId + "]";
+				+ createdBy + ", updatedBy=" + updatedBy + "]";
 	}
 
 }

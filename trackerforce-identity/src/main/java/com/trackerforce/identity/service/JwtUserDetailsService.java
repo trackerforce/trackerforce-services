@@ -34,8 +34,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 	}
 
 	public AuthAccess save(AuthAccess user) {
-		final var jwt =new JwtRequest(user.getUsername(), bcryptEncoder.encode(user.getPassword()));
-		final var newUser = new AuthAccess(jwt);
+		final var jwt = new JwtRequest(user.getUsername(), bcryptEncoder.encode(user.getPassword()));
+		final var newUser = new AuthAccess(jwt, user.getOrganization());
 		return authAccessRepository.save(newUser);
 	}
 }

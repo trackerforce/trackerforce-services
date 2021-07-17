@@ -2,8 +2,6 @@ package com.trackerforce.common.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 import javax.crypto.SecretKey;
@@ -51,16 +49,16 @@ public class JwtTokenService {
 		return expiration.before(new Date());
 	}
 	
-	public String[] generateToken(String subject) {
-		Map<String, Object> claims = new HashMap<>();
-		return doGenerateToken(claims, subject);
+	public String[] generateToken(String subject, String organizationAlias) {
+		return doGenerateToken(subject, organizationAlias);
 	}
 	
-	private String[] doGenerateToken(Map<String, Object> claims, String subject) {
+	private String[] doGenerateToken(String subject, String organizationAlias) {
 		final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 		final String token = Jwts.builder()
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 60 * 1000))
 				.setSubject(subject)
+				.setAudience(organizationAlias)
 				.signWith(key)
 				.compact();
 		

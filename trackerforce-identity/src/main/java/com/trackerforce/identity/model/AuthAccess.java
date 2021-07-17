@@ -1,10 +1,10 @@
 package com.trackerforce.identity.model;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.trackerforce.identity.model.request.JwtRequest;
-import com.trackerforce.identity.model.type.AccessType;
 
 @Document(collection = "auth-access")
 public class AuthAccess extends AbstractIdentityDocument {
@@ -20,18 +20,22 @@ public class AuthAccess extends AbstractIdentityDocument {
 	@JsonIgnore
 	private String tokenHash;
 	
-	private boolean owner;
-	
-	/**
-	 * {@link AccessType}
-	 */
-	private String accessType;
-	
 	public AuthAccess() {}
 	
-	public AuthAccess(JwtRequest authRequest) {
+	public AuthAccess(JwtRequest authRequest, Organization organization) {
 		this.username = authRequest.getUsername();
 		this.password = authRequest.getPassword();
+		setOrganization(organization);
+	}
+	
+	public boolean hasValidOrganization() {
+		if (super.organization == null)
+			return false;
+		
+		if (!StringUtils.hasText(super.organization.getName()))
+			return false;
+		
+		return true;
 	}
 
 	public String getUsername() {
@@ -56,22 +60,6 @@ public class AuthAccess extends AbstractIdentityDocument {
 
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
-	}
-
-	public boolean isOwner() {
-		return owner;
-	}
-
-	public void setOwner(boolean owner) {
-		this.owner = owner;
-	}
-
-	public String getAccessType() {
-		return accessType;
-	}
-
-	public void setAccessType(String accessType) {
-		this.accessType = accessType;
 	}
 
 	public String getTokenHash() {

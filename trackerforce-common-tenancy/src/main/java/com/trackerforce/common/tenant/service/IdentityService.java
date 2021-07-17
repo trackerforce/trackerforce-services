@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import static com.trackerforce.common.config.JwtRequestFilter.AUTHORIZATION;
-import static com.trackerforce.common.tenant.interceptor.TenantInterceptor.TENANT_HEADER;;
+import com.trackerforce.common.config.RequestHeader;;
 
 @Service
 public class IdentityService {
@@ -23,8 +22,10 @@ public class IdentityService {
 	
 	public boolean validateIdentity(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeaders();
-		headers.add(AUTHORIZATION, request.getHeader(AUTHORIZATION));
-		headers.add(TENANT_HEADER, request.getHeader(TENANT_HEADER));
+		headers.add(RequestHeader.AUTHORIZATION.toString(), 
+				request.getHeader(RequestHeader.AUTHORIZATION.toString()));
+		headers.add(RequestHeader.TENANT_HEADER.toString(), 
+				request.getHeader(RequestHeader.TENANT_HEADER.toString()));
 		
 		try {
 			var response = restTemplate.exchange(serviceUrl, 

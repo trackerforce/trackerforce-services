@@ -5,10 +5,10 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.trackerforce.common.config.RequestHeader;
 import com.trackerforce.common.tenant.service.IdentityService;
 
 /**
@@ -22,14 +22,6 @@ public class TenantInterceptor implements HandlerInterceptor {
 	
 	public static final String TENANT_ID = "TenantId";
 	
-	public static final String TENANT_HEADER = "X-Tenant";
-	
-	public static final String ORGANIZATION_ID = "OrganizationId";
-	
-	private final String DEDICATED_IDENTIFIER = "#";
-	
-	private final String TENANT_SHARED = "shared";
-	
 	private final IdentityService identityService;
 	
 	public TenantInterceptor(IdentityService identityService) {
@@ -40,15 +32,11 @@ public class TenantInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		
-		final Optional<String> tenant = Optional.ofNullable(request.getHeader(TENANT_HEADER));
+		final Optional<String> tenant = Optional.ofNullable(
+				request.getHeader(RequestHeader.TENANT_HEADER.toString()));
 		
 		if (tenant.isPresent() && StringUtils.hasText(tenant.get())) {
-			request.setAttribute(ORGANIZATION_ID, tenant.get().replace(DEDICATED_IDENTIFIER, Strings.EMPTY));
-			if (tenant.get().contains(DEDICATED_IDENTIFIER)) {
-				request.setAttribute(TENANT_ID, tenant.get().replace(DEDICATED_IDENTIFIER, Strings.EMPTY));
-			} else {
-				request.setAttribute(TENANT_ID, TENANT_SHARED);
-			}
+			request.setAttribute(TENANT_ID, tenant.get());
 			
 			if (!identityService.validateIdentity(request)) {
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

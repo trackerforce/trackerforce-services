@@ -12,15 +12,13 @@ import com.trackerforce.common.service.JwtTokenService;
 
 public abstract class JwtRequestFilter extends OncePerRequestFilter {
 	
-	public static final String AUTHORIZATION = "Authorization";
-
 	public static final String BEARER = "Bearer ";
 	
 	@Autowired
 	protected JwtTokenService jwtTokenService;
 	
 	public static Optional<String> getJwtFromRequest(HttpServletRequest request) {
-		final String bearerToken = request.getHeader(AUTHORIZATION);
+		final String bearerToken = request.getHeader(RequestHeader.AUTHORIZATION.toString());
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
 			return Optional.of(bearerToken.substring(7));
 		}
