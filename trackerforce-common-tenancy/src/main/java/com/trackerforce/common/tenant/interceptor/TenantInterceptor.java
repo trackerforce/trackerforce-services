@@ -32,8 +32,8 @@ public class TenantInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		
-		final Optional<String> tenant = Optional.ofNullable(
-				request.getHeader(RequestHeader.TENANT_HEADER.toString()));
+		var tenant = Optional.ofNullable(request.getHeader(
+				RequestHeader.TENANT_HEADER.toString()));
 		
 		if (tenant.isPresent() && StringUtils.hasText(tenant.get())) {
 			request.setAttribute(TENANT_ID, tenant.get());

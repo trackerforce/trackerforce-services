@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -40,17 +39,24 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 	
 	private BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 	
-	@Autowired
-	AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationManager;
 	
-	@Autowired
-	JwtUserDetailsService userDetailsService;
+	private AuthAccessRepository authAccessRepository;
 	
-	@Autowired
-	AuthAccessRepository authAccessRepository;
+	private JwtUserDetailsService userDetailsService;
 	
-	@Autowired
-	JwtTokenService jwtTokenUtil;
+	private JwtTokenService jwtTokenUtil;
+	
+	public AuthenticationService(
+			AuthenticationManager authenticationManager,
+			AuthAccessRepository authAccessRepository,
+			JwtUserDetailsService userDetailsService,
+			JwtTokenService jwtTokenUtil) {
+		this.authenticationManager = authenticationManager;
+		this.authAccessRepository = authAccessRepository;
+		this.userDetailsService = userDetailsService;
+		this.jwtTokenUtil = jwtTokenUtil;
+	}
 	
 	public Map<String, Object> authenticateAccess(JwtRequest authRequest) {
 		authenticate(authRequest);
@@ -59,7 +65,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		final var jwt = jwtTokenUtil.generateToken(authAccess.getUsername(), 
 				authAccess.getOrganization().getAlias());
 		
-		Map<String, Object> response = new HashMap<>();
+		var response = new HashMap<String, Object>();
 		response.put(ACCESS, authAccess);
 		response.put(TOKEN, jwt[0]);
 		response.put(REFRESH_TOKEN, jwt[1]);
@@ -91,19 +97,18 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 	
 	public AuthAccess registerAccess(AccessRequest accessRequest) {
 		var authAccess = accessRequest.getAuthAccess();
-		validate(authAccess);
-		return userDetailsService.save(authAccess);
+		this.validate(authAccess);
+		
+		return userDetailsService.newUser(authAccess);
 	}
 	
 	public void logoff(HttpServletRequest request, HttpServletResponse response) {
-		var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            final var authAccess = authAccessRepository.findByUsername(authentication.getName());
-            authAccess.setTokenHash(null);
-    		authAccessRepository.save(authAccess);
-    		
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
-        }
+        final var authAccess = getAuthenticated(request);
+        authAccess.setTokenHash(null);
+		authAccessRepository.save(authAccess);
+		
+        new SecurityContextLogoutHandler().logout(
+        		request, response, SecurityContextHolder.getContext().getAuthentication());
 	}
 
 	@Override
