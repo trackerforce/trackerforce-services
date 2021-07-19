@@ -32,6 +32,9 @@ public class TenantInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		
+		if (isHealthChecker(request))
+			return true;
+		
 		var tenant = Optional.ofNullable(request.getHeader(
 				RequestHeader.TENANT_HEADER.toString()));
 		
@@ -49,6 +52,10 @@ public class TenantInterceptor implements HandlerInterceptor {
 		}
 		
 		return HandlerInterceptor.super.preHandle(request, response, handler);
+	}
+	
+	private boolean isHealthChecker(HttpServletRequest request) {
+		return request.getRequestURI().equals(identityService.getHealthChecker());
 	}
 	
 }

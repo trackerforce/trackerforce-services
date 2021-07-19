@@ -4,18 +4,21 @@ import com.trackerforce.common.tenant.service.exception.InvalidTaskTypeException
 
 public enum TaskType {
 	
-	TEXT("TEXT"),
-	MULTILINE_TEXT("MULTILINE_TEXT"),
-	NUMBER("NUMBER"),
-	CHECK("CHECK"),
-	RADIO("RADIO"),
-	DRILLDOWN("DRILLDOWN"),
-	FILE("FILE");
+	TEXT("TEXT", false),
+	MULTILINE_TEXT("MULTILINE_TEXT", false),
+	NUMBER("NUMBER", true),
+	CHECK("CHECK", true),
+	RADIO("RADIO", true),
+	DRILLDOWN("DRILLDOWN", true),
+	FILE("FILE", false);
 	
 	private String name;
 	
-	private TaskType(String name) {
+	private boolean learnable;
+	
+	private TaskType(String name, boolean learnable) {
 		this.name = name;
+		this.learnable = learnable;
 	}
 	
 	@Override
@@ -23,6 +26,10 @@ public enum TaskType {
 		return this.name;
 	}
 	
+	public boolean isLearnable() {
+		return learnable;
+	}
+
 	public static void validate(String type) throws InvalidTaskTypeException {
 		try {
 			TaskType.valueOf(type);

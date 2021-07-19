@@ -6,6 +6,8 @@ public class Organization {
 	
 	private String alias;
 	
+	private String mlAPIUri;
+	
 	public String getName() {
 		return name;
 	}
@@ -20,6 +22,14 @@ public class Organization {
 
 	public void setAlias(String alias) {
 		this.alias = alias;
+	}
+
+	public String getMlAPIUri() {
+		return mlAPIUri;
+	}
+
+	public void setMlAPIUri(String mlAPIUri) {
+		this.mlAPIUri = mlAPIUri;
 	}
 
 }

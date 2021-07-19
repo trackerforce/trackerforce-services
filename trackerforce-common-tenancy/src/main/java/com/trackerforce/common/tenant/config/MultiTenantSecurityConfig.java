@@ -1,4 +1,4 @@
-package com.trackerforce.management.config;
+package com.trackerforce.common.tenant.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,7 +12,7 @@ import com.trackerforce.common.config.SecurityConfig;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class ManagementSecurityConfig extends SecurityConfig {
+public class MultiTenantSecurityConfig extends SecurityConfig {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {

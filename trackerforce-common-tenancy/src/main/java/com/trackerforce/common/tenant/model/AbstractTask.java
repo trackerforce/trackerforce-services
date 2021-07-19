@@ -14,6 +14,10 @@ public abstract class AbstractTask extends AbstractBusinessDocument {
 	 */
 	protected String type;
 	
+	protected boolean learn;
+	
+	protected boolean hidden;
+	
 	protected List<TaskOption> options;
 
 	public AbstractTask(String type, String description, List<TaskOption> options) {
@@ -28,6 +32,14 @@ public abstract class AbstractTask extends AbstractBusinessDocument {
 
 	public List<TaskOption> getOptions() {
 		return options;
+	}
+
+	public boolean isLearn() {
+		return learn;
+	}
+
+	public boolean isHidden() {
+		return hidden;
 	}
 
 }

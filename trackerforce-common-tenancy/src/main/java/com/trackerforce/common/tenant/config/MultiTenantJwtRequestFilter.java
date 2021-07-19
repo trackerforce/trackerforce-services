@@ -1,4 +1,4 @@
-package com.trackerforce.management.config;
+package com.trackerforce.common.tenant.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 
 @Component
-public class ManagementJwtRequestFilter extends JwtRequestFilter {
+public class MultiTenantJwtRequestFilter extends JwtRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

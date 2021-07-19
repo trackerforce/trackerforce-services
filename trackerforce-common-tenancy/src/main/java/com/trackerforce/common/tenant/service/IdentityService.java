@@ -20,6 +20,9 @@ public class IdentityService {
 	@Value("${service.identity.url}/identity/v1/valid")
 	private String serviceUrl;
 	
+	@Value("${service.endpoint.healthchecker}")
+	protected String healthChecker;
+	
 	public boolean validateIdentity(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(RequestHeader.AUTHORIZATION.toString(), 
@@ -37,6 +40,10 @@ public class IdentityService {
 		} catch (RestClientException e) {
 			return false;
 		}
+	}
+
+	public String getHealthChecker() {
+		return healthChecker;
 	}
 
 }
