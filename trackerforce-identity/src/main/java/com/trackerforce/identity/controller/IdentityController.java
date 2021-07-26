@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,16 +23,19 @@ import com.trackerforce.identity.service.AuthenticationService;
 @RequestMapping("identity")
 public class IdentityController {
 	
-	@Autowired
-	AuthenticationService authorizationService;
+	private final AuthenticationService authorizationService;
+	
+	public IdentityController(AuthenticationService authorizationService) {
+		this.authorizationService = authorizationService;
+	}
 	
 	@PostMapping(value = "/v1/authenticate")
-	public ResponseEntity<Map<String, Object>> authenticate(@RequestBody JwtRequest authRequest) {
+	public ResponseEntity<Map<String, Object>> authenticateRoot(@RequestBody JwtRequest authRequest) {
 		return ResponseEntity.ok(authorizationService.authenticateAccess(authRequest));
 	}
 	
 	@PostMapping(value = "/v1/register")
-	public ResponseEntity<?> saveUser(@RequestBody AccessRequest accessRequest) {
+	public ResponseEntity<?> registerRoot(@RequestBody AccessRequest accessRequest) {
 		return ResponseEntity.ok(authorizationService.registerAccess(accessRequest));
 	}
 	
