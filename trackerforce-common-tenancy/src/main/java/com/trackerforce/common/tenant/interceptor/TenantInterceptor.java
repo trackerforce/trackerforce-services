@@ -29,24 +29,21 @@ public class TenantInterceptor implements HandlerInterceptor {
 	}
 	
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
+	public boolean preHandle(HttpServletRequest request, 
+			HttpServletResponse response, Object handler) throws Exception {
 		
-		if (isHealthChecker(request))
-			return true;
-		
+		var allowedEndpoint = isAllowedEndpoint(request);
 		var tenant = Optional.ofNullable(request.getHeader(
 				RequestHeader.TENANT_HEADER.toString()));
 		
 		if (tenant.isPresent() && StringUtils.hasText(tenant.get())) {
 			request.setAttribute(TENANT_ID, tenant.get());
 			
-			if (!identityService.validateIdentity(request)) {
+			if (!allowedEndpoint && !identityService.validateIdentity(request)) {
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				return false;
 			}
-
-		} else {
+		} else if (!allowedEndpoint) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return false;
 		}
@@ -54,8 +51,8 @@ public class TenantInterceptor implements HandlerInterceptor {
 		return HandlerInterceptor.super.preHandle(request, response, handler);
 	}
 	
-	private boolean isHealthChecker(HttpServletRequest request) {
-		return request.getRequestURI().equals(identityService.getHealthChecker());
+	private boolean isAllowedEndpoint(HttpServletRequest request) {
+		return identityService.getAllowedEndpoints().contains(request.getRequestURI());
 	}
 	
 }

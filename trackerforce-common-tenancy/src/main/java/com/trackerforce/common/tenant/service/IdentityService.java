@@ -20,8 +20,8 @@ public class IdentityService {
 	@Value("${service.identity.url}/identity/v1/valid")
 	private String serviceUrl;
 	
-	@Value("${service.endpoint.healthchecker}")
-	protected String healthChecker;
+	@Value("${service.endpoint.allowed-endpoints}")
+	protected String allowedEndpoints;
 	
 	public boolean validateIdentity(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeaders();
@@ -42,8 +42,8 @@ public class IdentityService {
 		}
 	}
 
-	public String getHealthChecker() {
-		return healthChecker;
+	public String getAllowedEndpoints() {
+		return allowedEndpoints;
 	}
 
 }

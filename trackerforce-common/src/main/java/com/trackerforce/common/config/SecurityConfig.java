@@ -12,8 +12,8 @@ public abstract class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value("${service.endpoint.allowed-addresses}")
 	protected String allowedAddresses;
 	
-	@Value("${service.endpoint.healthchecker}")
-	protected String healthChecker;
+	@Value("${service.endpoint.allowed-endpoints}")
+	protected String allowedEndpoint;
 	
 	@Autowired
 	protected JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;

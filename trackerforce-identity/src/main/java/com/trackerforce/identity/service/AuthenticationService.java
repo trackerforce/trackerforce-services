@@ -37,15 +37,15 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 	
 	public static final String REFRESH_TOKEN = "refreshToken";
 	
-	private BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+	private final BCryptPasswordEncoder bcrypt;
 	
-	private AuthenticationManager authenticationManager;
+	private final AuthenticationManager authenticationManager;
 	
-	private AuthAccessRepository authAccessRepository;
+	private final AuthAccessRepository authAccessRepository;
 	
-	private JwtUserDetailsService userDetailsService;
+	private final JwtUserDetailsService userDetailsService;
 	
-	private JwtTokenService jwtTokenUtil;
+	private final JwtTokenService jwtTokenUtil;
 	
 	public AuthenticationService(
 			AuthenticationManager authenticationManager,
@@ -56,6 +56,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		this.authAccessRepository = authAccessRepository;
 		this.userDetailsService = userDetailsService;
 		this.jwtTokenUtil = jwtTokenUtil;
+		this.bcrypt = new BCryptPasswordEncoder();
 	}
 	
 	public Map<String, Object> authenticateAccess(JwtRequest authRequest) {

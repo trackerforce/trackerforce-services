@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.trackerforce.common.config.RequestHeader;
 import com.trackerforce.common.model.request.AgentRequest;
+import com.trackerforce.common.model.response.AgentResponse;
 import com.trackerforce.common.service.exception.ServiceException;
 
 @Service
@@ -29,8 +30,8 @@ public class ManagementService {
 				request.getHeader(RequestHeader.TENANT_HEADER.toString()));
 	}
 	
-	public AgentRequest registerAgent(HttpServletRequest request, AgentRequest agentRequest) 
-			throws ServiceException {
+	public AgentRequest registerAgent(HttpServletRequest request, 
+			AgentRequest agentRequest) throws ServiceException {
 		
 		var headers = new HttpHeaders();
 		setHeaders(request, headers);
@@ -41,6 +42,25 @@ public class ManagementService {
 					HttpMethod.POST, 
 					new HttpEntity<>(agentRequest, headers), 
 					AgentRequest.class);
+			
+			return response.getBody();			
+		} catch (RestClientException e) {
+			throw new ServiceException(e.getMessage(), e);
+		}
+	}
+	
+	public AgentResponse activateAgent(HttpServletRequest request, 
+			AgentRequest agentRequest) throws ServiceException {
+		
+		var headers = new HttpHeaders();
+		setHeaders(request, headers);
+		
+		try {
+			var response = restTemplate.exchange(
+					serviceUrl + "agent/v1/activate", 
+					HttpMethod.POST, 
+					new HttpEntity<>(agentRequest, headers), 
+					AgentResponse.class);
 			
 			return response.getBody();			
 		} catch (RestClientException e) {

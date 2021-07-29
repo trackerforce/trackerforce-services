@@ -29,11 +29,20 @@ public class AgentIdentityController {
 	public ResponseEntity<?> createAgent(HttpServletRequest request, 
 			@RequestBody AgentRequest agentRequest) {
 		try {
-			return ResponseEntity.ok(agentAuthorizationService
-					.registerAccess(request, agentRequest));
+			return ResponseEntity.ok(agentAuthorizationService.registerAccess(request, agentRequest));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}
+	}
+
+	@PostMapping(value = "/v1/activate")
+	public ResponseEntity<?> activateAgent(HttpServletRequest request,
+			@RequestBody AgentRequest agentRequest) {
+		try {
+			return ResponseEntity.ok(agentAuthorizationService.activateAgent(request, agentRequest));
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}	
 	}
 
 }

@@ -6,10 +6,20 @@ import java.util.List;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.trackerforce.common.model.AbstractDocument;
+import com.trackerforce.common.model.request.AgentRequest;
+import com.trackerforce.common.tenant.model.AbstractBusinessDocument;
 
 @Document(collection = "agents")
-public class Agent extends AbstractDocument {
+public class Agent extends AbstractBusinessDocument {
+	
+	@JsonIgnore
+	private String password;
+	
+	@JsonIgnore
+	private String refreshToken;
+	
+	@JsonIgnore
+	private String tokenHash;
 	
 	private String name;
 	
@@ -17,12 +27,19 @@ public class Agent extends AbstractDocument {
 	
 	private String department;
 	
-	private boolean active = true;
+	private boolean active = false;
 	
 	private List<String> roles =  Collections.emptyList();
 	
-	@JsonIgnore
-	private String password;
+	public Agent() {}
+	
+	public Agent(AgentRequest agentRequest) {
+		setDepartment(agentRequest.getDepartment());
+		setEmail(agentRequest.getEmail());
+		setName(agentRequest.getName());
+		setRoles(agentRequest.getRoles());
+		setPassword(agentRequest.getPassword());
+	}
 
 	public String getName() {
 		return name;

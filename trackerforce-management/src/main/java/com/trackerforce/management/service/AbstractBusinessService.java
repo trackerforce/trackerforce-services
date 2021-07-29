@@ -71,6 +71,18 @@ public abstract class AbstractBusinessService<T extends AbstractBusinessDocument
 	}
 	
 	/**
+	 * Generic entity creator
+	 * 
+	 * @param entity to be created
+	 * @param helper Optional helper component
+	 * @return Entity saved
+	 * @throws ServiceException if validation has errors
+	 */
+	public T create(final T entity) throws ServiceException {
+		return create(entity, null);
+	}
+	
+	/**
 	 * Generic entity updater
 	 * 
 	 * @param promise Db query

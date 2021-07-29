@@ -28,8 +28,11 @@ public class IdentitySecurityConfig extends SecurityConfig {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				.antMatchers(healthChecker).permitAll()
-				.antMatchers("/**/authenticate/", "/**/register/").permitAll()
+				.antMatchers(getAllowedEndpoints()).permitAll()
+				.antMatchers(
+						"/**/authenticate/", 
+						"/**/register/",
+						"/**/activate/").permitAll()
 				.antMatchers("/**").access("isAuthenticated()")
 			
 			.and()
@@ -60,6 +63,10 @@ public class IdentitySecurityConfig extends SecurityConfig {
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
+	}
+	
+	private String[] getAllowedEndpoints() {
+		return allowedEndpoint.split(",");
 	}
 
 }

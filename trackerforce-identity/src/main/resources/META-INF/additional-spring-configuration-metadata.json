@@ -15,9 +15,9 @@
     "description": "Address allowed to be accessed without authentication"
   },
   {
-    "name": "service.endpoint.healthchecker",
+    "name": "service.endpoint.allowed-endpoints",
     "type": "java.lang.String",
-    "description": "Resource name to check service availability"
+    "description": "Endpoints allowed to be accessed without authenticatio"
   },
   {
     "name": "service.management.url",
