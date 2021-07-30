@@ -2,6 +2,7 @@ package com.trackerforce.common.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 import java.util.function.Function;
 
 import javax.crypto.SecretKey;
@@ -16,6 +17,8 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtTokenService {
+	
+	public static final String ROLES = "roles";
 
 	@Value("${service.jwt.expire}")
 	private int JWT_TOKEN_VALIDITY;
@@ -49,16 +52,17 @@ public class JwtTokenService {
 		return expiration.before(new Date());
 	}
 	
-	public String[] generateToken(String subject, String organizationAlias) {
-		return doGenerateToken(subject, organizationAlias);
+	public String[] generateToken(String subject, String organizationAlias, Map<String, Object> claims) {
+		return doGenerateToken(subject, organizationAlias, claims);
 	}
 	
-	private String[] doGenerateToken(String subject, String organizationAlias) {
+	private String[] doGenerateToken(String subject, String organizationAlias, Map<String, Object> claims) {
 		final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 		final String token = Jwts.builder()
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 60 * 1000))
 				.setSubject(subject)
 				.setAudience(organizationAlias)
+				.addClaims(claims)
 				.signWith(key)
 				.compact();
 		

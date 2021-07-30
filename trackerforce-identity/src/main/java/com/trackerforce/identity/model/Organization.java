@@ -8,6 +8,12 @@ public class Organization {
 	
 	private String mlAPIUri;
 	
+	public Organization() {}
+	
+	public Organization(String alias) {
+		this.alias = alias;
+	}
+	
 	public String getName() {
 		return name;
 	}

@@ -1,6 +1,6 @@
 package com.trackerforce.management.model;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -29,7 +29,7 @@ public class Agent extends AbstractBusinessDocument {
 	
 	private boolean active = false;
 	
-	private List<String> roles =  Collections.emptyList();
+	private List<String> roles;
 	
 	public Agent() {}
 	
@@ -39,6 +39,7 @@ public class Agent extends AbstractBusinessDocument {
 		setName(agentRequest.getName());
 		setRoles(agentRequest.getRoles());
 		setPassword(agentRequest.getPassword());
+		setRoles(Arrays.asList("AGENT"));
 	}
 
 	public String getName() {

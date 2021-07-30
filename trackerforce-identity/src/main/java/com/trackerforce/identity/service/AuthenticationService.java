@@ -1,6 +1,7 @@
 package com.trackerforce.identity.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -21,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.trackerforce.common.config.JwtRequestFilter;
 import com.trackerforce.common.config.RequestHeader;
 import com.trackerforce.common.service.JwtTokenService;
+import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.identity.model.AuthAccess;
 import com.trackerforce.identity.model.request.AccessRequest;
 import com.trackerforce.identity.model.request.JwtRequest;
@@ -64,7 +67,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		
 		final var authAccess = authAccessRepository.findByUsername(authRequest.getUsername());
 		final var jwt = jwtTokenUtil.generateToken(authAccess.getUsername(), 
-				authAccess.getOrganization().getAlias());
+				authAccess.getOrganization().getAlias(), authAccess.getDefaultClaims());
 		
 		var response = new HashMap<String, Object>();
 		response.put(ACCESS, authAccess);
@@ -77,23 +80,51 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		return response;
 	}
 	
-	public AuthAccess getAuthenticated(HttpServletRequest request) {
+	public Object getAuthenticated(HttpServletRequest request) throws ServiceException {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
-		var authAccess = authAccessRepository.findByUsername(authentication.getName());
-		
-		if (authAccess == null)
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 		
 		var token = JwtRequestFilter.getJwtFromRequest(request);
-		if (!token.isPresent() || !bcrypt.matches(token.get(), authAccess.getTokenHash()))
+		if (!token.isPresent())
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+		
+		var roles = jwtTokenUtil.getClaimFromToken(
+				token.get(), claims -> claims.get(JwtTokenService.ROLES, List.class));
+		
+		if (roles.contains("ROOT")) {
+			return getRootAuthenticated(request, authentication, token.get());
+		} else if (roles.contains("AGENT") || roles.contains("SESSION")) {
+			return getInternalAuthenticated(request, authentication, token.get());
+		}
+		
+		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+	}
+	
+	public AuthAccess getRootAuthenticated(HttpServletRequest request, 
+			Authentication authentication, String token) {
+		var authAccess = authAccessRepository.findByUsername(authentication.getName());
+		if (authAccess == null || !bcrypt.matches(token, authAccess.getTokenHash()))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 		
 		var tenant = request.getHeader(RequestHeader.TENANT_HEADER.toString());
-		var orgAlias = jwtTokenUtil.getClaimFromToken(token.get(), Claims::getAudience);
+		var orgAlias = jwtTokenUtil.getClaimFromToken(token, Claims::getAudience);
 		if (!StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 		
 		return authAccess;
+	}
+	
+	public AuthAccess getInternalAuthenticated(HttpServletRequest request, 
+			Authentication authentication, String token) {
+		
+		if (!authentication.isAuthenticated())
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+		
+		var tenant = request.getHeader(RequestHeader.TENANT_HEADER.toString());
+		var orgAlias = jwtTokenUtil.getClaimFromToken(token, Claims::getAudience);
+		if (!StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+		
+		return new AuthAccess(jwtTokenUtil.getUsernameFromToken(token), orgAlias);
 	}
 	
 	public AuthAccess registerAccess(AccessRequest accessRequest) {
@@ -103,8 +134,9 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		return userDetailsService.newUser(authAccess);
 	}
 	
-	public void logoff(HttpServletRequest request, HttpServletResponse response) {
-        final var authAccess = getAuthenticated(request);
+	public void logoff(HttpServletRequest request, HttpServletResponse response) 
+			throws ServiceException {
+        final AuthAccess authAccess = (AuthAccess) getAuthenticated(request);
         authAccess.setTokenHash(null);
 		authAccessRepository.save(authAccess);
 		

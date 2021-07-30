@@ -1,9 +1,14 @@
 package com.trackerforce.identity.model;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.trackerforce.common.service.JwtTokenService;
 import com.trackerforce.identity.model.request.JwtRequest;
 
 @Document(collection = "auth-access")
@@ -28,6 +33,11 @@ public class AuthAccess extends AbstractIdentityDocument {
 		setOrganization(organization);
 	}
 	
+	public AuthAccess(String username, String orgAlias) {
+		this.username = username;
+		setOrganization(orgAlias);
+	}
+	
 	public boolean hasValidOrganization() {
 		if (super.organization == null)
 			return false;
@@ -36,6 +46,13 @@ public class AuthAccess extends AbstractIdentityDocument {
 			return false;
 		
 		return true;
+	}
+	
+	@JsonIgnore
+	public Map<String, Object> getDefaultClaims() {
+		var claims = new HashMap<String, Object>();
+		claims.put(JwtTokenService.ROLES, Arrays.asList("ROOT"));
+		return claims;
 	}
 
 	public String getUsername() {

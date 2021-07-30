@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trackerforce.identity.model.AuthAccess;
+import com.trackerforce.common.model.response.ErrorResponse;
+import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.identity.model.request.AccessRequest;
 import com.trackerforce.identity.model.request.JwtRequest;
 import com.trackerforce.identity.service.AuthenticationService;
@@ -40,19 +41,32 @@ public class IdentityController {
 	}
 	
 	@PostMapping(value = "/v1/logout")
-	public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request, HttpServletResponse response) {
-		authorizationService.logoff(request, response);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<?> logout(HttpServletRequest request, 
+			HttpServletResponse response) {
+		try {
+			authorizationService.logoff(request, response);
+			return ResponseEntity.ok().build();
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
 	}
 	
 	@GetMapping(value = "/v1/me")
-	public ResponseEntity<AuthAccess> getAuthenticated(HttpServletRequest request) {
-		return ResponseEntity.ok(authorizationService.getAuthenticated(request));
+	public ResponseEntity<?> getAuthenticated(HttpServletRequest request) {
+		try {
+			return ResponseEntity.ok(authorizationService.getAuthenticated(request));
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
 	}
 	
 	@GetMapping(value = "/v1/valid")
-	public ResponseEntity<Boolean> isValid(HttpServletRequest request) {
-		return ResponseEntity.ok(authorizationService.getAuthenticated(request) != null);
+	public ResponseEntity<?> isValid(HttpServletRequest request) {
+		try {
+			return ResponseEntity.ok(authorizationService.getAuthenticated(request) != null);
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
 	}
 
 }

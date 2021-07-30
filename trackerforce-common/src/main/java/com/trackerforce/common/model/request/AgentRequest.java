@@ -3,6 +3,8 @@ package com.trackerforce.common.model.request;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class AgentRequest {
 	
 	private String name;
@@ -12,6 +14,9 @@ public class AgentRequest {
 	private String department;
 	
 	private String password;
+	
+	@JsonProperty("new_password")
+	private String newPassword;
 	
 	private List<String> roles =  Collections.emptyList();
 
@@ -53,6 +58,14 @@ public class AgentRequest {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
 	}
 
 }

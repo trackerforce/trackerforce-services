@@ -1,8 +1,12 @@
 package com.trackerforce.common.model.response;
 
-import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(Include.NON_NULL)
 public class AgentResponse {
 	
 	private String name;
@@ -11,9 +15,10 @@ public class AgentResponse {
 	
 	private String department;
 	
-	private String temp_access;
+	@JsonProperty("temp_access")
+	private String tempAccess;
 	
-	private List<String> roles =  Collections.emptyList();
+	private List<String> roles;
 
 	public String getName() {
 		return name;
@@ -39,12 +44,12 @@ public class AgentResponse {
 		this.department = department;
 	}
 
-	public String getTemp_access() {
-		return temp_access;
+	public String getTempAccess() {
+		return tempAccess;
 	}
 
-	public void setTemp_access(String temp_access) {
-		this.temp_access = temp_access;
+	public void setTempAccess(String tempAccess) {
+		this.tempAccess = tempAccess;
 	}
 
 	public List<String> getRoles() {

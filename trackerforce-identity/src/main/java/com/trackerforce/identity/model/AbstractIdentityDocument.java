@@ -13,5 +13,9 @@ public abstract class AbstractIdentityDocument extends AbstractDocument {
 	public void setOrganization(Organization organization) {
 		this.organization = organization;
 	}
+	
+	public void setOrganization(String orgAlias) {
+		this.organization = new Organization(orgAlias);
+	}
 
 }

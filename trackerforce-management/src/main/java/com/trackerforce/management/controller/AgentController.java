@@ -1,5 +1,7 @@
 package com.trackerforce.management.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,13 +35,21 @@ public class AgentController {
 	
 	@PostMapping(value = "/v1/activate")
 	public ResponseEntity<?> activate(@RequestBody AgentRequest agentRequest) {
-		agentService.activate(agentRequest);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(agentService.activate(agentRequest));
 	}
 	
 	@GetMapping(value = "/v1/find")
 	public ResponseEntity<?> find(@RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentService.findAgent(agentRequest));
+	}
+	
+	@GetMapping(value = "/v1/me")
+	public ResponseEntity<?> getAuthenticated(HttpServletRequest request) {
+		try {
+			return ResponseEntity.ok(agentService.getAuthenticated(request));
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
 	}
 	
 }

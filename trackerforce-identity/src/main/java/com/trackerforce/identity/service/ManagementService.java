@@ -7,8 +7,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.config.RequestHeader;
 import com.trackerforce.common.model.request.AgentRequest;
@@ -30,25 +31,6 @@ public class ManagementService {
 				request.getHeader(RequestHeader.TENANT_HEADER.toString()));
 	}
 	
-	public AgentRequest registerAgent(HttpServletRequest request, 
-			AgentRequest agentRequest) throws ServiceException {
-		
-		var headers = new HttpHeaders();
-		setHeaders(request, headers);
-		
-		try {
-			var response = restTemplate.exchange(
-					serviceUrl + "agent/v1/create", 
-					HttpMethod.POST, 
-					new HttpEntity<>(agentRequest, headers), 
-					AgentRequest.class);
-			
-			return response.getBody();			
-		} catch (RestClientException e) {
-			throw new ServiceException(e.getMessage(), e);
-		}
-	}
-	
 	public AgentResponse activateAgent(HttpServletRequest request, 
 			AgentRequest agentRequest) throws ServiceException {
 		
@@ -62,9 +44,28 @@ public class ManagementService {
 					new HttpEntity<>(agentRequest, headers), 
 					AgentResponse.class);
 			
-			return response.getBody();			
-		} catch (RestClientException e) {
-			throw new ServiceException(e.getMessage(), e);
+			return response.getBody();
+		} catch (HttpClientErrorException e) {
+			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+		}
+	}
+	
+	public AgentResponse findAgent(HttpServletRequest request, 
+			AgentRequest agentRequest) throws ServiceException {
+		
+		var headers = new HttpHeaders();
+		setHeaders(request, headers);
+		
+		try {
+			var response = restTemplate.exchange(
+					serviceUrl + "agent/v1/find", 
+					HttpMethod.GET, 
+					new HttpEntity<>(agentRequest, headers), 
+					AgentResponse.class);
+			
+			return response.getBody();
+		} catch (HttpClientErrorException e) {
+			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
 		}
 	}
 
