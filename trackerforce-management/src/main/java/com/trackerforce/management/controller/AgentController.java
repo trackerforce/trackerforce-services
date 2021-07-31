@@ -38,6 +38,12 @@ public class AgentController {
 		return ResponseEntity.ok(agentService.activate(agentRequest));
 	}
 	
+	@PostMapping(value = "/v1/login")
+	public ResponseEntity<?> login(HttpServletRequest request) {
+		System.out.println("Logged");
+		return ResponseEntity.ok().build();
+	}
+	
 	@GetMapping(value = "/v1/find")
 	public ResponseEntity<?> find(@RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentService.findAgent(agentRequest));

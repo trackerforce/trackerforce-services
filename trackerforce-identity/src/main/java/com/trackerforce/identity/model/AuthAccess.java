@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.trackerforce.common.service.JwtTokenService;
+import com.trackerforce.common.model.type.JwtKeys;
 import com.trackerforce.identity.model.request.JwtRequest;
 
 @Document(collection = "auth-access")
@@ -25,6 +25,9 @@ public class AuthAccess extends AbstractIdentityDocument {
 	@JsonIgnore
 	private String tokenHash;
 	
+	@JsonIgnore
+	private boolean root = true;
+	
 	public AuthAccess() {}
 	
 	public AuthAccess(JwtRequest authRequest, Organization organization) {
@@ -33,9 +36,13 @@ public class AuthAccess extends AbstractIdentityDocument {
 		setOrganization(organization);
 	}
 	
+	/**
+	 * Agents and Session users
+	 */
 	public AuthAccess(String username, String orgAlias) {
 		this.username = username;
 		setOrganization(orgAlias);
+		setRoot(false);
 	}
 	
 	public boolean hasValidOrganization() {
@@ -51,7 +58,7 @@ public class AuthAccess extends AbstractIdentityDocument {
 	@JsonIgnore
 	public Map<String, Object> getDefaultClaims() {
 		var claims = new HashMap<String, Object>();
-		claims.put(JwtTokenService.ROLES, Arrays.asList("ROOT"));
+		claims.put(JwtKeys.ROLES.toString(), Arrays.asList("ROOT"));
 		return claims;
 	}
 
@@ -85,6 +92,14 @@ public class AuthAccess extends AbstractIdentityDocument {
 
 	public void setTokenHash(String tokenHash) {
 		this.tokenHash = tokenHash;
+	}
+
+	public boolean isRoot() {
+		return root;
+	}
+
+	public void setRoot(boolean root) {
+		this.root = root;
 	}
 
 }

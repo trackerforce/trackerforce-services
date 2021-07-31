@@ -17,8 +17,6 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtTokenService {
-	
-	public static final String ROLES = "roles";
 
 	@Value("${service.jwt.expire}")
 	private int JWT_TOKEN_VALIDITY;

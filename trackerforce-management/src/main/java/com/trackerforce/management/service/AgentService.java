@@ -1,7 +1,5 @@
 package com.trackerforce.management.service;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -10,19 +8,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.trackerforce.common.config.JwtRequestFilter;
-import com.trackerforce.common.config.RequestHeader;
 import com.trackerforce.common.model.request.AgentRequest;
 import com.trackerforce.common.model.response.AgentResponse;
 import com.trackerforce.common.service.JwtTokenService;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.model.Agent;
 import com.trackerforce.management.repository.AgentRepositoryDao;
-
-import io.jsonwebtoken.Claims;
 
 @Service
 public class AgentService extends AbstractBusinessService<Agent> {
@@ -31,14 +24,11 @@ public class AgentService extends AbstractBusinessService<Agent> {
 	
 	private final BCryptPasswordEncoder bcryptEncoder;
 	
-	private final JwtTokenService jwtTokenUtil;
-	
 	public AgentService(
 			AgentRepositoryDao agentDao,
 			JwtTokenService jwtTokenUtil) {
 		super(agentDao, Agent.class, "agent");
 		this.agentDao = agentDao;
-		this.jwtTokenUtil = jwtTokenUtil;
 		this.bcryptEncoder = new BCryptPasswordEncoder();
 	}
 
@@ -102,25 +92,10 @@ public class AgentService extends AbstractBusinessService<Agent> {
 	
 	public AgentResponse getAuthenticated(HttpServletRequest request) throws ServiceException {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
-		
-		var token = JwtRequestFilter.getJwtFromRequest(request);
-		if (!token.isPresent())
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-		
-		var roles = jwtTokenUtil.getClaimFromToken(token.get(), claims -> claims.get("roles", List.class));
 		var agentRequest = new AgentRequest();
+		
 		agentRequest.setEmail(authentication.getName());
-		
-		var authAccess = findAgent(agentRequest);
-		if (authAccess == null || !authentication.isAuthenticated() || !roles.contains("AGENT"))
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-		
-		var tenant = request.getHeader(RequestHeader.TENANT_HEADER.toString());
-		var orgAlias = jwtTokenUtil.getClaimFromToken(token.get(), Claims::getAudience);
-		if (!StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-		
-		return authAccess;
+		return findAgent(agentRequest);
 	}
 
 }
