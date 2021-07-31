@@ -66,28 +66,58 @@ public class AgentService extends AbstractBusinessService<Agent> {
 		agentResponse.setName(agent.getName());
 		agentResponse.setEmail(agent.getEmail());
 		agentResponse.setDepartment(agent.getDepartment());
+		agentResponse.setOnline(agent.isOnline());
 		
 		return agentResponse;
 	}
 	
 	public AgentResponse activate(final AgentRequest agentRequest) {
 		var agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
-		
-		if (agent.isActive() || 
-				!bcryptEncoder.matches(agentRequest.getPassword(), agent.getPassword()))
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); 
+		var agentResponse = login(agentRequest);
 		
 		agent.setPassword(bcryptEncoder.encode(agentRequest.getNewPassword()));
 		agent.setActive(true);
 		agentDao.save(agent);
 		
+		agentResponse.setTempAccess(bcryptEncoder.encode(agentRequest.getNewPassword()));
+		return agentResponse;
+	}
+	
+	public AgentResponse login(final AgentRequest agentRequest) {
+		var agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
+		
+		if (!agent.isActive() || 
+				!bcryptEncoder.matches(agentRequest.getPassword(), agent.getPassword()))
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); 
+		
 		var agentResponse = new AgentResponse();
 		agentResponse.setEmail(agent.getEmail());
-		agentResponse.setTempAccess(bcryptEncoder.encode(agentRequest.getNewPassword()));
 		agentResponse.setDepartment(agent.getDepartment());
 		agentResponse.setRoles(agent.getRoles());
 		
+		agent.setOnline(true);
+		agentDao.save(agent);
+		
 		return agentResponse;
+	}
+	
+	public void logoff(HttpServletRequest request) {
+		var authentication = SecurityContextHolder.getContext().getAuthentication();
+		var agent = agentDao.getAgentRepository().findByEmail(authentication.getName());
+		
+		if (!agent.isActive() || !agent.isOnline())
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); 
+		
+		agent.setOnline(false);
+		agentDao.save(agent);
+	}
+	
+	public boolean isOnline(HttpServletRequest request) throws ServiceException {
+		var authentication = SecurityContextHolder.getContext().getAuthentication();
+		var agentRequest = new AgentRequest();
+		
+		agentRequest.setEmail(authentication.getName());
+		return findAgent(agentRequest).isOnline();
 	}
 	
 	public AgentResponse getAuthenticated(HttpServletRequest request) throws ServiceException {

@@ -39,8 +39,13 @@ public class AgentController {
 	}
 	
 	@PostMapping(value = "/v1/login")
-	public ResponseEntity<?> login(HttpServletRequest request) {
-		System.out.println("Logged");
+	public ResponseEntity<?> login(@RequestBody AgentRequest agentRequest) {
+		return ResponseEntity.ok(agentService.login(agentRequest));
+	}
+	
+	@PostMapping(value = "/v1/logoff")
+	public ResponseEntity<?> logoff(HttpServletRequest request) {
+		agentService.logoff(request);
 		return ResponseEntity.ok().build();
 	}
 	
@@ -53,6 +58,15 @@ public class AgentController {
 	public ResponseEntity<?> getAuthenticated(HttpServletRequest request) {
 		try {
 			return ResponseEntity.ok(agentService.getAuthenticated(request));
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
+	}
+	
+	@GetMapping(value = "/v1/check")
+	public ResponseEntity<?> check(HttpServletRequest request) {
+		try {
+			return ResponseEntity.ok(agentService.isOnline(request));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}

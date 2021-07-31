@@ -19,6 +19,8 @@ public class AgentResponse {
 	private String tempAccess;
 	
 	private List<String> roles;
+	
+	private boolean online;
 
 	public String getName() {
 		return name;
@@ -60,4 +62,12 @@ public class AgentResponse {
 		this.roles = roles;
 	}
 
+	public boolean isOnline() {
+		return online;
+	}
+
+	public void setOnline(boolean online) {
+		this.online = online;
+	}
+	
 }

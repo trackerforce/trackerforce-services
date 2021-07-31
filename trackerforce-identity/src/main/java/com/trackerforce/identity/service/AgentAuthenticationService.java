@@ -15,7 +15,6 @@ import com.trackerforce.common.model.request.AgentRequest;
 import com.trackerforce.common.model.response.AgentResponse;
 import com.trackerforce.common.model.type.JwtKeys;
 import com.trackerforce.common.service.JwtTokenService;
-import com.trackerforce.common.service.exception.ServiceException;
 
 @Service
 public class AgentAuthenticationService {
@@ -31,10 +30,20 @@ public class AgentAuthenticationService {
 		this.managementService = managementService;
 	}
 	
-	public HashMap<String, Object> activateAgent(HttpServletRequest request, 
-			AgentRequest accessRequest) throws ServiceException {
-		var agentResponse = managementService.activateAgent(request, accessRequest);
-		authenticate(request, agentResponse);
+	/**
+	 * Add Agent to context and generate JWT credentials
+	 * 
+	 * @param request
+	 * @param agentResponse
+	 * @return
+	 */
+	private HashMap<String, Object> authenticate(HttpServletRequest request, AgentResponse agentResponse) {
+		final UsernamePasswordAuthenticationToken authUser = 
+				new UsernamePasswordAuthenticationToken(
+						agentResponse.getEmail(), agentResponse.getTempAccess(), new ArrayList<>());
+		
+		authUser.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+		SecurityContextHolder.getContext().setAuthentication(authUser);
 		
 		var claims = new HashMap<String, Object>();
 		claims.put(JwtKeys.ROLES.toString(), agentResponse.getRoles());
@@ -52,13 +61,16 @@ public class AgentAuthenticationService {
 		return response;
 	}
 	
-	private void authenticate(HttpServletRequest request, AgentResponse agentResponse) {
-		final UsernamePasswordAuthenticationToken authUser = 
-				new UsernamePasswordAuthenticationToken(
-						agentResponse.getEmail(), agentResponse.getTempAccess(), new ArrayList<>());
-		
-		authUser.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-		SecurityContextHolder.getContext().setAuthentication(authUser);
+	public HashMap<String, Object> activateAgent(HttpServletRequest request, 
+			AgentRequest agentRequest) {
+		var agentResponse = managementService.activateAgent(request, agentRequest);
+		return authenticate(request, agentResponse);
+	}
+	
+	public HashMap<String, Object> authenticateAccess(HttpServletRequest request, 
+			AgentRequest agentRequest) {
+		var agentResponse = managementService.login(request, agentRequest);
+		return authenticate(request, agentResponse);
 	}
 
 }

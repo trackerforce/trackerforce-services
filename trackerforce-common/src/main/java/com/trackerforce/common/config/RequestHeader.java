@@ -2,6 +2,7 @@ package com.trackerforce.common.config;
 
 public enum RequestHeader {
 	
+	INTERNAL_ORIGIN("X-Origin-Auth"),
 	TENANT_HEADER("X-Tenant"),
 	AUTHORIZATION("Authorization"),
 	BEARER("Bearer ");

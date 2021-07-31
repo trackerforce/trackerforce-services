@@ -33,8 +33,7 @@ public class TenantInterceptor implements HandlerInterceptor {
 			HttpServletResponse response, Object handler) throws Exception {
 		
 		var allowedEndpoint = isAllowedEndpoint(request);
-		var tenant = Optional.ofNullable(request.getHeader(
-				RequestHeader.TENANT_HEADER.toString()));
+		var tenant = Optional.ofNullable(request.getHeader(RequestHeader.TENANT_HEADER.toString()));
 		
 		if (tenant.isPresent() && StringUtils.hasText(tenant.get())) {
 			request.setAttribute(TENANT_ID, tenant.get());

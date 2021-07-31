@@ -43,16 +43,20 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 	
 	private final JwtUserDetailsService userDetailsService;
 	
+	private final ManagementService managementService;
+	
 	private final JwtTokenService jwtTokenUtil;
 	
 	public AuthenticationService(
 			AuthenticationManager authenticationManager,
 			AuthAccessRepository authAccessRepository,
+			ManagementService managementService,
 			JwtUserDetailsService userDetailsService,
 			JwtTokenService jwtTokenUtil) {
 		this.authenticationManager = authenticationManager;
 		this.authAccessRepository = authAccessRepository;
 		this.userDetailsService = userDetailsService;
+		this.managementService = managementService;
 		this.jwtTokenUtil = jwtTokenUtil;
 		this.bcrypt = new BCryptPasswordEncoder();
 	}
@@ -88,7 +92,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		if (roles.contains("ROOT")) {
 			return getRootAuthenticated(request, authentication, token.get());
 		} else if (roles.contains("AGENT") || roles.contains("SESSION")) {
-			return getInternalAuthenticated(request, token.get());
+			return getInternalAuthenticated(request, token.get(), roles);
 		}
 		
 		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -108,10 +112,17 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		return authAccess;
 	}
 	
-	public AuthAccess getInternalAuthenticated(HttpServletRequest request, String token) {
+	public AuthAccess getInternalAuthenticated(HttpServletRequest request, 
+			String token, List<?> roles) {
+		
+		var online = false;
+		if (roles.contains("AGENT"))
+			online = managementService.isOnline(request);
+		
 		var tenant = request.getHeader(RequestHeader.TENANT_HEADER.toString());
 		var orgAlias = jwtTokenUtil.getClaimFromToken(token, Claims::getAudience);
-		if (!StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
+		
+		if (!online || !StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 		
 		return new AuthAccess(jwtTokenUtil.getUsernameFromToken(token), orgAlias);
@@ -131,6 +142,8 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
         if (authAccess.isRoot()) {
         	authAccess.setTokenHash(null);
         	authAccessRepository.save(authAccess);        	
+        } else {
+        	managementService.logoff(request);
         }
 		
         new SecurityContextLogoutHandler().logout(

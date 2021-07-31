@@ -15,12 +15,6 @@ public class Agent extends AbstractBusinessDocument {
 	@JsonIgnore
 	private String password;
 	
-	@JsonIgnore
-	private String refreshToken;
-	
-	@JsonIgnore
-	private String tokenHash;
-	
 	private String name;
 	
 	private String email;
@@ -28,6 +22,8 @@ public class Agent extends AbstractBusinessDocument {
 	private String department;
 	
 	private boolean active = false;
+	
+	private boolean online = false;
 	
 	private List<String> roles;
 	
@@ -88,6 +84,14 @@ public class Agent extends AbstractBusinessDocument {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isOnline() {
+		return online;
+	}
+
+	public void setOnline(boolean online) {
+		this.online = online;
 	}
 
 }

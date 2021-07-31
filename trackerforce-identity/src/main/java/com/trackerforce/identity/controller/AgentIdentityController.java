@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trackerforce.common.model.request.AgentRequest;
-import com.trackerforce.common.model.response.ErrorResponse;
-import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.identity.service.AgentAuthenticationService;
-import com.trackerforce.identity.service.AuthenticationService;
 
 @CrossOrigin
 @RestController
@@ -22,20 +19,20 @@ public class AgentIdentityController {
 	
 	private final AgentAuthenticationService agentAuthorizationService;
 	
-	public AgentIdentityController(
-			AgentAuthenticationService agentAuthorizationService,
-			AuthenticationService authenticationService) {
+	public AgentIdentityController(AgentAuthenticationService agentAuthorizationService) {
 		this.agentAuthorizationService = agentAuthorizationService;
 	}
 
 	@PostMapping(value = "/v1/activate")
 	public ResponseEntity<?> activateAgent(HttpServletRequest request,
 			@RequestBody AgentRequest agentRequest) {
-		try {
-			return ResponseEntity.ok(agentAuthorizationService.activateAgent(request, agentRequest));
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}	
+		return ResponseEntity.ok(agentAuthorizationService.activateAgent(request, agentRequest));	
+	}
+	
+	@PostMapping(value = "/v1/authenticate")
+	public ResponseEntity<?> authenticateAccess(HttpServletRequest request,
+			@RequestBody AgentRequest agentRequest) {
+		return ResponseEntity.ok(agentAuthorizationService.authenticateAccess(request, agentRequest));
 	}
 
 }
