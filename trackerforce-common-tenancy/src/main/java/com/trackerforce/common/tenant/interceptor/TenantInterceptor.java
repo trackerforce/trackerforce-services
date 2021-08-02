@@ -51,7 +51,11 @@ public class TenantInterceptor implements HandlerInterceptor {
 	}
 	
 	private boolean isAllowedEndpoint(HttpServletRequest request) {
-		return identityService.getAllowedEndpoints().contains(request.getRequestURI());
+		for (String endpoint : identityService.getAllowedEndpoints().split(",")) {
+			if (endpoint.equals(request.getRequestURI()))
+				return true;
+		}
+		return false;
 	}
 	
 }

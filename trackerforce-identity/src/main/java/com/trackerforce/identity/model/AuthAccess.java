@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.trackerforce.common.model.type.JwtKeys;
+import com.trackerforce.common.model.type.ServicesRole;
 import com.trackerforce.identity.model.request.JwtRequest;
 
 @Document(collection = "auth-access")
@@ -58,7 +59,7 @@ public class AuthAccess extends AbstractIdentityDocument {
 	@JsonIgnore
 	public Map<String, Object> getDefaultClaims() {
 		var claims = new HashMap<String, Object>();
-		claims.put(JwtKeys.ROLES.toString(), Arrays.asList("ROOT"));
+		claims.put(JwtKeys.ROLES.toString(), Arrays.asList(ServicesRole.ROOT.name()));
 		return claims;
 	}
 

@@ -26,23 +26,23 @@ public class IdentityJwtRequestFilter extends JwtRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		
+
 		final Optional<String> jwt = getJwtFromRequest(request);
 		jwt.ifPresent(token -> {
 			try {
 				String username = jwtTokenService.getUsernameFromToken(token);
 				if (jwtTokenService.validateToken(token, username)) {
-					final UsernamePasswordAuthenticationToken authUser = 
-							new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+					final UsernamePasswordAuthenticationToken authUser = new UsernamePasswordAuthenticationToken(
+							username, null, new ArrayList<>());
 					authUser.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-					
+
 					SecurityContextHolder.getContext().setAuthentication(authUser);
 				}
 			} catch (IllegalArgumentException | MalformedJwtException | ExpiredJwtException | SignatureException e) {
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			}
 		});
-		
+
 		filterChain.doFilter(request, response);
 	}
 

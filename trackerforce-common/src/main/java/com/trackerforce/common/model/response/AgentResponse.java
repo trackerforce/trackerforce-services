@@ -21,6 +21,8 @@ public class AgentResponse {
 	private List<String> roles;
 	
 	private boolean online;
+	
+	private boolean active;
 
 	public String getName() {
 		return name;
@@ -68,6 +70,14 @@ public class AgentResponse {
 
 	public void setOnline(boolean online) {
 		this.online = online;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 	
 }

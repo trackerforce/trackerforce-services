@@ -21,12 +21,10 @@ import com.trackerforce.management.repository.AgentRepositoryDao;
 public class AgentService extends AbstractBusinessService<Agent> {
 
 	private final AgentRepositoryDao agentDao;
-	
+
 	private final BCryptPasswordEncoder bcryptEncoder;
-	
-	public AgentService(
-			AgentRepositoryDao agentDao,
-			JwtTokenService jwtTokenUtil) {
+
+	public AgentService(AgentRepositoryDao agentDao, JwtTokenService jwtTokenUtil) {
 		super(agentDao, Agent.class, "agent");
 		this.agentDao = agentDao;
 		this.bcryptEncoder = new BCryptPasswordEncoder();
@@ -47,7 +45,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 	public AgentResponse create(final AgentRequest agentRequest) throws ServiceException {
 		final var password = RandomStringUtils.randomAlphanumeric(5).toUpperCase();
 		agentRequest.setPassword(bcryptEncoder.encode(password));
-		
+
 		final var agent = super.create(new Agent(agentRequest));
 		var agentResponse = new AgentResponse();
 		agentResponse.setName(agent.getName());
@@ -55,77 +53,70 @@ public class AgentService extends AbstractBusinessService<Agent> {
 		agentResponse.setDepartment(agent.getDepartment());
 		agentResponse.setRoles(agent.getRoles());
 		agentResponse.setTempAccess(password);
-		
+
 		return agentResponse;
 	}
-	
-	public AgentResponse findAgent(final AgentRequest agentRequest) {
-		var agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
-		
-		var agentResponse = new AgentResponse();
-		agentResponse.setName(agent.getName());
-		agentResponse.setEmail(agent.getEmail());
-		agentResponse.setDepartment(agent.getDepartment());
-		agentResponse.setOnline(agent.isOnline());
-		
-		return agentResponse;
-	}
-	
+
 	public AgentResponse activate(final AgentRequest agentRequest) {
 		var agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
-		var agentResponse = login(agentRequest);
-		
+		var agentResponse = login(agentRequest, agent);
+
 		agent.setPassword(bcryptEncoder.encode(agentRequest.getNewPassword()));
 		agent.setActive(true);
-		agentDao.save(agent);
-		
+		agent = agentDao.save(agent);
+
 		agentResponse.setTempAccess(bcryptEncoder.encode(agentRequest.getNewPassword()));
+		agentResponse.setActive(agent.isActive());
 		return agentResponse;
 	}
-	
-	public AgentResponse login(final AgentRequest agentRequest) {
-		var agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
+
+	public AgentResponse login(final AgentRequest agentRequest, Agent agent) {
+		if (agent == null) {
+			agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
+			
+			if (!agent.isActive())
+				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+		}
 		
-		if (!agent.isActive() || 
-				!bcryptEncoder.matches(agentRequest.getPassword(), agent.getPassword()))
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); 
-		
+		if (!bcryptEncoder.matches(agentRequest.getPassword(), agent.getPassword()))
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+		agent.setOnline(true);
+		agentDao.save(agent);
+
 		var agentResponse = new AgentResponse();
 		agentResponse.setEmail(agent.getEmail());
 		agentResponse.setDepartment(agent.getDepartment());
 		agentResponse.setRoles(agent.getRoles());
-		
-		agent.setOnline(true);
-		agentDao.save(agent);
-		
+		agentResponse.setOnline(agent.isOnline());
+		agentResponse.setActive(agent.isActive());
+
 		return agentResponse;
 	}
-	
+
 	public void logoff(HttpServletRequest request) {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
 		var agent = agentDao.getAgentRepository().findByEmail(authentication.getName());
-		
+
 		if (!agent.isActive() || !agent.isOnline())
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); 
-		
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
 		agent.setOnline(false);
 		agentDao.save(agent);
 	}
-	
-	public boolean isOnline(HttpServletRequest request) throws ServiceException {
+
+	public boolean isOnline(HttpServletRequest request) {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
 		var agentRequest = new AgentRequest();
-		
+
 		agentRequest.setEmail(authentication.getName());
-		return findAgent(agentRequest).isOnline();
+		final var agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());;
+		return agent.isOnline() && agent.isActive();
 	}
-	
-	public AgentResponse getAuthenticated(HttpServletRequest request) throws ServiceException {
+
+	public Agent getAuthenticated(HttpServletRequest request) {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
-		var agentRequest = new AgentRequest();
-		
-		agentRequest.setEmail(authentication.getName());
-		return findAgent(agentRequest);
+		return agentDao.getAgentRepository().findByEmail(authentication.getName());
 	}
 
 }

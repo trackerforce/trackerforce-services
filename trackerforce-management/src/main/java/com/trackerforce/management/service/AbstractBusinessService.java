@@ -174,5 +174,46 @@ public abstract class AbstractBusinessService<T extends AbstractBusinessDocument
 
 		return response;
 	}
+	
+	/**
+	 * {@link AbstractBusinessService#findAllProjectedBy(String, String, String, int, int)}
+	 */
+	public Map<String, Object> findAllProjectedBy2(
+			final Map<String, Object> query,
+			final String sortBy,
+			final String output,
+			final int page, 
+			final int size) {
+		
+		final var criteriaOptional = Optional.ofNullable(query);
+		final var outputOptional = Optional.ofNullable(output);
+		final var sortOptional = Optional.ofNullable(sortBy);
+		
+		Criteria criteria = null;
+		if (criteriaOptional.isPresent()) {
+			for (String attr : query.keySet()) {
+				var val = String.format(".*%s.*", query.get(attr));
+				
+				if (criteria == null)
+					criteria = Criteria.where(attr).regex(val, "i");
+				else
+					criteria = criteria.and(attr).regex(val, "i");
+			}
+		}
+		
+		var pageTasks = dao.findByProjectedBy(
+				serviceModel, criteria, page, size, 
+				outputOptional.isPresent() ? outputOptional.get().split(",") : null,
+				sortOptional.isPresent() ? sortOptional.get().split(",") : null);
+		
+		var tasks = pageTasks.getContent();
+		var response = new HashMap<String, Object>();
+		response.put("data", tasks);
+		response.put("page", pageTasks.getNumber());
+		response.put("items", pageTasks.getTotalElements());
+		response.put("pages", pageTasks.getTotalPages());
+
+		return response;
+	}
 
 }
