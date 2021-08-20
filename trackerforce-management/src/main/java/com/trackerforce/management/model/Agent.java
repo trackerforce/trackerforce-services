@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.trackerforce.common.model.request.AgentRequest;
+import com.trackerforce.common.model.type.ServicesRole;
 import com.trackerforce.common.tenant.model.AbstractBusinessDocument;
 
 @Document(collection = "agents")
@@ -35,7 +36,7 @@ public class Agent extends AbstractBusinessDocument {
 		setName(agentRequest.getName());
 		setRoles(agentRequest.getRoles());
 		setPassword(agentRequest.getPassword());
-		setRoles(Arrays.asList("AGENT"));
+		setRoles(Arrays.asList(ServicesRole.AGENT.name()));
 	}
 
 	public String getName() {

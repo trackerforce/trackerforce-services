@@ -15,16 +15,16 @@ import com.trackerforce.management.repository.TaskRepositoryDao;
 
 @Service
 public class TaskService extends AbstractBusinessService<Task> {
-	
+
 	private static final String[] ALLOWED_TASK_UPDATE = { "description", "type", "options" };
 
-	private TaskRepositoryDao taskDao;
-	
+	private final TaskRepositoryDao taskDao;
+
 	public TaskService(TaskRepositoryDao taskDao) {
 		super(taskDao, Task.class, "task");
 		this.taskDao = taskDao;
 	}
-	
+
 	@Override
 	protected void validate(final Task entity) throws ServiceException {
 		try {
@@ -44,14 +44,13 @@ public class TaskService extends AbstractBusinessService<Task> {
 		var task = taskRequest.getTask();
 		return super.create(task, taskRequest.getHelper());
 	}
-	
-	public Task update(final String id, final Map<String, Object> updates) 
-			throws ServiceException {
+
+	public Task update(final String id, final Map<String, Object> updates) throws ServiceException {
 		var promise = taskDao.getTaskRepository().findById(id);
 		var allowed = new HashMap<String, String[]>();
 		allowed.put(entityName, ALLOWED_TASK_UPDATE);
 		allowed.put("helper", ALLOWED_HELPER_UPDATE);
-		
+
 		return super.update(promise, updates, allowed);
 	}
 
