@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.trackerforce.common.tenant.model.AbstractBusinessDocument;
 import com.trackerforce.common.tenant.model.CommonProcedure;
 import com.trackerforce.common.tenant.model.CommonTemplate;
-import com.trackerforce.common.tenant.model.ComponentHelper;
 
 @Document(collection = "cases")
-public class SessionCase extends AbstractSessionDocument {
+public class SessionCase extends AbstractBusinessDocument {
 
 	private long protocol;
 
@@ -18,17 +18,13 @@ public class SessionCase extends AbstractSessionDocument {
 
 	private String context;
 
-	private String description;
-
-	private ComponentHelper helper;
-
 	private List<SessionProcedure> procedures;
 
 	private SessionCase(CommonTemplate input) {
 		this.contextId = input.getId();
 		this.context = input.getName();
-		this.description = input.getDescription();
-		this.helper = input.getHelper();
+		super.setDescription(input.getDescription());
+		super.setHelper(input.getHelper());
 	}
 
 	public static SessionCase create(CommonTemplate input) {
@@ -73,22 +69,6 @@ public class SessionCase extends AbstractSessionDocument {
 
 	public void setContext(String context) {
 		this.context = context;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public ComponentHelper getHelper() {
-		return helper;
-	}
-
-	public void setHelper(ComponentHelper helper) {
-		this.helper = helper;
 	}
 
 }

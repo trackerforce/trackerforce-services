@@ -17,7 +17,7 @@ import com.trackerforce.session.service.SessionCaseService;
 
 @CrossOrigin(methods = { RequestMethod.POST })
 @RestController
-@RequestMapping("session")
+@RequestMapping("session/case")
 public class SessionCaseController {
 
 	private final SessionCaseService sessionCaseService;
@@ -29,22 +29,10 @@ public class SessionCaseController {
 	@PostMapping(value = "/v1")
 	public ResponseEntity<?> create(HttpServletRequest request, @RequestBody SessionCaseRequest sessionCaseRequest) {
 		try {
-			return ResponseEntity.ok(sessionCaseService.hanlder(request, sessionCaseRequest));
+			return ResponseEntity.ok(sessionCaseService.create(request, sessionCaseRequest));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}
-	}
-
-	@PostMapping(value = "/v1/procedure/submit")
-	public ResponseEntity<?> submitProcedure() {
-		// TODO
-		return ResponseEntity.ok().build();
-	}
-
-	@PostMapping(value = "/v1/procedure/select")
-	public ResponseEntity<?> selectProcedure() {
-		// TODO
-		return ResponseEntity.ok().build();
 	}
 
 }

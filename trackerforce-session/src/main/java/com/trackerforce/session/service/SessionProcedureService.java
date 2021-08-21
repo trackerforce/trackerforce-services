@@ -7,26 +7,26 @@ import org.springframework.util.Assert;
 
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.session.model.SessionCase;
+import com.trackerforce.session.model.SessionProcedure;
 import com.trackerforce.session.model.request.SessionCaseRequest;
 import com.trackerforce.session.repository.SessionCaseRepositoryDao;
 
 @Service
-public class SessionCaseService extends AbstractSessionService<SessionCase> {
+public class SessionProcedureService extends AbstractSessionService<SessionProcedure> {
 
 	private final SessionCaseRepositoryDao sessionCaseDao;
 
 	private final ManagementService managementService;
 
-	public SessionCaseService(SessionCaseRepositoryDao procedureDao, ManagementService managementService) {
+	public SessionProcedureService(SessionCaseRepositoryDao procedureDao, ManagementService managementService) {
 		this.sessionCaseDao = procedureDao;
 		this.managementService = managementService;
 	}
 
 	@Override
-	protected void validate(final SessionCase entity) throws ServiceException {
+	protected void validate(final SessionProcedure entity) throws ServiceException {
 		try {
 			Assert.notNull(entity, "The class must not be null");
-			Assert.notNull(entity.getProtocol(), "Protocol must not be null");
 		} catch (final Exception e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
@@ -38,7 +38,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		var template = managementService.findTemplate(request, sessionCaseRequest.getTemplate());
 		var sessionCase = SessionCase.create(template);
 
-		this.validate(sessionCase);
+//		this.validate(sessionCase);
 		return sessionCaseDao.save(sessionCase);
 	}
 

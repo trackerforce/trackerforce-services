@@ -1,10 +1,10 @@
 package com.trackerforce.session.service;
 
 import com.trackerforce.common.service.exception.ServiceException;
+import com.trackerforce.common.tenant.model.AbstractBusinessDocument;
 import com.trackerforce.common.tenant.service.AbstractTenantService;
-import com.trackerforce.session.model.AbstractSessionDocument;
 
-public abstract class AbstractSessionService<T extends AbstractSessionDocument> 
+public abstract class AbstractSessionService<T extends AbstractBusinessDocument> 
 	extends AbstractTenantService<T> {
 	
 	/**
