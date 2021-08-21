@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.trackerforce.common.service.exception.ServiceException;
-import com.trackerforce.session.model.ProcedureResolution;
 import com.trackerforce.session.model.SessionCase;
 import com.trackerforce.session.model.request.SessionCaseRequest;
 import com.trackerforce.session.repository.SessionCaseRepositoryDao;
@@ -36,11 +35,8 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 	public SessionCase hanlder(HttpServletRequest request, final SessionCaseRequest sessionCaseRequest)
 			throws ServiceException {
 
-		var sessionCase = new SessionCase();
-		sessionCase.setProtocol(System.currentTimeMillis() / 1000);
-
-		var proc = managementService.findProcedure(request, sessionCaseRequest.getProcedure());
-		sessionCase.getProcedures().add(new ProcedureResolution(proc));
+		var template = managementService.findTemplate(request, sessionCaseRequest.getTemplate());
+		var sessionCase = SessionCase.create(template);
 
 		this.validate(sessionCase);
 		return sessionCaseDao.save(sessionCase);
