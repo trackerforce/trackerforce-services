@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
-import com.trackerforce.common.tenant.model.AbstractTask;
+import com.trackerforce.common.tenant.model.CommonTask;
 import com.trackerforce.management.model.Task;
 import com.trackerforce.management.model.request.ProcedureRequest;
 import com.trackerforce.management.service.ProcedureService;
@@ -67,7 +67,7 @@ public class ProcedureController {
 	}
 	
 	@PostMapping(value = "/v1/{id}/task/reorder")
-	public ResponseEntity<LinkedList<AbstractTask>> reorderTask(
+	public ResponseEntity<LinkedList<CommonTask>> reorderTask(
 			@PathVariable(value="id") String id,
 			@RequestParam(required = true) int from,
 			@RequestParam(required = true) int to) {

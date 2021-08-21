@@ -23,5 +23,10 @@
     "name": "service.identity.url",
     "type": "java.lang.String",
     "description": "IAM endpoint"
+  },
+  {
+    "name": "service.management.url",
+    "type": "java.lang.String",
+    "description": "Management endpoint'"
   }
 ]}

@@ -5,14 +5,14 @@ import java.util.LinkedList;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.trackerforce.common.tenant.model.AbstractBusinessDocument;
-import com.trackerforce.common.tenant.model.AbstractProcedure;
+import com.trackerforce.common.tenant.model.CommonProcedure;
 
 @Document(collection = "templates")
 public class Template  extends AbstractBusinessDocument {
 	
 	private String name;
 	
-	private LinkedList<AbstractProcedure> procedures;
+	private LinkedList<CommonProcedure> procedures;
 
 	public String getName() {
 		return name;
@@ -22,7 +22,7 @@ public class Template  extends AbstractBusinessDocument {
 		this.name = name;
 	}
 
-	public LinkedList<AbstractProcedure> getProcedures() {
+	public LinkedList<CommonProcedure> getProcedures() {
 		if (procedures == null)
 			procedures = new LinkedList<>();
 		

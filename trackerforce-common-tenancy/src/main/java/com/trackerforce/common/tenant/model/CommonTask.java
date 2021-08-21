@@ -7,20 +7,23 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.trackerforce.common.tenant.model.type.TaskType;
 
 @JsonInclude(Include.NON_NULL)
-public abstract class AbstractTask extends AbstractBusinessDocument {
-	
+public class CommonTask extends AbstractBusinessDocument {
+
 	/**
 	 * {@link TaskType}
 	 */
 	protected String type;
-	
+
 	protected boolean learn;
-	
+
 	protected boolean hidden;
-	
+
 	protected List<TaskOption> options;
 
-	public AbstractTask(String type, String description, List<TaskOption> options) {
+	public CommonTask() {
+	}
+
+	public CommonTask(String type, String description, List<TaskOption> options) {
 		setDescription(description);
 		this.type = type;
 		this.options = options;

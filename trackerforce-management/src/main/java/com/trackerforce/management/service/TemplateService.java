@@ -10,7 +10,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.service.exception.ServiceException;
-import com.trackerforce.common.tenant.model.AbstractProcedure;
+import com.trackerforce.common.tenant.model.CommonProcedure;
 import com.trackerforce.common.tenant.model.type.RenderType;
 import com.trackerforce.management.model.Procedure;
 import com.trackerforce.management.model.Template;
@@ -64,7 +64,7 @@ public class TemplateService extends AbstractBusinessService<Template> {
 		return super.update(promise, updates, allowed);
 	}
 	
-	public LinkedList<AbstractProcedure> reorderProcedure(final String id, int from, int to) {
+	public LinkedList<CommonProcedure> reorderProcedure(final String id, int from, int to) {
 		final var templatePromise = templateDao.getTemplateRepository().findById(id);
 		
 		if (!templatePromise.isPresent())

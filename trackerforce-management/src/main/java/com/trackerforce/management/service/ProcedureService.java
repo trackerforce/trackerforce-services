@@ -10,7 +10,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.service.exception.ServiceException;
-import com.trackerforce.common.tenant.model.AbstractTask;
+import com.trackerforce.common.tenant.model.CommonTask;
 import com.trackerforce.common.tenant.model.type.RenderType;
 import com.trackerforce.management.model.Procedure;
 import com.trackerforce.management.model.Task;
@@ -64,7 +64,7 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 		return super.update(promise, updates, allowed);
 	}
 
-	public LinkedList<AbstractTask> reorderTask(final String id, int from, int to) {
+	public LinkedList<CommonTask> reorderTask(final String id, int from, int to) {
 		final var procedurePromise = procedureDao.getProcedureRepository().findById(id);
 
 		if (!procedurePromise.isPresent())

@@ -1,17 +1,25 @@
 package com.trackerforce.session.model.request;
 
-import com.trackerforce.session.model.SessionCase;
-
 public class SessionCaseRequest {
 
-	private SessionCase sessionCase;
+	private String event;
 
-	public SessionCase getSessionCase() {
-		return sessionCase;
+	private String procedure;
+
+	public String getEvent() {
+		return event;
 	}
 
-	public void setSessionCase(SessionCase sessionCase) {
-		this.sessionCase = sessionCase;
+	public void setEvent(String event) {
+		this.event = event;
+	}
+
+	public String getProcedure() {
+		return procedure;
+	}
+
+	public void setProcedure(String procedure) {
+		this.procedure = procedure;
 	}
 
 }
