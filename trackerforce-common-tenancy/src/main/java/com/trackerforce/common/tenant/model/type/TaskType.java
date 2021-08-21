@@ -38,8 +38,8 @@ public enum TaskType {
 		}
 	}
 
-	public static Class<?> getType(String type) {
-		switch (TaskType.valueOf(type)) {
+	public static Class<?> getType(TaskType type) {
+		switch (type) {
 		case DRILLDOWN:
 		case MULTILINE_TEXT:
 		case TEXT:

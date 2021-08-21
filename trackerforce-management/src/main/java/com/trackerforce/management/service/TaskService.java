@@ -8,7 +8,6 @@ import org.springframework.util.Assert;
 
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.common.tenant.model.type.RenderType;
-import com.trackerforce.common.tenant.model.type.TaskType;
 import com.trackerforce.management.model.Task;
 import com.trackerforce.management.model.request.TaskRequest;
 import com.trackerforce.management.repository.TaskRepositoryDao;
@@ -29,9 +28,8 @@ public class TaskService extends AbstractBusinessService<Task> {
 	protected void validate(final Task entity) throws ServiceException {
 		try {
 			Assert.notNull(entity, "The class must not be null");
+			Assert.notNull(entity.getType(), "'type' must not be empty");
 			Assert.hasText(entity.getDescription(), "'description' must not be empty");
-			Assert.hasText(entity.getType(), "'type' must not be empty");
-			TaskType.validate(entity.getType());
 
 			if (entity.getHelper() != null)
 				RenderType.validate(entity.getHelper().getRenderType());

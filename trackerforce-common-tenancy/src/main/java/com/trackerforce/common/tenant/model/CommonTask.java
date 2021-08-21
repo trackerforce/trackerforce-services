@@ -12,7 +12,7 @@ public class CommonTask extends AbstractBusinessDocument {
 	/**
 	 * {@link TaskType}
 	 */
-	protected String type;
+	protected TaskType type;
 
 	protected boolean learn;
 
@@ -23,13 +23,13 @@ public class CommonTask extends AbstractBusinessDocument {
 	public CommonTask() {
 	}
 
-	public CommonTask(String type, String description, List<TaskOption> options) {
+	public CommonTask(TaskType type, String description, List<TaskOption> options) {
 		setDescription(description);
 		this.type = type;
 		this.options = options;
 	}
 
-	public String getType() {
+	public TaskType getType() {
 		return type;
 	}
 
