@@ -14,6 +14,8 @@ public class ProcedureResolution extends CommonProcedure {
 
 	public ProcedureResolution(CommonProcedure input) {
 		super.name = input.getName();
+		super.setDescription(input.getDescription());
+		super.setHelper(input.getHelper());
 
 		this.taskResolution = new LinkedList<TaskResolution<?>>();
 		for (CommonTask task : input.getTasks())

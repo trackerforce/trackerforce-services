@@ -12,6 +12,9 @@ public class TaskResolution<T> extends CommonTask {
 		super.options = input.getOptions();
 		super.type = input.getType();
 
+		super.setDescription(input.getDescription());
+		super.setHelper(input.getHelper());
+		super.setId(input.getId());
 	}
 
 	public static <Y> TaskResolution<Y> createTaskResolution(CommonTask input, Class<Y> clazzResolution) {
