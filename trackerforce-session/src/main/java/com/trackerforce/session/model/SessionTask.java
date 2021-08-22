@@ -2,9 +2,12 @@ package com.trackerforce.session.model;
 
 import com.trackerforce.common.tenant.model.CommonTask;
 
-public class SessionTask<T> extends CommonTask {
+public class SessionTask extends CommonTask {
 
-	private T response;
+	private Object response;
+
+	public SessionTask() {
+	}
 
 	private SessionTask(CommonTask input) {
 		super.hidden = input.isHidden();
@@ -17,15 +20,15 @@ public class SessionTask<T> extends CommonTask {
 		super.setId(input.getId());
 	}
 
-	public static <Y> SessionTask<Y> createTaskResolution(CommonTask input, Class<Y> clazzResolution) {
-		return new SessionTask<Y>(input);
+	public static SessionTask createTaskResolution(CommonTask input) {
+		return new SessionTask(input);
 	}
 
-	public T getResponse() {
+	public Object getResponse() {
 		return response;
 	}
 
-	public void setResponse(T response) {
+	public void setResponse(Object response) {
 		this.response = response;
 	}
 

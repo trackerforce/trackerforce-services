@@ -38,19 +38,4 @@ public enum TaskType {
 		}
 	}
 
-	public static Class<?> getType(TaskType type) {
-		switch (type) {
-		case DRILLDOWN:
-		case MULTILINE_TEXT:
-		case TEXT:
-			return String.class;
-		case CHECK:
-			return Boolean.class;
-		case NUMBER:
-			return Integer.class;
-		default:
-			return Object.class;
-		}
-	}
-
 }

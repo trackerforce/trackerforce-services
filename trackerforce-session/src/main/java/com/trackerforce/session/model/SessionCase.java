@@ -20,6 +20,9 @@ public class SessionCase extends AbstractBusinessDocument {
 
 	private List<SessionProcedure> procedures;
 
+	public SessionCase() {
+	}
+
 	private SessionCase(CommonTemplate input) {
 		this.contextId = input.getId();
 		this.context = input.getName();

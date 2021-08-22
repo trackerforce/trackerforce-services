@@ -10,17 +10,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trackerforce.common.model.response.ErrorResponse;
+import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.session.model.request.SessionProcedureRequest;
+import com.trackerforce.session.service.SessionProcedureService;
 
 @CrossOrigin(methods = { RequestMethod.POST })
 @RestController
 @RequestMapping("session/procedure")
 public class SessionProcedureController {
 
+	private final SessionProcedureService sessionProcedureService;
+
+	public SessionProcedureController(SessionProcedureService sessionProcedureService) {
+		this.sessionProcedureService = sessionProcedureService;
+	}
+
 	@PostMapping(value = "/v1/handler")
 	public ResponseEntity<?> hanlder(HttpServletRequest request,
 			@RequestBody SessionProcedureRequest sessionProcedureRequest) {
-		return ResponseEntity.ok().build();
+		try {
+			return ResponseEntity.ok(sessionProcedureService.hanlder(request, sessionProcedureRequest));
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
 	}
 
 }

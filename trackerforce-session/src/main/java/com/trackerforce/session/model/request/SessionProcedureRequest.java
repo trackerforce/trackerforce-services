@@ -1,10 +1,22 @@
 package com.trackerforce.session.model.request;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.trackerforce.session.model.SessionTask;
 import com.trackerforce.session.model.type.SessionProcedureEvent;
 
 public class SessionProcedureRequest {
 
 	private SessionProcedureEvent event;
+
+	@JsonProperty("case")
+	private String sessionCaseId;
+
+	@JsonProperty("procedure")
+	private String procedureId;
+
+	private List<SessionTask> tasks;
 
 	public SessionProcedureEvent getEvent() {
 		return event;
@@ -12,6 +24,30 @@ public class SessionProcedureRequest {
 
 	public void setEvent(SessionProcedureEvent event) {
 		this.event = event;
+	}
+
+	public String getSessionCaseId() {
+		return sessionCaseId;
+	}
+
+	public void setSessionCaseId(String sessionCaseId) {
+		this.sessionCaseId = sessionCaseId;
+	}
+
+	public String getProcedureId() {
+		return procedureId;
+	}
+
+	public void setProcedureId(String procedureId) {
+		this.procedureId = procedureId;
+	}
+
+	public List<SessionTask> getTasks() {
+		return tasks;
+	}
+
+	public void setTasks(List<SessionTask> tasks) {
+		this.tasks = tasks;
 	}
 
 }
