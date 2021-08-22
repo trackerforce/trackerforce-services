@@ -19,14 +19,18 @@ public class SessionProcedureService extends AbstractSessionService<SessionProce
 
 	private final SessionCaseRepositoryDao sessionCaseDao;
 
-	public SessionProcedureService(SessionCaseRepositoryDao procedureDao) {
-		this.sessionCaseDao = procedureDao;
+	private final ManagementService managementService;
+
+	public SessionProcedureService(SessionCaseRepositoryDao sessionCaseDao, ManagementService managementService) {
+		this.sessionCaseDao = sessionCaseDao;
+		this.managementService = managementService;
 	}
 
 	@Override
 	protected void validate(final SessionProcedure entity) throws ServiceException {
 		try {
 			Assert.notNull(entity, "The class must not be null");
+			Assert.notEmpty(entity.getTaskResolution(), "Procedure has no tasks");
 		} catch (final Exception e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
@@ -35,21 +39,35 @@ public class SessionProcedureService extends AbstractSessionService<SessionProce
 	public SessionProcedure hanlder(HttpServletRequest request, final SessionProcedureRequest sessionProcedureRequest)
 			throws ServiceException {
 		switch (sessionProcedureRequest.getEvent()) {
+		case NEW:
+			return create(request, sessionProcedureRequest);
 		case SAVE:
-			return save(request, sessionProcedureRequest);
+			return save(sessionProcedureRequest);
 		default:
 			throw new ServiceException("Invalid Session Procedure Event");
 		}
 	}
 
-	private SessionProcedure save(HttpServletRequest request, final SessionProcedureRequest sessionProcedureRequest) {
+	private SessionProcedure create(HttpServletRequest request, final SessionProcedureRequest sessionProcedureRequest)
+			throws ServiceException {
+		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
+		var commonProcedure = managementService.findProcedure(request, sessionProcedureRequest.getProcedureId());
+		var procedure = SessionProcedure.create(commonProcedure);
+
+		validate(procedure);
+		
+		sessionCase.getProcedures().add(procedure);
+		sessionCaseDao.save(sessionCase);
+		return procedure;
+	}
+
+	private SessionProcedure save(final SessionProcedureRequest sessionProcedureRequest) {
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 		for (SessionTask task : sessionProcedureRequest.getTasks()) {
-			var optTask = procedure.getTaskResolution().stream()
-					.filter(t -> t.getId().equals(task.getId()))
+			var optTask = procedure.getTaskResolution().stream().filter(t -> t.getId().equals(task.getId()))
 					.findFirst();
-			
+
 			if (optTask.isPresent())
 				optTask.get().setResponse(task.getResponse());
 		}

@@ -17,8 +17,8 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 
 	private final ManagementService managementService;
 
-	public SessionCaseService(SessionCaseRepositoryDao procedureDao, ManagementService managementService) {
-		this.sessionCaseDao = procedureDao;
+	public SessionCaseService(SessionCaseRepositoryDao sessionCaseDao, ManagementService managementService) {
+		this.sessionCaseDao = sessionCaseDao;
 		this.managementService = managementService;
 	}
 
