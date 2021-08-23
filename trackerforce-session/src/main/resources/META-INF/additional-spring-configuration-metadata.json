@@ -27,6 +27,11 @@
   {
     "name": "service.management.url",
     "type": "java.lang.String",
-    "description": "Management endpoint'"
+    "description": "Management endpoint"
+  },
+  {
+    "name": "service.queue.url",
+    "type": "java.lang.String",
+    "description": "Queue endpoint"
   }
 ]}

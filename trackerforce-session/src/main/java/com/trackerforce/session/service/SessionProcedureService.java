@@ -7,11 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.trackerforce.common.model.exception.BusinessException;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.session.model.SessionCase;
 import com.trackerforce.session.model.SessionProcedure;
 import com.trackerforce.session.model.SessionTask;
 import com.trackerforce.session.model.request.SessionProcedureRequest;
+import com.trackerforce.session.model.type.ProcedureStatus;
 import com.trackerforce.session.repository.SessionCaseRepositoryDao;
 
 @Service
@@ -21,9 +23,13 @@ public class SessionProcedureService extends AbstractSessionService<SessionProce
 
 	private final ManagementService managementService;
 
-	public SessionProcedureService(SessionCaseRepositoryDao sessionCaseDao, ManagementService managementService) {
+	private final QueueService queueService;
+
+	public SessionProcedureService(SessionCaseRepositoryDao sessionCaseDao, ManagementService managementService,
+			QueueService queueService) {
 		this.sessionCaseDao = sessionCaseDao;
 		this.managementService = managementService;
+		this.queueService = queueService;
 	}
 
 	@Override
@@ -36,13 +42,17 @@ public class SessionProcedureService extends AbstractSessionService<SessionProce
 		}
 	}
 
-	public SessionProcedure hanlder(HttpServletRequest request, final SessionProcedureRequest sessionProcedureRequest)
+	public SessionProcedure handler(HttpServletRequest request, final SessionProcedureRequest sessionProcedureRequest)
 			throws ServiceException {
 		switch (sessionProcedureRequest.getEvent()) {
 		case NEW:
 			return create(request, sessionProcedureRequest);
+		case SUBMIT:
+			return submit(request, sessionProcedureRequest);
 		case SAVE:
 			return save(sessionProcedureRequest);
+		case CANCEL:
+			return cancel(sessionProcedureRequest);
 		default:
 			throw new ServiceException("Invalid Session Procedure Event");
 		}
@@ -55,15 +65,32 @@ public class SessionProcedureService extends AbstractSessionService<SessionProce
 		var procedure = SessionProcedure.create(commonProcedure);
 
 		validate(procedure);
-		
+
 		sessionCase.getProcedures().add(procedure);
 		sessionCaseDao.save(sessionCase);
 		return procedure;
 	}
 
+	private SessionProcedure submit(HttpServletRequest request, final SessionProcedureRequest sessionProcedureRequest)
+			throws ServiceException {
+		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
+		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
+
+		try {
+			procedure.changeStatus(ProcedureStatus.SUBMITTED);
+			sessionCaseDao.save(sessionCase);
+
+			queueService.submitProcedure(request, procedure, sessionCase.getContextId());
+			return procedure;
+		} catch (BusinessException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
 	private SessionProcedure save(final SessionProcedureRequest sessionProcedureRequest) {
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
+
 		for (SessionTask task : sessionProcedureRequest.getTasks()) {
 			var optTask = procedure.getTaskResolution().stream().filter(t -> t.getId().equals(task.getId()))
 					.findFirst();
@@ -74,6 +101,19 @@ public class SessionProcedureService extends AbstractSessionService<SessionProce
 
 		sessionCaseDao.save(sessionCase);
 		return procedure;
+	}
+
+	private SessionProcedure cancel(final SessionProcedureRequest sessionProcedureRequest) {
+		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
+		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
+
+		try {
+			procedure.changeStatus(ProcedureStatus.CANCELED);
+			sessionCaseDao.save(sessionCase);
+			return procedure;
+		} catch (BusinessException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
 	}
 
 	private SessionCase getSessionCase(String sessionCaseId) {

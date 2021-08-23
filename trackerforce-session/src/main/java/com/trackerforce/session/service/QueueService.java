@@ -12,45 +12,27 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.config.RequestHeader;
-import com.trackerforce.common.tenant.model.CommonProcedure;
-import com.trackerforce.common.tenant.model.CommonTemplate;
+import com.trackerforce.session.model.SessionProcedure;
 
 @Service
-public class ManagementService {
+public class QueueService {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	@Value("${service.management.url}/management/")
+	@Value("${service.queue.url}/queue")
 	private String serviceUrl;
 
 	private void setHeaders(HttpServletRequest request, HttpHeaders headers) {
-		headers.add(RequestHeader.AUTHORIZATION.toString(), request.getHeader(RequestHeader.AUTHORIZATION.toString()));
 		headers.add(RequestHeader.TENANT_HEADER.toString(), request.getHeader(RequestHeader.TENANT_HEADER.toString()));
 	}
 
-	public CommonTemplate findTemplate(HttpServletRequest request, String id) {
+	public void submitProcedure(HttpServletRequest request, SessionProcedure procedure, String contextId) {
 		var headers = new HttpHeaders();
 		setHeaders(request, headers);
 
 		try {
-			var response = restTemplate.exchange(serviceUrl + "template/v1/" + id, HttpMethod.GET,
-					new HttpEntity<>(null, headers), CommonTemplate.class);
-
-			return response.getBody();
-		} catch (HttpClientErrorException e) {
-			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
-		}
-	}
-
-	public CommonProcedure findProcedure(HttpServletRequest request, String id) {
-		var headers = new HttpHeaders();
-		setHeaders(request, headers);
-
-		try {
-			var response = restTemplate.exchange(serviceUrl + "procedure/v1/" + id, HttpMethod.GET,
-					new HttpEntity<>(null, headers), CommonProcedure.class);
-
-			return response.getBody();
+			restTemplate.exchange(serviceUrl + "/session/v1/procedure/submit/" + contextId, HttpMethod.POST,
+					new HttpEntity<>(procedure, headers), Object.class);
 		} catch (HttpClientErrorException e) {
 			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
 		}

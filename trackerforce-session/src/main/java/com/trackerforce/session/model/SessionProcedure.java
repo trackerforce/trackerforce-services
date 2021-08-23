@@ -2,15 +2,17 @@ package com.trackerforce.session.model;
 
 import java.util.LinkedList;
 
+import com.trackerforce.common.model.exception.BusinessException;
 import com.trackerforce.common.tenant.model.CommonProcedure;
 import com.trackerforce.common.tenant.model.CommonTask;
+import com.trackerforce.common.tenant.model.exception.InvalidStatusChangeException;
 import com.trackerforce.session.model.type.ProcedureStatus;
 
 public class SessionProcedure extends CommonProcedure {
 
 	private String resolution;
 
-	private ProcedureStatus status;
+	private ProcedureStatus status = ProcedureStatus.OPENED;
 
 	private LinkedList<SessionTask> taskResolution;
 
@@ -35,8 +37,15 @@ public class SessionProcedure extends CommonProcedure {
 		for (CommonTask task : input.getTasks())
 			resolution.getTaskResolution().add(SessionTask.createTaskResolution(task));
 
-		resolution.setStatus(ProcedureStatus.OPENED);
 		return resolution;
+	}
+
+	public SessionProcedure changeStatus(ProcedureStatus newStatus) throws BusinessException {
+		if (!status.canChange(newStatus.name()))
+			throw new InvalidStatusChangeException(getStatus().name(), status.name());
+
+		this.status = newStatus;
+		return this;
 	}
 
 	public String getResolution() {
@@ -59,10 +68,6 @@ public class SessionProcedure extends CommonProcedure {
 
 	public ProcedureStatus getStatus() {
 		return status;
-	}
-
-	public void setStatus(ProcedureStatus status) {
-		this.status = status;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.trackerforce.session.model.type;
 
+import java.util.Arrays;
+
 import com.trackerforce.session.service.exception.InvalidStatusException;
 
 public enum ProcedureStatus {
@@ -7,12 +9,12 @@ public enum ProcedureStatus {
 	/**
 	 * A new procedure is created and visible to be filled out
 	 */
-	OPENED,
+	OPENED("SUBMITTED", "CANCELED"),
 
 	/**
 	 * All input were filled out and the procedure is ready to be processed
 	 */
-	SUBMITTED,
+	SUBMITTED("OPENED", "RESOLVED", "CANCELED"),
 
 	/**
 	 * Procedure processed
@@ -23,6 +25,16 @@ public enum ProcedureStatus {
 	 * Procedure removed from the case
 	 */
 	CANCELED;
+
+	private String[] canChangeTo;
+
+	private ProcedureStatus(String... canChangeTo) {
+		this.canChangeTo = canChangeTo;
+	}
+
+	public boolean canChange(String to) {
+		return Arrays.asList(canChangeTo).contains(to);
+	}
 
 	public static void validate(String type) throws InvalidStatusException {
 		try {

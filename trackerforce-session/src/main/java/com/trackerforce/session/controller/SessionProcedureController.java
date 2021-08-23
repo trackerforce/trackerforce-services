@@ -27,10 +27,10 @@ public class SessionProcedureController {
 	}
 
 	@PostMapping(value = "/v1/handler")
-	public ResponseEntity<?> hanlder(HttpServletRequest request,
+	public ResponseEntity<?> handler(HttpServletRequest request,
 			@RequestBody SessionProcedureRequest sessionProcedureRequest) {
 		try {
-			return ResponseEntity.ok(sessionProcedureService.hanlder(request, sessionProcedureRequest));
+			return ResponseEntity.ok(sessionProcedureService.handler(request, sessionProcedureRequest));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}
