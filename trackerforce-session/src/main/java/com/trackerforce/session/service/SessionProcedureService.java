@@ -76,15 +76,15 @@ public class SessionProcedureService extends AbstractSessionService<SessionProce
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
-		try {
-			procedure.changeStatus(ProcedureStatus.SUBMITTED);
+//		try {
+//			procedure.changeStatus(ProcedureStatus.SUBMITTED);
 			sessionCaseDao.save(sessionCase);
 
 			queueService.submitProcedure(request, procedure, sessionCase.getContextId());
 			return procedure;
-		} catch (BusinessException e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}
+//		} catch (BusinessException e) {
+//			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+//		}
 	}
 
 	private SessionProcedure save(final SessionProcedureRequest sessionProcedureRequest) {

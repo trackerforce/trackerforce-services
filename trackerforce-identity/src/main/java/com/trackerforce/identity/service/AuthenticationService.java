@@ -109,7 +109,9 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 
 		if (roles.contains(ServicesRole.ROOT.name())) {
 			return getRootAuthenticated(request, authentication, token.get());
-		} else if (roles.contains(ServicesRole.AGENT.name()) || roles.contains(ServicesRole.SESSION.name())) {
+		} else if (roles.contains(ServicesRole.AGENT.name()) || 
+				roles.contains(ServicesRole.SESSION.name()) ||
+				roles.contains(ServicesRole.INTERNAL.name())) {
 			return getInternalAuthenticated(request, token.get(), roles);
 		}
 
@@ -133,6 +135,8 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		var online = false;
 		if (roles.contains(ServicesRole.AGENT.name()))
 			online = managementService.isOnline(request);
+		else if (roles.contains(ServicesRole.INTERNAL.name()))
+			online = true;
 
 		var tenant = request.getHeader(RequestHeader.TENANT_HEADER.toString());
 		var orgAlias = jwtTokenUtil.getClaimFromToken(token, Claims::getAudience);

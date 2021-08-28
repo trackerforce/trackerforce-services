@@ -51,10 +51,6 @@ public class JwtTokenService {
 	}
 	
 	public String[] generateToken(String subject, String organizationAlias, Map<String, Object> claims) {
-		return doGenerateToken(subject, organizationAlias, claims);
-	}
-	
-	private String[] doGenerateToken(String subject, String organizationAlias, Map<String, Object> claims) {
 		final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 		final String token = Jwts.builder()
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 60 * 1000))
