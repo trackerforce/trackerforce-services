@@ -36,10 +36,35 @@ public class AgentService extends AbstractBusinessService<Agent> {
 			Assert.notNull(entity, "The class must not be null");
 			Assert.hasText(entity.getName(), "'name' must not be empty");
 			Assert.hasText(entity.getEmail(), "'email' must not be empty");
-			Assert.hasText(entity.getDepartment(), "'department' must not be empty");
 		} catch (final Exception e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
+	}
+	
+	public AgentResponse watchCase(String agentId, String caseId) {
+		var optgent = agentDao.getAgentRepository().findById(agentId);
+
+		if (!optgent.isPresent())
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+		var agent = optgent.get();
+		agent.getCases().add(caseId);
+		agent = agentDao.save(agent);
+
+		return AgentResponse.watch(agent.getEmail(), agent.getCases());
+	}
+	
+	public AgentResponse unWatchCase(String agentId, String caseId) {
+		var optgent = agentDao.getAgentRepository().findById(agentId);
+
+		if (!optgent.isPresent())
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+		var agent = optgent.get();
+		agent.getCases().remove(caseId);
+		agent = agentDao.save(agent);
+
+		return AgentResponse.watch(agent.getEmail(), agent.getCases());
 	}
 
 	public AgentResponse create(final AgentRequest agentRequest) throws ServiceException {
@@ -47,13 +72,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 		agentRequest.setPassword(bcryptEncoder.encode(password));
 
 		final var agent = super.create(new Agent(agentRequest));
-		var agentResponse = new AgentResponse();
-		agentResponse.setName(agent.getName());
-		agentResponse.setEmail(agent.getEmail());
-		agentResponse.setDepartment(agent.getDepartment());
-		agentResponse.setRoles(agent.getRoles());
-		agentResponse.setTempAccess(password);
-
+		var agentResponse = AgentResponse.createAgent(agent.getName(), agent.getEmail(), password, agent.getRoles());
 		return agentResponse;
 	}
 
@@ -73,25 +92,18 @@ public class AgentService extends AbstractBusinessService<Agent> {
 	public AgentResponse login(final AgentRequest agentRequest, Agent agent) {
 		if (agent == null) {
 			agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
-			
+
 			if (!agent.isActive())
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 		}
-		
+
 		if (!bcryptEncoder.matches(agentRequest.getPassword(), agent.getPassword()))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		agent.setOnline(true);
 		agentDao.save(agent);
 
-		var agentResponse = new AgentResponse();
-		agentResponse.setEmail(agent.getEmail());
-		agentResponse.setDepartment(agent.getDepartment());
-		agentResponse.setRoles(agent.getRoles());
-		agentResponse.setOnline(agent.isOnline());
-		agentResponse.setActive(agent.isActive());
-
-		return agentResponse;
+		return AgentResponse.login(agent.getEmail(), agent.getRoles(), agent.isOnline(), agent.isActive());
 	}
 
 	public void logoff(HttpServletRequest request) {
@@ -110,7 +122,8 @@ public class AgentService extends AbstractBusinessService<Agent> {
 		var agentRequest = new AgentRequest();
 
 		agentRequest.setEmail(authentication.getName());
-		final var agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());;
+		final var agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
+		;
 		return agent.isOnline() && agent.isActive();
 	}
 

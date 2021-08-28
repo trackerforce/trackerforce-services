@@ -56,4 +56,16 @@ public class ManagementService {
 		}
 	}
 
+	public void watchCase(HttpServletRequest request, String id, String agentId) {
+		var headers = new HttpHeaders();
+		setHeaders(request, headers);
+
+		try {
+			var url = String.format("%s%s%s/%s", serviceUrl, "agent/v1/watch/", agentId, id);
+			restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(null, headers), Object.class);
+		} catch (HttpClientErrorException e) {
+			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+		}
+	}
+
 }

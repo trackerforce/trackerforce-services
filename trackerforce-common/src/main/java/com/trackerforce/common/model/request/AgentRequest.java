@@ -11,8 +11,6 @@ public class AgentRequest {
 	
 	private String email;
 	
-	private String department;
-	
 	private String password;
 	
 	@JsonProperty("new_password")
@@ -34,14 +32,6 @@ public class AgentRequest {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(String department) {
-		this.department = department;
 	}
 
 	public List<String> getRoles() {

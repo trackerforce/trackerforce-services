@@ -16,6 +16,9 @@ public class SessionProcedureRequest {
 	@JsonProperty("procedure")
 	private String procedureId;
 
+	@JsonProperty("agent_id")
+	private String agentId;
+
 	private List<SessionTask> tasks;
 
 	public SessionProcedureEvent getEvent() {
@@ -40,6 +43,14 @@ public class SessionProcedureRequest {
 
 	public void setProcedureId(String procedureId) {
 		this.procedureId = procedureId;
+	}
+
+	public String getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(String agentId) {
+		this.agentId = agentId;
 	}
 
 	public List<SessionTask> getTasks() {

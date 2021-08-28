@@ -52,7 +52,28 @@ public class AgentController {
 		agentService.logoff(request);
 		return ResponseEntity.ok().build();
 	}
+
+	@PostMapping(value = "/v1/watch/{agentId}/{caseId}")
+	public ResponseEntity<?> watch(
+			@PathVariable(value = "id") String agentId,
+			@PathVariable(value = "id") String caseId) {
+		return ResponseEntity.ok(agentService.watchCase(agentId, caseId));
+	}
 	
+	@PostMapping(value = "/v1/unwatch/{agentId}/{caseId}")
+	public ResponseEntity<?> unwatch(
+			@PathVariable(value = "id") String agentId,
+			@PathVariable(value = "id") String caseId) {
+		return ResponseEntity.ok(agentService.unWatchCase(agentId, caseId));
+	}
+	
+	@GetMapping(value = "/v1/cases/{agentId}")
+	public ResponseEntity<?> listCases(
+			@PathVariable(value = "id") String agentId,
+			@PathVariable(value = "id") String caseId) {
+		return ResponseEntity.ok(agentService.unWatchCase(agentId, caseId));
+	}
+
 	@GetMapping(value = "/v1/{id}")
 	public ResponseEntity<?> findOne(@PathVariable(value="id") String id, String output) {
 		return ResponseEntity.ok(agentService.findByIdProjectedBy(id, output));

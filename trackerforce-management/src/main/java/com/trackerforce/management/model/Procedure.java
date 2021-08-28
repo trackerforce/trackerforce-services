@@ -7,14 +7,14 @@ import com.trackerforce.common.tenant.model.CommonProcedure;
 @Document(collection = "procedures")
 public class Procedure extends CommonProcedure {
 	
-	private Checkpoint checkpoint;
-	
-	public Checkpoint getCheckpoint() {
-		return checkpoint;
+	private Hook hook;
+
+	public Hook getHook() {
+		return hook;
 	}
 
-	public void setCheckpoint(Checkpoint checkpoint) {
-		this.checkpoint = checkpoint;
+	public void setHook(Hook hook) {
+		this.hook = hook;
 	}
 
 }

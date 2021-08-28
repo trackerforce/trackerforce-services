@@ -31,8 +31,9 @@ public class QueueService {
 		setHeaders(request, headers);
 
 		try {
-			restTemplate.exchange(serviceUrl + "/session/v1/procedure/submit/" + contextId, HttpMethod.POST,
-					new HttpEntity<>(procedure, headers), Object.class);
+			var tenantId = request.getHeader(RequestHeader.TENANT_HEADER.toString());
+			var url = String.format("%s%s%s/%s", serviceUrl, "/session/v1/procedure/submit/", tenantId, contextId);
+			restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(procedure, headers), Object.class);
 		} catch (HttpClientErrorException e) {
 			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
 		}

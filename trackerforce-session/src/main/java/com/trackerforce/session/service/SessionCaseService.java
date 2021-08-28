@@ -39,7 +39,10 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		var sessionCase = SessionCase.create(template);
 
 		this.validate(sessionCase);
-		return sessionCaseDao.save(sessionCase);
+		sessionCase = sessionCaseDao.save(sessionCase);
+		managementService.watchCase(request, sessionCase.getId(), sessionCaseRequest.getAgentId());
+		
+		return sessionCase;
 	}
 
 }

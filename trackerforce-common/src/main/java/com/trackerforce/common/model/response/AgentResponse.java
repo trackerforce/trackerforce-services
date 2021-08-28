@@ -8,21 +8,57 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(Include.NON_NULL)
 public class AgentResponse {
-	
+
 	private String name;
-	
+
 	private String email;
-	
+
 	private String department;
-	
+
 	@JsonProperty("temp_access")
 	private String tempAccess;
-	
+
 	private List<String> roles;
-	
+
+	private List<String> cases;
+
 	private boolean online;
-	
+
 	private boolean active;
+
+	public AgentResponse() {
+	}
+
+	private AgentResponse(String name, String email, String password, List<String> roles) {
+		setName(name);
+		setEmail(email);
+		setRoles(roles);
+		setTempAccess(password);
+	}
+	
+	private AgentResponse(String email, List<String> roles, boolean online, boolean active) {
+		setEmail(email);
+		setRoles(roles);
+		setOnline(online);
+		setActive(active);
+	}
+	
+	private AgentResponse(String email, List<String> cases) {
+		setEmail(email);
+		setCases(cases);
+	}
+
+	public static AgentResponse createAgent(String name, String email, String password, List<String> roles) {
+		return new AgentResponse(name, email, password, roles);
+	}
+	
+	public static AgentResponse login(String email, List<String> roles, boolean online, boolean active) {
+		return new AgentResponse(email, roles, online, active);
+	}
+	
+	public static AgentResponse watch(String email, List<String> cases) {
+		return new AgentResponse(email, cases);
+	}
 
 	public String getName() {
 		return name;
@@ -64,6 +100,14 @@ public class AgentResponse {
 		this.roles = roles;
 	}
 
+	public List<String> getCases() {
+		return cases;
+	}
+
+	public void setCases(List<String> cases) {
+		this.cases = cases;
+	}
+
 	public boolean isOnline() {
 		return online;
 	}
@@ -79,5 +123,5 @@ public class AgentResponse {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 }

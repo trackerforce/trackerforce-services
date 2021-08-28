@@ -38,7 +38,6 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 	protected void validate(final Procedure entity) throws ServiceException {
 		try {
 			Assert.notNull(entity, "The class must not be null");
-			Assert.notNull(entity.getCheckpoint(), "Procedure checkpoint must not be null");
 			Assert.hasText(entity.getDescription(), "'description' must not be empty");
 			Assert.hasText(entity.getName(), "'name' must not be empty");
 
@@ -58,7 +57,7 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 		var promise = procedureDao.getProcedureRepository().findById(id);
 		var allowed = new HashMap<String, String[]>();
 		allowed.put(entityName, ALLOWED_PROC_UPDATE);
-		allowed.put("checkpoint", ALLOWED_CP_UPDATE);
+		allowed.put("hook", ALLOWED_CP_UPDATE);
 		allowed.put("helper", ALLOWED_HELPER_UPDATE);
 
 		return super.update(promise, updates, allowed);
