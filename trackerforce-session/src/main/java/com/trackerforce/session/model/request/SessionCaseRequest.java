@@ -4,10 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SessionCaseRequest {
 
+	@JsonProperty("cases")
+	private String[] caseIds;
+
 	@JsonProperty("agent_id")
 	private String agentId;
 
 	private String template;
+
+	public String[] getCaseIds() {
+		return caseIds;
+	}
+
+	public void setCaseIds(String[] caseIds) {
+		this.caseIds = caseIds;
+	}
 
 	public String getAgentId() {
 		return agentId;
