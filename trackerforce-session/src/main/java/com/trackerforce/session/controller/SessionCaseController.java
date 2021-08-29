@@ -48,8 +48,8 @@ public class SessionCaseController {
 		}
 	}
 
-	@GetMapping(value = "/v1")
-	public ResponseEntity<?> find(HttpServletRequest request, 
+	@GetMapping(value = "/v1/ids")
+	public ResponseEntity<?> findByIds(HttpServletRequest request, 
 			@RequestBody SessionCaseRequest sessionCaseRequest,
 			@RequestParam(required = false) String sortBy, 
 			@RequestParam(required = false) String output,
