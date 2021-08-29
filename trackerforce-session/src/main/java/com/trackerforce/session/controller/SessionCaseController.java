@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.session.model.request.SessionCaseRequest;
+import com.trackerforce.session.model.request.SessionProcedureRequest;
 import com.trackerforce.session.service.SessionCaseService;
 
 @CrossOrigin(methods = { RequestMethod.POST })
@@ -31,6 +32,16 @@ public class SessionCaseController {
 	public ResponseEntity<?> create(HttpServletRequest request, @RequestBody SessionCaseRequest sessionCaseRequest) {
 		try {
 			return ResponseEntity.ok(sessionCaseService.create(request, sessionCaseRequest));
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
+	}
+	
+	@PostMapping(value = "/v1/handler")
+	public ResponseEntity<?> handler(HttpServletRequest request,
+			@RequestBody SessionProcedureRequest sessionProcedureRequest) {
+		try {
+			return ResponseEntity.ok(sessionCaseService.handlerProcedure(request, sessionProcedureRequest));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}
