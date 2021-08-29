@@ -1,5 +1,6 @@
 package com.trackerforce.management.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,9 @@ public class TaskController {
 			@RequestParam(required = false) String output,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
-		return ResponseEntity.ok(taskService.findAllProjectedBy(description, sortBy, output, page, size));
+		var query = new HashMap<String, Object>();
+		query.put("description", description);
+		return ResponseEntity.ok(taskService.findAllProjectedBy(query, sortBy, output, page, size));
 	}
 	
 	@GetMapping(value = "/v1/{id}")

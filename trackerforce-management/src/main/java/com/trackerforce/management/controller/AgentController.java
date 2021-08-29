@@ -86,7 +86,7 @@ public class AgentController {
 			@RequestParam(required = false) String output,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
-		return ResponseEntity.ok(agentService.findAllProjectedBy2(query, sortBy, output, page, size));
+		return ResponseEntity.ok(agentService.findAllProjectedBy(query, sortBy, output, page, size));
 	}
 
 	@GetMapping(value = "/v1/me")

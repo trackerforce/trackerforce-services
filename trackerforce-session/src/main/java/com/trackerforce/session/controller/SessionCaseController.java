@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,15 @@ public class SessionCaseController {
 
 	@PostMapping(value = "/v1")
 	public ResponseEntity<?> create(HttpServletRequest request, @RequestBody SessionCaseRequest sessionCaseRequest) {
+		try {
+			return ResponseEntity.ok(sessionCaseService.create(request, sessionCaseRequest));
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
+	}
+	
+	@GetMapping(value = "/v1")
+	public ResponseEntity<?> find(HttpServletRequest request, @RequestBody SessionCaseRequest sessionCaseRequest) {
 		try {
 			return ResponseEntity.ok(sessionCaseService.create(request, sessionCaseRequest));
 		} catch (ServiceException e) {

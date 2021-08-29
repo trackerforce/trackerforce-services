@@ -1,5 +1,6 @@
 package com.trackerforce.management.controller;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -47,7 +48,9 @@ public class ProcedureController {
 			@RequestParam(required = false) String output,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
-		return ResponseEntity.ok(procedureService.findAllProjectedBy(description, sortBy, output, page, size));
+		var query = new HashMap<String, Object>();
+		query.put("description", description);
+		return ResponseEntity.ok(procedureService.findAllProjectedBy(query, sortBy, output, page, size));
 	}
 	
 	@GetMapping(value = "/v1/{id}")
