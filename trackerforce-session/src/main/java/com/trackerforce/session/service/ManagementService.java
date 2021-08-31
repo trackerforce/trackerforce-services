@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.config.RequestHeader;
 import com.trackerforce.common.tenant.model.CommonProcedure;
+import com.trackerforce.common.tenant.model.CommonTask;
 import com.trackerforce.common.tenant.model.CommonTemplate;
 
 @Service
@@ -28,7 +29,8 @@ public class ManagementService {
 		headers.add(RequestHeader.TENANT_HEADER.toString(), request.getHeader(RequestHeader.TENANT_HEADER.toString()));
 	}
 
-	public CommonTemplate findTemplate(HttpServletRequest request, String id) {
+	@SuppressWarnings("unchecked")
+	public CommonTemplate<CommonProcedure<?>> findTemplate(HttpServletRequest request, String id) {
 		var headers = new HttpHeaders();
 		setHeaders(request, headers);
 
@@ -42,7 +44,8 @@ public class ManagementService {
 		}
 	}
 
-	public CommonProcedure findProcedure(HttpServletRequest request, String id) {
+	@SuppressWarnings("unchecked")
+	public CommonProcedure<CommonTask> findProcedure(HttpServletRequest request, String id) {
 		var headers = new HttpHeaders();
 		setHeaders(request, headers);
 

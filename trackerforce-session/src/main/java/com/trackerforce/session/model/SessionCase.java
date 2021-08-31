@@ -23,18 +23,18 @@ public class SessionCase extends AbstractBusinessDocument {
 	public SessionCase() {
 	}
 
-	private SessionCase(CommonTemplate input) {
+	private SessionCase(CommonTemplate<CommonProcedure<?>> input) {
 		this.contextId = input.getId();
 		this.context = input.getName();
 		super.setDescription(input.getDescription());
 		super.setHelper(input.getHelper());
 	}
 
-	public static SessionCase create(CommonTemplate input) {
+	public static SessionCase create(CommonTemplate<CommonProcedure<?>> input) {
 		var sessionCase = new SessionCase(input);
 
 		sessionCase.setProtocol(System.currentTimeMillis() / 1000);
-		for (CommonProcedure proc : input.getProcedures())
+		for (CommonProcedure<?> proc : input.getProcedures())
 			sessionCase.getProcedures().add(SessionProcedure.create(proc));
 
 		return sessionCase;

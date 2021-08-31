@@ -104,7 +104,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
 		for (SessionTask task : sessionProcedureRequest.getTasks()) {
-			var optTask = procedure.getTaskResolution().stream().filter(t -> t.getId().equals(task.getId()))
+			var optTask = procedure.getTasks().stream().filter(t -> t.getId().equals(task.getId()))
 					.findFirst();
 
 			if (optTask.isPresent())

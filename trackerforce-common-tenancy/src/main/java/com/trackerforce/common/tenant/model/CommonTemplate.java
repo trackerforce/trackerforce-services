@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class CommonTemplate extends AbstractBusinessDocument {
+public class CommonTemplate<T extends CommonProcedure<? extends CommonTask>> extends AbstractBusinessDocument {
 
 	private String name;
 
-	private LinkedList<CommonProcedure> procedures;
+	private LinkedList<T> procedures;
 
 	public String getName() {
 		return name;
@@ -20,7 +20,7 @@ public class CommonTemplate extends AbstractBusinessDocument {
 		this.name = name;
 	}
 
-	public LinkedList<CommonProcedure> getProcedures() {
+	public LinkedList<T> getProcedures() {
 		if (procedures == null)
 			procedures = new LinkedList<>();
 

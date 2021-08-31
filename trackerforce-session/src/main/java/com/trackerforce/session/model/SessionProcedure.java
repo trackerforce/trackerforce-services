@@ -8,18 +8,18 @@ import com.trackerforce.common.tenant.model.CommonTask;
 import com.trackerforce.common.tenant.model.exception.InvalidStatusChangeException;
 import com.trackerforce.session.model.type.ProcedureStatus;
 
-public class SessionProcedure extends CommonProcedure {
+public class SessionProcedure extends CommonProcedure<SessionTask> {
 
 	private String resolution;
 
 	private ProcedureStatus status = ProcedureStatus.OPENED;
-
-	private LinkedList<SessionTask> taskResolution;
+	
+	protected LinkedList<SessionTask> tasks;
 
 	public SessionProcedure() {
 	}
 
-	private SessionProcedure(CommonProcedure input) {
+	private SessionProcedure(CommonProcedure<?> input) {
 		super.name = input.getName();
 		super.setId(input.getId());
 		super.setDescription(input.getDescription());
@@ -32,10 +32,10 @@ public class SessionProcedure extends CommonProcedure {
 	 * @param input Procedure from the management template
 	 * @return New Session Case procedure
 	 */
-	public static SessionProcedure create(CommonProcedure input) {
+	public static SessionProcedure create(CommonProcedure<?> input) {
 		var resolution = new SessionProcedure(input);
 		for (CommonTask task : input.getTasks())
-			resolution.getTaskResolution().add(SessionTask.createTaskResolution(task));
+			resolution.getTasks().add(SessionTask.createTaskResolution(task));
 
 		return resolution;
 	}
@@ -56,18 +56,15 @@ public class SessionProcedure extends CommonProcedure {
 		this.resolution = resolution;
 	}
 
-	public LinkedList<SessionTask> getTaskResolution() {
-		if (taskResolution == null)
-			this.taskResolution = new LinkedList<SessionTask>();
-		return taskResolution;
-	}
-
-	public void setTaskResolution(LinkedList<SessionTask> taskResolution) {
-		this.taskResolution = taskResolution;
-	}
-
 	public ProcedureStatus getStatus() {
 		return status;
+	}
+
+	@Override
+	public LinkedList<SessionTask> getTasks() {
+		if (tasks == null)
+			tasks = new LinkedList<SessionTask>();
+		return tasks;
 	}
 
 }
