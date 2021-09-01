@@ -23,10 +23,11 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 	private final SessionCaseRepositoryDao sessionCaseDao;
 
 	private final ManagementService managementService;
-	
+
 	private final QueueService queueService;
 
-	public SessionCaseService(SessionCaseRepositoryDao sessionCaseDao, ManagementService managementService, QueueService queueService) {
+	public SessionCaseService(SessionCaseRepositoryDao sessionCaseDao, ManagementService managementService,
+			QueueService queueService) {
 		super(sessionCaseDao, SessionCase.class);
 		this.sessionCaseDao = sessionCaseDao;
 		this.managementService = managementService;
@@ -52,12 +53,12 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		this.validate(sessionCase);
 		sessionCase = sessionCaseDao.save(sessionCase);
 		managementService.watchCase(request, sessionCase.getId(), sessionCaseRequest.getAgentId());
-		
+
 		return sessionCase;
 	}
-	
-	public SessionProcedure handlerProcedure(HttpServletRequest request, final SessionProcedureRequest sessionProcedureRequest)
-			throws ServiceException {
+
+	public SessionProcedure handlerProcedure(HttpServletRequest request,
+			final SessionProcedureRequest sessionProcedureRequest) throws ServiceException {
 		switch (sessionProcedureRequest.getEvent()) {
 		case NEW:
 			return createProcedure(request, sessionProcedureRequest);
@@ -71,9 +72,9 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 			throw new ServiceException("Invalid Session Procedure Event");
 		}
 	}
-	
-	private SessionProcedure createProcedure(HttpServletRequest request, final SessionProcedureRequest sessionProcedureRequest)
-			throws ServiceException {
+
+	private SessionProcedure createProcedure(HttpServletRequest request,
+			final SessionProcedureRequest sessionProcedureRequest) throws ServiceException {
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 		var commonProcedure = managementService.findProcedure(request, sessionProcedureRequest.getProcedureId());
 		var procedure = SessionProcedure.create(commonProcedure);
@@ -82,21 +83,21 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		sessionCaseDao.save(sessionCase);
 		return procedure;
 	}
-	
-	private SessionProcedure submitProcedure(HttpServletRequest request, final SessionProcedureRequest sessionProcedureRequest)
-			throws ServiceException {
+
+	private SessionProcedure submitProcedure(HttpServletRequest request,
+			final SessionProcedureRequest sessionProcedureRequest) throws ServiceException {
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
-//		try {
-//			procedure.changeStatus(ProcedureStatus.SUBMITTED);
-		sessionCaseDao.save(sessionCase);
+		try {
+			procedure.changeStatus(ProcedureStatus.SUBMITTED);
+			sessionCaseDao.save(sessionCase);
 
-		queueService.submitProcedure(request, procedure, sessionCase.getContextId());
-		return procedure;
-//		} catch (BusinessException e) {
-//			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-//		}
+			queueService.submitProcedure(request, procedure, sessionCase.getContextId());
+			return procedure;
+		} catch (BusinessException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
 	}
 
 	private SessionProcedure saveProcedure(final SessionProcedureRequest sessionProcedureRequest) {
@@ -104,8 +105,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
 		for (SessionTask task : sessionProcedureRequest.getTasks()) {
-			var optTask = procedure.getTasks().stream().filter(t -> t.getId().equals(task.getId()))
-					.findFirst();
+			var optTask = procedure.getTasks().stream().filter(t -> t.getId().equals(task.getId())).findFirst();
 
 			if (optTask.isPresent())
 				optTask.get().setResponse(task.getResponse());
@@ -127,7 +127,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
+
 	private SessionCase getSessionCase(String sessionCaseId) {
 		var optCase = sessionCaseDao.getCaseRepository().findById(sessionCaseId);
 
