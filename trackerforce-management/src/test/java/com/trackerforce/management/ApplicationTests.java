@@ -1,10 +1,10 @@
-package com.trackerforce.session;
+package com.trackerforce.management;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TrackerforceManagementApplicationTests {
+class ApplicationTests {
 
 	@Test
 	void contextLoads() {
