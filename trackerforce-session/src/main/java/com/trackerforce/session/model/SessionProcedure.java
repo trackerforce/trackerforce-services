@@ -13,7 +13,7 @@ public class SessionProcedure extends CommonProcedure<SessionTask> {
 	private String resolution;
 
 	private ProcedureStatus status = ProcedureStatus.OPENED;
-	
+
 	protected LinkedList<SessionTask> tasks;
 
 	public SessionProcedure() {
@@ -46,6 +46,14 @@ public class SessionProcedure extends CommonProcedure<SessionTask> {
 
 		this.status = newStatus;
 		return this;
+	}
+
+	public boolean canSubmit() {
+		for (SessionTask task : getTasks())
+			if (task.getResponse() == null)
+				return false;
+		
+		return true;
 	}
 
 	public String getResolution() {

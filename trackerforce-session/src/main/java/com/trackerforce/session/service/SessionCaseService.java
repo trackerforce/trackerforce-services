@@ -90,6 +90,9 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
 		try {
+			if (!procedure.canSubmit())
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Has pending tasks");
+				
 			procedure.changeStatus(ProcedureStatus.SUBMITTED);
 			sessionCaseDao.save(sessionCase);
 
