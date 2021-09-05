@@ -21,8 +21,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.config.JwtRequestFilter;
-import com.trackerforce.common.config.RequestHeader;
 import com.trackerforce.common.model.type.JwtKeys;
+import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.common.model.type.ServicesRole;
 import com.trackerforce.common.service.JwtTokenService;
 import com.trackerforce.common.service.exception.ServiceException;

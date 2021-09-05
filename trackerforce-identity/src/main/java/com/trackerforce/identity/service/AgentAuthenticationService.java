@@ -10,10 +10,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
-import com.trackerforce.common.config.RequestHeader;
 import com.trackerforce.common.model.request.AgentRequest;
 import com.trackerforce.common.model.response.AgentResponse;
 import com.trackerforce.common.model.type.JwtKeys;
+import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.common.service.JwtTokenService;
 
 @Service

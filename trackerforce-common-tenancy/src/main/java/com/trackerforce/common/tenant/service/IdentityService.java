@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.trackerforce.common.config.RequestHeader;;
+import com.trackerforce.common.model.type.RequestHeader;;
 
 @Service
 public class IdentityService {

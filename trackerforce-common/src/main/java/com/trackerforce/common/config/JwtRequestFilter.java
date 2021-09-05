@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.common.service.JwtTokenService;
 
 public abstract class JwtRequestFilter extends OncePerRequestFilter {

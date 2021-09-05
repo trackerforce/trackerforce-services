@@ -1,4 +1,4 @@
-package com.trackerforce.common.config;
+package com.trackerforce.common.model.type;
 
 public enum RequestHeader {
 	

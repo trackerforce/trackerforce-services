@@ -11,7 +11,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.trackerforce.common.config.RequestHeader;
+import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.session.model.SessionProcedure;
 
 @Service

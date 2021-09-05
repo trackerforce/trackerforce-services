@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.trackerforce.common.config.RequestHeader;
+import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.common.tenant.service.IdentityService;
 
 /**
