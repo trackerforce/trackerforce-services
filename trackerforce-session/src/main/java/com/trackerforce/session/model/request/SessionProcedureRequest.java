@@ -19,6 +19,8 @@ public class SessionProcedureRequest {
 	@JsonProperty("agent_id")
 	private String agentId;
 
+	private String resolution;
+
 	private List<SessionTask> tasks;
 
 	public SessionProcedureEvent getEvent() {
@@ -51,6 +53,14 @@ public class SessionProcedureRequest {
 
 	public void setAgentId(String agentId) {
 		this.agentId = agentId;
+	}
+
+	public String getResolution() {
+		return resolution;
+	}
+
+	public void setResolution(String resolution) {
+		this.resolution = resolution;
 	}
 
 	public List<SessionTask> getTasks() {

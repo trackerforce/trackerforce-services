@@ -64,6 +64,8 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 			return createProcedure(request, sessionProcedureRequest);
 		case SUBMIT:
 			return submitProcedure(request, sessionProcedureRequest);
+		case NEXT:
+			return nextProcedure(request, sessionProcedureRequest);
 		case SAVE:
 			return saveProcedure(sessionProcedureRequest);
 		case CANCEL:
@@ -92,11 +94,31 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		try {
 			if (!procedure.canSubmit())
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Has pending tasks");
-				
+
 			procedure.changeStatus(ProcedureStatus.SUBMITTED);
 			sessionCaseDao.save(sessionCase);
 
 			queueService.submitProcedure(request, procedure, sessionCase.getContextId());
+			return procedure;
+		} catch (BusinessException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	private SessionProcedure nextProcedure(HttpServletRequest request,
+			final SessionProcedureRequest sessionProcedureRequest) throws ServiceException {
+		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
+		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
+
+		if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
+
+		try {
+			procedure.setResolution(sessionProcedureRequest.getResolution());
+			procedure.changeStatus(ProcedureStatus.RESOLVED);
+			sessionCaseDao.save(sessionCase);
+
+			queueService.nextProcedure(request, procedure, sessionCase.getContextId());
 			return procedure;
 		} catch (BusinessException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

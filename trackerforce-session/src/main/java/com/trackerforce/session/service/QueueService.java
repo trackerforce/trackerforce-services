@@ -19,7 +19,7 @@ public class QueueService {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	@Value("${service.queue.url}/queue")
+	@Value("${service.queue.url}/queue/session")
 	private String serviceUrl;
 
 	private void setHeaders(HttpServletRequest request, HttpHeaders headers) {
@@ -32,7 +32,20 @@ public class QueueService {
 
 		try {
 			var tenantId = request.getHeader(RequestHeader.TENANT_HEADER.toString());
-			var url = String.format("%s%s%s/%s", serviceUrl, "/session/v1/procedure/submit/", tenantId, contextId);
+			var url = String.format("%s%s%s/%s", serviceUrl, "/v1/procedure/submit/", tenantId, contextId);
+			restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(procedure, headers), Object.class);
+		} catch (HttpClientErrorException e) {
+			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+		}
+	}
+	
+	public void nextProcedure(HttpServletRequest request, SessionProcedure procedure, String contextId) {
+		var headers = new HttpHeaders();
+		setHeaders(request, headers);
+
+		try {
+			var tenantId = request.getHeader(RequestHeader.TENANT_HEADER.toString());
+			var url = String.format("%s%s%s/%s", serviceUrl, "/v1/procedure/next/", tenantId, contextId);
 			restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(procedure, headers), Object.class);
 		} catch (HttpClientErrorException e) {
 			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
