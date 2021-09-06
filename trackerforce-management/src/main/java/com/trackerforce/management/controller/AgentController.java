@@ -29,9 +29,9 @@ public class AgentController {
 	private AgentService agentService;
 
 	@PostMapping(value = "/v1/create")
-	public ResponseEntity<?> create(@RequestBody AgentRequest agentRequest) {
+	public ResponseEntity<?> create(HttpServletRequest request, @RequestBody AgentRequest agentRequest) {
 		try {
-			return ResponseEntity.ok(agentService.create(agentRequest));
+			return ResponseEntity.ok(agentService.create(request, agentRequest));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}

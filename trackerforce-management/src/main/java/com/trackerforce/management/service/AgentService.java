@@ -40,7 +40,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 			throw new ServiceException(e.getMessage(), e);
 		}
 	}
-	
+
 	public AgentResponse watchCase(String agentId, String caseId) {
 		var optgent = agentDao.getAgentRepository().findById(agentId);
 
@@ -53,7 +53,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 
 		return AgentResponse.watch(agent.getEmail(), agent.getCases());
 	}
-	
+
 	public AgentResponse unWatchCase(String agentId, String caseId) {
 		var optgent = agentDao.getAgentRepository().findById(agentId);
 
@@ -67,7 +67,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 		return AgentResponse.watch(agent.getEmail(), agent.getCases());
 	}
 
-	public AgentResponse create(final AgentRequest agentRequest) throws ServiceException {
+	public AgentResponse create(HttpServletRequest request, AgentRequest agentRequest) throws ServiceException {
 		final var password = RandomStringUtils.randomAlphanumeric(5).toUpperCase();
 		agentRequest.setPassword(bcryptEncoder.encode(password));
 
@@ -103,12 +103,13 @@ public class AgentService extends AbstractBusinessService<Agent> {
 		agent.setOnline(true);
 		agentDao.save(agent);
 
-		return AgentResponse.login(agent.getEmail(), agent.getRoles(), agent.isOnline(), agent.isActive());
+		return AgentResponse.login(agent.getId(), agent.getEmail(), agent.getRoles(), agent.isOnline(),
+				agent.isActive());
 	}
 
 	public void logoff(HttpServletRequest request) {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
-		var agent = agentDao.getAgentRepository().findByEmail(authentication.getName());
+		var agent = agentDao.getAgentRepository().findById(authentication.getName()).get();
 
 		if (!agent.isActive() || !agent.isOnline())
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -119,17 +120,22 @@ public class AgentService extends AbstractBusinessService<Agent> {
 
 	public boolean isOnline(HttpServletRequest request) {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
-		var agentRequest = new AgentRequest();
+		var optAgent = agentDao.getAgentRepository().findById(authentication.getName());
 
-		agentRequest.setEmail(authentication.getName());
-		final var agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
-		;
-		return agent.isOnline() && agent.isActive();
+		if (!optAgent.isPresent())
+			return false;
+
+		return optAgent.get().isOnline() && optAgent.get().isActive();
 	}
 
 	public Agent getAuthenticated(HttpServletRequest request) {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
-		return agentDao.getAgentRepository().findByEmail(authentication.getName());
+		var optAgent = agentDao.getAgentRepository().findById(authentication.getName());
+
+		if (!optAgent.isPresent())
+			return null;
+
+		return optAgent.get();
 	}
 
 }

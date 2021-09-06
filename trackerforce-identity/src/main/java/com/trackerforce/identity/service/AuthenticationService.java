@@ -27,6 +27,7 @@ import com.trackerforce.common.model.type.ServicesRole;
 import com.trackerforce.common.service.JwtTokenService;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.identity.model.AuthAccess;
+import com.trackerforce.identity.model.Organization;
 import com.trackerforce.identity.model.request.AccessRequest;
 import com.trackerforce.identity.model.request.JwtRequest;
 import com.trackerforce.identity.repository.AuthAccessRepository;
@@ -83,7 +84,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		authenticate(authRequest);
 
 		final var authAccess = authAccessRepository.findByUsername(authRequest.getUsername());
-		final var jwt = jwtTokenUtil.generateToken(authAccess.getUsername(), authAccess.getOrganization().getAlias(),
+		final var jwt = jwtTokenUtil.generateToken(authAccess.getId(), authAccess.getOrganization().getAlias(),
 				authAccess.getDefaultClaims());
 
 		var response = new HashMap<String, Object>();
@@ -119,7 +120,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 	}
 
 	public AuthAccess getRootAuthenticated(HttpServletRequest request, Authentication authentication, String token) {
-		var authAccess = authAccessRepository.findByUsername(authentication.getName());
+		var authAccess = authAccessRepository.findById(authentication.getName()).get();
 		if (authAccess == null || !bcrypt.matches(token, authAccess.getTokenHash()))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
@@ -129,6 +130,11 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		return authAccess;
+	}
+	
+	public Organization getOrganization(String tenantId) {
+		
+		return null;
 	}
 
 	public AuthAccess getInternalAuthenticated(HttpServletRequest request, String token, List<?> roles) {

@@ -48,7 +48,7 @@ public class AgentAuthenticationService {
 		var claims = new HashMap<String, Object>();
 		claims.put(JwtKeys.ROLES.toString(), agentResponse.getRoles());
 		
-		final var jwt = jwtTokenUtil.generateToken(agentResponse.getEmail(), 
+		final var jwt = jwtTokenUtil.generateToken(agentResponse.getId(), 
 				request.getHeader(RequestHeader.TENANT_HEADER.toString()), 
 				claims);
 		

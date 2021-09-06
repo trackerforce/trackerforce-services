@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(Include.NON_NULL)
 public class AgentResponse {
 
+	private String id;
+
 	private String name;
 
 	private String email;
@@ -35,14 +37,15 @@ public class AgentResponse {
 		setRoles(roles);
 		setTempAccess(password);
 	}
-	
-	private AgentResponse(String email, List<String> roles, boolean online, boolean active) {
+
+	private AgentResponse(String id, String email, List<String> roles, boolean online, boolean active) {
+		setId(id);
 		setEmail(email);
 		setRoles(roles);
 		setOnline(online);
 		setActive(active);
 	}
-	
+
 	private AgentResponse(String email, List<String> cases) {
 		setEmail(email);
 		setCases(cases);
@@ -51,13 +54,21 @@ public class AgentResponse {
 	public static AgentResponse createAgent(String name, String email, String password, List<String> roles) {
 		return new AgentResponse(name, email, password, roles);
 	}
-	
-	public static AgentResponse login(String email, List<String> roles, boolean online, boolean active) {
-		return new AgentResponse(email, roles, online, active);
+
+	public static AgentResponse login(String id, String email, List<String> roles, boolean online, boolean active) {
+		return new AgentResponse(id, email, roles, online, active);
 	}
-	
+
 	public static AgentResponse watch(String email, List<String> cases) {
 		return new AgentResponse(email, cases);
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {
