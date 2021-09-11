@@ -1,19 +1,18 @@
 package com.trackerforce.identity.model;
 
 public class Organization {
-	
+
 	private String name;
-	
+
 	private String alias;
-	
-	private String mlAPIUri;
-	
-	public Organization() {}
-	
+
+	public Organization() {
+	}
+
 	public Organization(String alias) {
 		this.alias = alias;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -28,14 +27,6 @@ public class Organization {
 
 	public void setAlias(String alias) {
 		this.alias = alias;
-	}
-
-	public String getMlAPIUri() {
-		return mlAPIUri;
-	}
-
-	public void setMlAPIUri(String mlAPIUri) {
-		this.mlAPIUri = mlAPIUri;
 	}
 
 }

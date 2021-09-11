@@ -1,6 +1,7 @@
 package com.trackerforce.management.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,13 @@ public class GlobalController {
 		Map<String, Object> query = new HashMap<String, Object>();
 		query.put("key", key);
 		
-		var result = findAll(query, null, output, 0, 1);
-		return ResponseEntity.ok(result.getBody().get("data"));
+		var result = globalService.findAllProjectedBy(query, null, output, 0, 1);
+		var data = ((List<?>) result.get("data"));
+		
+		if (data.size() == 0)
+			return ResponseEntity.notFound().build();
+		
+		return ResponseEntity.ok( data.get(0));
 	}
 	
 	@PatchMapping(value = "/v1/{id}")
