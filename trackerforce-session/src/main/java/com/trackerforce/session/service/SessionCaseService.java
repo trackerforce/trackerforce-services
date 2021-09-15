@@ -10,6 +10,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.model.exception.BusinessException;
+import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.session.model.SessionCase;
 import com.trackerforce.session.model.SessionProcedure;
@@ -25,14 +26,17 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 	private final SessionCaseRepositoryDao sessionCaseDao;
 
 	private final ManagementService managementService;
+	
+	private final MLEngineService mlEngineService;
 
 	private final QueueService queueService;
 
 	public SessionCaseService(SessionCaseRepositoryDao sessionCaseDao, ManagementService managementService,
-			QueueService queueService) {
+			MLEngineService mlEngineService, QueueService queueService) {
 		super(sessionCaseDao, SessionCase.class);
 		this.sessionCaseDao = sessionCaseDao;
 		this.managementService = managementService;
+		this.mlEngineService = mlEngineService;
 		this.queueService = queueService;
 	}
 
@@ -86,18 +90,19 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		return optCase;
 	}
 	
-	public SessionProcedure next(HttpServletRequest request,
-			SessionProcedureRequest sessionProcedureRequest, Map<String, Object> query, String sortBy, String output, int page,
-			int size) throws ServiceException {
+	public Map<String, Object> next(HttpServletRequest request, SessionProcedureRequest sessionProcedureRequest,
+			QueryableRequest queryable) throws ServiceException {
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
 		if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
 
-//		managementService.predictProcedure(request, toString());
-		queueService.nextProcedure(request, procedure, sessionCase.getContextId());
-		return procedure;
+		// TODO: Implement agreggation
+		var mlServiceUrl = managementService.findMLServiceUrl(request);
+		var predicted = mlEngineService.predictProcedure(mlServiceUrl.getValue("url"), procedure);
+		var procedures = managementService.findAll(request, queryable);
+		return procedures;
 	}
 
 	private SessionProcedure createProcedure(HttpServletRequest request,

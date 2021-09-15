@@ -1,5 +1,7 @@
 package com.trackerforce.session.service;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -11,9 +13,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.common.tenant.model.CommonProcedure;
 import com.trackerforce.common.tenant.model.CommonTemplate;
+import com.trackerforce.session.model.response.GlobalResponse;
 
 @Service
 public class ManagementService {
@@ -57,13 +61,32 @@ public class ManagementService {
 		}
 	}
 	
-	public CommonProcedure<?> predictProcedure(HttpServletRequest request, String id) {
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> findAll(HttpServletRequest request, QueryableRequest queryableRequest) {
 		var headers = new HttpHeaders();
 		setHeaders(request, headers);
 
 		try {
-			var response = restTemplate.exchange(serviceUrl + "procedure/v1/" + id, HttpMethod.GET,
-					new HttpEntity<>(null, headers), CommonProcedure.class);
+			var name = queryableRequest.getQuery().get("name");
+			var url = String.format("%s%s?output=id,name,description&page=%s&name=%s", serviceUrl, "procedure/v1/",
+					queryableRequest.getPage(), name);
+
+			var response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(null, headers), Map.class);
+
+			return response.getBody();
+		} catch (HttpClientErrorException e) {
+			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+		}
+	}
+	
+	public GlobalResponse findMLServiceUrl(HttpServletRequest request) {
+		var headers = new HttpHeaders();
+		setHeaders(request, headers);
+
+		try {
+			var url = String.format("%s%s", serviceUrl, "global/v1/ML_SERVICE");
+			var response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(null, headers),
+					GlobalResponse.class);
 
 			return response.getBody();
 		} catch (HttpClientErrorException e) {
