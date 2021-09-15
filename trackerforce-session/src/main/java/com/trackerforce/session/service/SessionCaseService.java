@@ -1,5 +1,7 @@
 package com.trackerforce.session.service;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
@@ -64,8 +66,6 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 			return createProcedure(request, sessionProcedureRequest);
 		case SUBMIT:
 			return submitProcedure(request, sessionProcedureRequest);
-		case PREDICT:
-			return predictProcedure(request, sessionProcedureRequest);
 		case NEXT:
 			return nextProcedure(request, sessionProcedureRequest);
 		case SAVE:
@@ -84,6 +84,20 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Case not found");
 
 		return optCase;
+	}
+	
+	public SessionProcedure next(HttpServletRequest request,
+			SessionProcedureRequest sessionProcedureRequest, Map<String, Object> query, String sortBy, String output, int page,
+			int size) throws ServiceException {
+		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
+		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
+
+		if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
+
+//		managementService.predictProcedure(request, toString());
+		queueService.nextProcedure(request, procedure, sessionCase.getContextId());
+		return procedure;
 	}
 
 	private SessionProcedure createProcedure(HttpServletRequest request,
@@ -114,19 +128,6 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		} catch (BusinessException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
-	}
-
-	private SessionProcedure predictProcedure(HttpServletRequest request,
-			final SessionProcedureRequest sessionProcedureRequest) throws ServiceException {
-		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
-		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
-
-		if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
-
-//		managementService.predictProcedure(request, toString());
-		queueService.nextProcedure(request, procedure, sessionCase.getContextId());
-		return procedure;
 	}
 
 	private SessionProcedure nextProcedure(HttpServletRequest request,

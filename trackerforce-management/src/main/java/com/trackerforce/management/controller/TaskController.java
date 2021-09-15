@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.model.request.TaskRequest;
@@ -47,7 +48,9 @@ public class TaskController {
 			@RequestParam(defaultValue = "10") int size) {
 		var query = new HashMap<String, Object>();
 		query.put("description", description);
-		return ResponseEntity.ok(taskService.findAllProjectedBy(query, sortBy, output, page, size));
+		
+		var queryable = new QueryableRequest(query, sortBy, output, page, size);
+		return ResponseEntity.ok(taskService.findAllProjectedBy(queryable));
 	}
 	
 	@GetMapping(value = "/v1/{id}")

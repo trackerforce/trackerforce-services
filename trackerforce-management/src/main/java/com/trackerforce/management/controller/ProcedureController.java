@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.model.Task;
@@ -51,7 +52,9 @@ public class ProcedureController {
 		var query = new HashMap<String, Object>();
 		query.put("description", description);
 		query.put("name", name);
-		return ResponseEntity.ok(procedureService.findAllProjectedBy(query, sortBy, output, page, size));
+		
+		var queryable = new QueryableRequest(query, sortBy, output, page, size);
+		return ResponseEntity.ok(procedureService.findAllProjectedBy(queryable));
 	}
 	
 	@GetMapping(value = "/v1/{id}")

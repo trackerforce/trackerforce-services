@@ -10,6 +10,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.model.AbstractDocument;
+import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
 import com.trackerforce.common.tenant.service.exception.InvalidServiceUpdateException;
 
@@ -126,15 +127,14 @@ public abstract class AbstractTenantService<T extends AbstractDocument> {
 	/**
 	 * {@link AbstractBusinessService#findAllProjectedBy(String, String, String, int, int)}
 	 */
-	public Map<String, Object> findAllProjectedBy(Map<String, Object> query, String sortBy, String output, int page,
-			int size) {
+	public Map<String, Object> findAllProjectedBy(QueryableRequest queryable) {
 
-		final var criteriaOptional = Optional.ofNullable(query);
-		final var outputOptional = Optional.ofNullable(output);
-		final var sortOptional = Optional.ofNullable(sortBy);
+		final var criteriaOptional = Optional.ofNullable(queryable.getQuery());
+		final var outputOptional = Optional.ofNullable(queryable.getOutput());
+		final var sortOptional = Optional.ofNullable(queryable.getSortBy());
 
-		var criteria = dao.createCriteria(query, criteriaOptional);
-		var pageData = dao.findByProjectedBy(serviceModel, criteria, page, size,
+		var criteria = dao.createCriteria(queryable.getQuery(), criteriaOptional);
+		var pageData = dao.findByProjectedBy(serviceModel, criteria, queryable.getPage(), queryable.getSize(),
 				outputOptional.isPresent() ? outputOptional.get().split(",") : null,
 				sortOptional.isPresent() ? sortOptional.get().split(",") : null);
 

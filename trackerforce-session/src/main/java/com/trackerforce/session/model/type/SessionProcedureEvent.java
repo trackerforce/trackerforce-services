@@ -5,6 +5,5 @@ public enum SessionProcedureEvent {
 	SAVE,
 	SUBMIT,
 	CANCEL,
-	PREDICT,
 	NEXT,
 }

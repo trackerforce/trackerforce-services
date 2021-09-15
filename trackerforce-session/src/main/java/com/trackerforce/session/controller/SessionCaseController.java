@@ -1,5 +1,7 @@
 package com.trackerforce.session.controller;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
@@ -51,9 +53,12 @@ public class SessionCaseController {
 	}
 
 	@GetMapping(value = "/v1/ids")
-	public ResponseEntity<?> findByIds(HttpServletRequest request, @RequestBody SessionCaseRequest sessionCaseRequest,
-			@RequestParam(required = false) String sortBy, @RequestParam(required = false) String output,
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+	public ResponseEntity<?> findByIds(HttpServletRequest request, 
+			@RequestBody SessionCaseRequest sessionCaseRequest,
+			@RequestParam(required = false) String sortBy, 
+			@RequestParam(required = false) String output,
+			@RequestParam(defaultValue = "0") int page, 
+			@RequestParam(defaultValue = "10") int size) {
 		return ResponseEntity.ok(
 				sessionCaseService.findByIdsProjectedBy(sessionCaseRequest.getCaseIds(), sortBy, output, page, size));
 	}
@@ -61,6 +66,21 @@ public class SessionCaseController {
 	@GetMapping(value = "/v1/protocol/{protocol}")
 	public ResponseEntity<SessionCase> findByProtocol(@PathVariable("protocol") String protocol) {
 		return ResponseEntity.ok(sessionCaseService.getSessionCaseByProtocol(protocol));
+	}
+	
+	@GetMapping(value = "/v1/next")
+	public ResponseEntity<?> next(HttpServletRequest request,
+			@RequestBody SessionProcedureRequest sessionProcedureRequest,
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) String description,
+			@RequestParam(required = false) String sortBy,
+			@RequestParam(required = false) String output,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		var query = new HashMap<String, Object>();
+		query.put("description", description);
+		query.put("name", name);
+		return ResponseEntity.ok(sessionCaseService.getSessionCaseByProtocol(""));
 	}
 
 }

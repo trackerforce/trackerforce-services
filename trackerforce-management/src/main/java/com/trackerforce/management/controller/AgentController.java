@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trackerforce.common.model.request.AgentRequest;
+import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.service.AgentService;
@@ -86,7 +87,8 @@ public class AgentController {
 			@RequestParam(required = false) String output,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
-		return ResponseEntity.ok(agentService.findAllProjectedBy(query, sortBy, output, page, size));
+		var queryable = new QueryableRequest(query, sortBy, output, page, size);
+		return ResponseEntity.ok(agentService.findAllProjectedBy(queryable));
 	}
 
 	@GetMapping(value = "/v1/me")

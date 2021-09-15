@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.model.request.GlobalRequest;
@@ -46,7 +47,8 @@ public class GlobalController {
 			@RequestParam(required = false) String output,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
-		return ResponseEntity.ok(globalService.findAllProjectedBy(query, sortBy, output, page, size));
+		var queryable = new QueryableRequest(query, sortBy, output, page, size);
+		return ResponseEntity.ok(globalService.findAllProjectedBy(queryable));
 	}
 	
 	@GetMapping(value = "/v1/{key}")
@@ -54,7 +56,8 @@ public class GlobalController {
 		Map<String, Object> query = new HashMap<String, Object>();
 		query.put("key", key);
 		
-		var result = globalService.findAllProjectedBy(query, null, output, 0, 1);
+		var queryable = new QueryableRequest(query, null, output, 0, 1);
+		var result = globalService.findAllProjectedBy(queryable);
 		var data = ((List<?>) result.get("data"));
 		
 		if (data.size() == 0)
