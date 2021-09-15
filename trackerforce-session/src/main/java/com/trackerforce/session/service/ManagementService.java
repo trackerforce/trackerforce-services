@@ -13,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.common.tenant.model.CommonProcedure;
-import com.trackerforce.common.tenant.model.CommonTask;
 import com.trackerforce.common.tenant.model.CommonTemplate;
 
 @Service
@@ -44,8 +43,21 @@ public class ManagementService {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public CommonProcedure<CommonTask> findProcedure(HttpServletRequest request, String id) {
+	public CommonProcedure<?> findProcedure(HttpServletRequest request, String id) {
+		var headers = new HttpHeaders();
+		setHeaders(request, headers);
+
+		try {
+			var response = restTemplate.exchange(serviceUrl + "procedure/v1/" + id, HttpMethod.GET,
+					new HttpEntity<>(null, headers), CommonProcedure.class);
+
+			return response.getBody();
+		} catch (HttpClientErrorException e) {
+			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+		}
+	}
+	
+	public CommonProcedure<?> predictProcedure(HttpServletRequest request, String id) {
 		var headers = new HttpHeaders();
 		setHeaders(request, headers);
 

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
+import com.trackerforce.session.model.SessionCase;
 import com.trackerforce.session.model.request.SessionCaseRequest;
 import com.trackerforce.session.model.request.SessionProcedureRequest;
 import com.trackerforce.session.service.SessionCaseService;
@@ -49,14 +51,16 @@ public class SessionCaseController {
 	}
 
 	@GetMapping(value = "/v1/ids")
-	public ResponseEntity<?> findByIds(HttpServletRequest request, 
-			@RequestBody SessionCaseRequest sessionCaseRequest,
-			@RequestParam(required = false) String sortBy, 
-			@RequestParam(required = false) String output,
-			@RequestParam(defaultValue = "0") int page, 
-			@RequestParam(defaultValue = "10") int size) {
-		return ResponseEntity.ok(sessionCaseService.findByIdsProjectedBy(sessionCaseRequest.getCaseIds(), sortBy,
-				output, page, size));
+	public ResponseEntity<?> findByIds(HttpServletRequest request, @RequestBody SessionCaseRequest sessionCaseRequest,
+			@RequestParam(required = false) String sortBy, @RequestParam(required = false) String output,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(
+				sessionCaseService.findByIdsProjectedBy(sessionCaseRequest.getCaseIds(), sortBy, output, page, size));
+	}
+
+	@GetMapping(value = "/v1/protocol/{protocol}")
+	public ResponseEntity<SessionCase> findByProtocol(@PathVariable("protocol") String protocol) {
+		return ResponseEntity.ok(sessionCaseService.getSessionCaseByProtocol(protocol));
 	}
 
 }

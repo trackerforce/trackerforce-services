@@ -64,6 +64,8 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 			return createProcedure(request, sessionProcedureRequest);
 		case SUBMIT:
 			return submitProcedure(request, sessionProcedureRequest);
+		case PREDICT:
+			return predictProcedure(request, sessionProcedureRequest);
 		case NEXT:
 			return nextProcedure(request, sessionProcedureRequest);
 		case SAVE:
@@ -73,6 +75,15 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		default:
 			throw new ServiceException("Invalid Session Procedure Event");
 		}
+	}
+
+	public SessionCase getSessionCaseByProtocol(String protocol) {
+		var optCase = sessionCaseDao.getCaseRepository().findByProtocol(Long.parseLong(protocol));
+
+		if (optCase == null)
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Case not found");
+
+		return optCase;
 	}
 
 	private SessionProcedure createProcedure(HttpServletRequest request,
@@ -103,6 +114,19 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		} catch (BusinessException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
+	}
+
+	private SessionProcedure predictProcedure(HttpServletRequest request,
+			final SessionProcedureRequest sessionProcedureRequest) throws ServiceException {
+		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
+		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
+
+		if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
+
+//		managementService.predictProcedure(request, toString());
+		queueService.nextProcedure(request, procedure, sessionCase.getContextId());
+		return procedure;
 	}
 
 	private SessionProcedure nextProcedure(HttpServletRequest request,
