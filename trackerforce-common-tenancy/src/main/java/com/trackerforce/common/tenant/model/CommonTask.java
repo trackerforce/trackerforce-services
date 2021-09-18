@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.trackerforce.common.tenant.model.type.TaskType;
 
 @JsonInclude(Include.NON_NULL)
-public abstract class CommonTask extends AbstractBusinessDocument {
+public class CommonTask extends AbstractBusinessDocument {
 
 	/**
 	 * {@link TaskType}

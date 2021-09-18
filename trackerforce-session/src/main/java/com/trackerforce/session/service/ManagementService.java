@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.common.tenant.model.CommonProcedure;
-import com.trackerforce.common.tenant.model.CommonTemplate;
+import com.trackerforce.session.model.SessionTemplate;
 import com.trackerforce.session.model.response.GlobalResponse;
 
 @Service
@@ -31,15 +31,14 @@ public class ManagementService {
 		headers.add(RequestHeader.AUTHORIZATION.toString(), request.getHeader(RequestHeader.AUTHORIZATION.toString()));
 		headers.add(RequestHeader.TENANT_HEADER.toString(), request.getHeader(RequestHeader.TENANT_HEADER.toString()));
 	}
-
-	@SuppressWarnings("unchecked")
-	public CommonTemplate<CommonProcedure<?>> findTemplate(HttpServletRequest request, String id) {
+	
+	public SessionTemplate findTemplate(HttpServletRequest request, String id) {
 		var headers = new HttpHeaders();
 		setHeaders(request, headers);
 
 		try {
 			var response = restTemplate.exchange(serviceUrl + "template/v1/" + id, HttpMethod.GET,
-					new HttpEntity<>(null, headers), CommonTemplate.class);
+					new HttpEntity<>(null, headers), SessionTemplate.class);
 
 			return response.getBody();
 		} catch (HttpClientErrorException e) {

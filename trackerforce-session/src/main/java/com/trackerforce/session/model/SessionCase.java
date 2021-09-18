@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.trackerforce.common.tenant.model.AbstractBusinessDocument;
 import com.trackerforce.common.tenant.model.CommonProcedure;
-import com.trackerforce.common.tenant.model.CommonTemplate;
 
 @Document(collection = "cases")
 public class SessionCase extends AbstractBusinessDocument {
@@ -23,14 +22,14 @@ public class SessionCase extends AbstractBusinessDocument {
 	public SessionCase() {
 	}
 
-	private SessionCase(CommonTemplate<CommonProcedure<?>> input) {
+	private SessionCase(SessionTemplate input) {
 		this.contextId = input.getId();
 		this.context = input.getName();
 		super.setDescription(input.getDescription());
 		super.setHelper(input.getHelper());
 	}
 
-	public static SessionCase create(CommonTemplate<CommonProcedure<?>> input) {
+	public static SessionCase create(SessionTemplate input) {
 		var sessionCase = new SessionCase(input);
 
 		sessionCase.setProtocol(System.currentTimeMillis() / 1000);

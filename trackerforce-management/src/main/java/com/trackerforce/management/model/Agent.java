@@ -1,7 +1,7 @@
 package com.trackerforce.management.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -73,7 +73,7 @@ public class Agent extends AbstractBusinessDocument {
 
 	public List<String> getCases() {
 		if (cases == null)
-			cases = Collections.emptyList();
+			cases = new ArrayList<>();
 		return cases;
 	}
 

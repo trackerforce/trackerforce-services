@@ -42,7 +42,7 @@ public class AuthAccess extends AbstractIdentityDocument {
 	 */
 	public AuthAccess(String username, String orgAlias) {
 		this.username = username;
-		setOrganization(orgAlias);
+		setOrganizationByAlias(orgAlias);
 		setRoot(false);
 	}
 	

@@ -56,23 +56,22 @@ public class AgentController {
 
 	@PostMapping(value = "/v1/watch/{agentId}/{caseId}")
 	public ResponseEntity<?> watch(
-			@PathVariable(value = "id") String agentId,
-			@PathVariable(value = "id") String caseId) {
+			@PathVariable(value = "agentId") String agentId,
+			@PathVariable(value = "caseId") String caseId) {
 		return ResponseEntity.ok(agentService.watchCase(agentId, caseId));
 	}
 	
 	@PostMapping(value = "/v1/unwatch/{agentId}/{caseId}")
 	public ResponseEntity<?> unwatch(
-			@PathVariable(value = "id") String agentId,
-			@PathVariable(value = "id") String caseId) {
+			@PathVariable(value = "agentId") String agentId,
+			@PathVariable(value = "caseId") String caseId) {
 		return ResponseEntity.ok(agentService.unWatchCase(agentId, caseId));
 	}
 	
 	@GetMapping(value = "/v1/cases/{agentId}")
-	public ResponseEntity<?> listCases(
-			@PathVariable(value = "id") String agentId,
-			@PathVariable(value = "id") String caseId) {
-		return ResponseEntity.ok(agentService.unWatchCase(agentId, caseId));
+	public ResponseEntity<?> listCases(@PathVariable(value = "agentId") String agentId) {
+		// TODO: Implement
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping(value = "/v1/{id}")
