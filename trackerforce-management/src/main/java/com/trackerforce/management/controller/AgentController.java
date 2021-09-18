@@ -67,12 +67,6 @@ public class AgentController {
 			@PathVariable(value = "caseId") String caseId) {
 		return ResponseEntity.ok(agentService.unWatchCase(agentId, caseId));
 	}
-	
-	@GetMapping(value = "/v1/cases/{agentId}")
-	public ResponseEntity<?> listCases(@PathVariable(value = "agentId") String agentId) {
-		// TODO: Implement
-		return ResponseEntity.ok().build();
-	}
 
 	@GetMapping(value = "/v1/{id}")
 	public ResponseEntity<?> findOne(@PathVariable(value="id") String id, String output) {

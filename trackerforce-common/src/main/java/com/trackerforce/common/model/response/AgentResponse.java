@@ -38,25 +38,27 @@ public class AgentResponse {
 		setTempAccess(password);
 	}
 
-	private AgentResponse(String id, String email, List<String> roles, boolean online, boolean active) {
+	private AgentResponse(String id, String email, List<String> roles) {
 		setId(id);
 		setEmail(email);
 		setRoles(roles);
-		setOnline(online);
-		setActive(active);
+		setOnline(true);
+		setActive(true);
 	}
 
 	private AgentResponse(String email, List<String> cases) {
 		setEmail(email);
 		setCases(cases);
+		setOnline(true);
+		setActive(true);
 	}
 
 	public static AgentResponse createAgent(String name, String email, String password, List<String> roles) {
 		return new AgentResponse(name, email, password, roles);
 	}
 
-	public static AgentResponse login(String id, String email, List<String> roles, boolean online, boolean active) {
-		return new AgentResponse(id, email, roles, online, active);
+	public static AgentResponse login(String id, String email, List<String> roles) {
+		return new AgentResponse(id, email, roles);
 	}
 
 	public static AgentResponse watch(String email, List<String> cases) {

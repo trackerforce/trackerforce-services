@@ -103,8 +103,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 		agent.setOnline(true);
 		agentDao.save(agent);
 
-		return AgentResponse.login(agent.getId(), agent.getEmail(), agent.getRoles(), agent.isOnline(),
-				agent.isActive());
+		return AgentResponse.login(agent.getId(), agent.getEmail(), agent.getRoles());
 	}
 
 	public void logoff(HttpServletRequest request) {
