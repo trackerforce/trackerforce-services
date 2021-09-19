@@ -58,7 +58,9 @@ public class ProcedureController {
 	}
 	
 	@GetMapping(value = "/v1/{id}")
-	public ResponseEntity<?> findOne(@PathVariable(value="id") String id, String output) {
+	public ResponseEntity<?> findOne(
+			@PathVariable(value = "id") String id,
+			@RequestParam(required = false) String output) {
 		return ResponseEntity.ok(procedureService.findByIdProjectedBy(id, output));
 	}
 	

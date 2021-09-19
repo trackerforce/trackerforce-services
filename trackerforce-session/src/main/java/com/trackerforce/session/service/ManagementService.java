@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.model.type.RequestHeader;
-import com.trackerforce.common.tenant.model.CommonProcedure;
+import com.trackerforce.session.model.SessionProcedure;
 import com.trackerforce.session.model.SessionTemplate;
 import com.trackerforce.session.model.response.GlobalResponse;
 
@@ -45,14 +45,23 @@ public class ManagementService {
 			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
 		}
 	}
+	
+	public SessionProcedure findProcedureShort(HttpServletRequest request, String id) {
+		return findProcedure(request, id, "id,name,description");
+	}
+	
+	public SessionProcedure findProcedure(HttpServletRequest request, String id) {
+		return findProcedure(request, id, null);
+	}
 
-	public CommonProcedure<?> findProcedure(HttpServletRequest request, String id) {
+	private SessionProcedure findProcedure(HttpServletRequest request, String id, String output) {
 		var headers = new HttpHeaders();
 		setHeaders(request, headers);
 
 		try {
-			var response = restTemplate.exchange(serviceUrl + "procedure/v1/" + id, HttpMethod.GET,
-					new HttpEntity<>(null, headers), CommonProcedure.class);
+			var url = String.format("%s%s%s?output=%s", serviceUrl, "procedure/v1/", id, output);
+			var response = restTemplate.exchange(url, HttpMethod.GET,
+					new HttpEntity<>(null, headers), SessionProcedure.class);
 
 			return response.getBody();
 		} catch (HttpClientErrorException e) {

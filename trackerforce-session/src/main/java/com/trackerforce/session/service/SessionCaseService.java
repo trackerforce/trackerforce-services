@@ -101,19 +101,21 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		return nextResult(request, procedure, queryable);
 	}
 	
-	private Map<String, Object> nextResult(HttpServletRequest request, SessionProcedure procedure, QueryableRequest queryable) {
-//		var result = new HashMap<String, Object>();
+	private Map<String, Object> nextResult(HttpServletRequest request, SessionProcedure procedure,
+			QueryableRequest queryable) {
 		var mlServiceUrl = managementService.findMLServiceUrl(request);
 		var mlUrl = mlServiceUrl.getValue("url");
 		var mlAccuracy = mlServiceUrl.getValue("accuracy");
-		
-		var predicted = mlEngineService.predictProcedure(mlUrl, procedure);
-		if (predicted.getAccuracy() > 0) {
-			var predictedProcedure = managementService.findProcedure(request, predicted.getPredicted());
-		}
-			
+
 		var procedures = managementService.findAll(request, queryable);
+		var predicted = mlEngineService.predictProcedure(mlUrl, procedure);
 		
+		if (predicted.getAccuracy() >= Long.valueOf(mlAccuracy)) {
+			var predictedProcedure = managementService.findProcedureShort(request, predicted.getPredicted());
+			procedures.put("predicted", predictedProcedure);
+			procedures.put("prediction_accuracy", predicted.getAccuracy());
+		}
+
 		return procedures;
 	}
 

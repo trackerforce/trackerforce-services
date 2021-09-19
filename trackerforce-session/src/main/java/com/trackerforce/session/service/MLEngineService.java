@@ -25,7 +25,14 @@ public class MLEngineService {
 			return prediction.getBody();
 		}
 		
-		return null;
+		return mockResponse();
+	}
+	
+	private PredictionResponse mockResponse() {
+		var response = new PredictionResponse();
+		response.setAccuracy(80);
+		response.setPredicted("60e7d05e4b4fd060c7ea5b10");
+		return response;
 	}
 
 }
