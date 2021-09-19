@@ -98,10 +98,22 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
 
-		// TODO: Implement agreggation
+		return nextResult(request, procedure, queryable);
+	}
+	
+	private Map<String, Object> nextResult(HttpServletRequest request, SessionProcedure procedure, QueryableRequest queryable) {
+//		var result = new HashMap<String, Object>();
 		var mlServiceUrl = managementService.findMLServiceUrl(request);
-		var predicted = mlEngineService.predictProcedure(mlServiceUrl.getValue("url"), procedure);
+		var mlUrl = mlServiceUrl.getValue("url");
+		var mlAccuracy = mlServiceUrl.getValue("accuracy");
+		
+		var predicted = mlEngineService.predictProcedure(mlUrl, procedure);
+		if (predicted.getAccuracy() > 0) {
+			var predictedProcedure = managementService.findProcedure(request, predicted.getPredicted());
+		}
+			
 		var procedures = managementService.findAll(request, queryable);
+		
 		return procedures;
 	}
 

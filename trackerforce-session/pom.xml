@@ -34,6 +34,7 @@
 	</scm>
 
 	<properties>
+		<switcherclient.version>1.2.1</switcherclient.version>
 		<trackerforce-common-tenancy.version>0.0.2-SNAPSHOT</trackerforce-common-tenancy.version>
 	</properties>
 	
@@ -60,6 +61,12 @@
 			<groupId>com.trackerforce</groupId>
 			<artifactId>trackerforce-common-tenancy</artifactId>
 			<version>${trackerforce-common-tenancy.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.github.switcherapi</groupId>
+			<artifactId>switcher-client</artifactId>
+			<version>${switcherclient.version}</version>
 		</dependency>
 
 		<dependency>

@@ -2,7 +2,7 @@ package com.trackerforce.common.tenant.model.type;
 
 public enum GlobalKeyType {
 
-	ML_SERVICE("Machine Learning Engine Service URL", "url");
+	ML_SERVICE("Machine Learning Engine Service", "url", "accuracy");
 	
 	private String summary;
 	
