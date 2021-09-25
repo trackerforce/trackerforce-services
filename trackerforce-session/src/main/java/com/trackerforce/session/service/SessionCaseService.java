@@ -15,6 +15,7 @@ import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.session.model.SessionCase;
 import com.trackerforce.session.model.SessionProcedure;
 import com.trackerforce.session.model.SessionTask;
+import com.trackerforce.session.model.request.PredictionRequest;
 import com.trackerforce.session.model.request.SessionCaseRequest;
 import com.trackerforce.session.model.request.SessionProcedureRequest;
 import com.trackerforce.session.model.type.ProcedureStatus;
@@ -98,18 +99,18 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
 
-		return nextResult(request, procedure, queryable);
+		return nextResult(request, procedure, sessionCase, queryable);
 	}
 	
 	private Map<String, Object> nextResult(HttpServletRequest request, SessionProcedure procedure,
-			QueryableRequest queryable) {
+			SessionCase sessionCase, QueryableRequest queryable) {
 		var mlServiceUrl = managementService.findMLServiceUrl(request);
 		var mlUrl = mlServiceUrl.getValue("url");
 		var mlAccuracy = mlServiceUrl.getValue("accuracy");
 
 		var procedures = managementService.findAll(request, queryable);
-		var predicted = mlEngineService.predictProcedure(mlUrl, procedure);
-		
+		var predicted = mlEngineService.predictProcedure(mlUrl, new PredictionRequest(sessionCase, procedure));
+
 		if (predicted.getAccuracy() >= Long.valueOf(mlAccuracy)) {
 			var predictedProcedure = managementService.findProcedureShort(request, predicted.getPredicted());
 			procedures.put("predicted", predictedProcedure);

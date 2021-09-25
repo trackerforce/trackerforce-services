@@ -9,7 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.trackerforce.session.model.SessionProcedure;
+import com.trackerforce.session.model.request.PredictionRequest;
 import com.trackerforce.session.model.response.PredictionResponse;
 
 @Service
@@ -17,10 +17,10 @@ public class MLEngineService {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	public PredictionResponse predictProcedure(String serviceUrl, SessionProcedure procedureRequest) {
+	public PredictionResponse predictProcedure(String serviceUrl, PredictionRequest predictionRequest) {
 		if (getSwitcher(ML_SERVICE).isItOn()) {
 			var prediction = restTemplate.exchange(String.format("%s%s", serviceUrl, "/predict/v1/"), HttpMethod.GET,
-					new HttpEntity<>(procedureRequest, new HttpHeaders()), PredictionResponse.class);
+					new HttpEntity<>(predictionRequest, new HttpHeaders()), PredictionResponse.class);
 	
 			return prediction.getBody();
 		}
