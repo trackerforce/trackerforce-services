@@ -11,11 +11,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.trackerforce.common.model.exception.BusinessException;
 import com.trackerforce.common.model.request.QueryableRequest;
+import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.session.model.SessionCase;
 import com.trackerforce.session.model.SessionProcedure;
 import com.trackerforce.session.model.SessionTask;
-import com.trackerforce.session.model.request.PredictionRequest;
 import com.trackerforce.session.model.request.SessionCaseRequest;
 import com.trackerforce.session.model.request.SessionProcedureRequest;
 import com.trackerforce.session.model.type.ProcedureStatus;
@@ -104,13 +104,17 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 	
 	private Map<String, Object> nextResult(HttpServletRequest request, SessionProcedure procedure,
 			SessionCase sessionCase, QueryableRequest queryable) {
+		// Retrieve ML access info
 		var mlServiceUrl = managementService.findMLServiceUrl(request);
 		var mlUrl = mlServiceUrl.getValue("url");
 		var mlAccuracy = mlServiceUrl.getValue("accuracy");
-
+		var tenantId = request.getHeader(RequestHeader.TENANT_HEADER.toString());
+		
+		// Retrieve available procedures
 		var procedures = managementService.findAll(request, queryable);
-		var predicted = mlEngineService.predictProcedure(mlUrl, new PredictionRequest(sessionCase, procedure));
-
+		
+		// Retrieve prediction and validate accuracy before aggregating
+		var predicted = mlEngineService.predictProcedure(mlUrl, tenantId, procedure, sessionCase.getContextId());
 		if (predicted.getAccuracy() >= Long.valueOf(mlAccuracy)) {
 			var predictedProcedure = managementService.findProcedureShort(request, predicted.getPredicted());
 			procedures.put("predicted", predictedProcedure);
