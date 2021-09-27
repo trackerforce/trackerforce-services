@@ -42,7 +42,6 @@ public class GlobalService extends AbstractBusinessService<Global> {
 		var promise = globalDao.getGlobalRepository().findById(id);
 		var allowed = new HashMap<String, String[]>();
 		allowed.put(entityName, ALLOWED_GLOBAL_UPDATE);
-		allowed.put("helper", ALLOWED_HELPER_UPDATE);
 
 		return super.update(promise, updates, allowed);
 	}
