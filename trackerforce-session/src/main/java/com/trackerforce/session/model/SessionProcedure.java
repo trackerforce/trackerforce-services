@@ -2,6 +2,7 @@ package com.trackerforce.session.model;
 
 import java.util.LinkedList;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trackerforce.common.model.exception.BusinessException;
 import com.trackerforce.common.tenant.model.CommonProcedure;
 import com.trackerforce.common.tenant.model.CommonTask;
@@ -9,6 +10,9 @@ import com.trackerforce.common.tenant.model.exception.InvalidStatusChangeExcepti
 import com.trackerforce.session.model.type.ProcedureStatus;
 
 public class SessionProcedure extends CommonProcedure<SessionTask> {
+	
+	@JsonProperty("context_id")
+	private String contextId;
 
 	private String resolution;
 
@@ -66,6 +70,14 @@ public class SessionProcedure extends CommonProcedure<SessionTask> {
 
 	public ProcedureStatus getStatus() {
 		return status;
+	}
+
+	public String getContextId() {
+		return contextId;
+	}
+
+	public void setContextId(String contextId) {
+		this.contextId = contextId;
 	}
 
 	@Override

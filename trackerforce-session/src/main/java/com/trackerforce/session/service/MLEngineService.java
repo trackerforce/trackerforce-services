@@ -18,21 +18,21 @@ public class MLEngineService {
 	private RestTemplate restTemplate = new RestTemplate();
 
 	public PredictionResponse predictProcedure(String serviceUrl, String tenantId,
-			SessionProcedure predictionRequest, String contextId) {
+			SessionProcedure procedure, String contextId) {
+		procedure.setContextId(contextId);
 		if (getSwitcher(ML_SERVICE).isItOn()) {
 			var prediction = restTemplate.exchange(String.format("%s%s%s", serviceUrl, "/predict/v1/", tenantId),
-					HttpMethod.GET, new HttpEntity<>(predictionRequest, new HttpHeaders()), PredictionResponse.class);
-
+					HttpMethod.POST, new HttpEntity<>(procedure, new HttpHeaders()), PredictionResponse.class);
+			
 			return prediction.getBody();
 		}
-
+		
 		return mockResponse();
 	}
 	
 	private PredictionResponse mockResponse() {
 		var response = new PredictionResponse();
-		response.setAccuracy(80);
-		response.setPredicted("60e7d05e4b4fd060c7ea5b10");
+		response.setAccuracy(0);
 		return response;
 	}
 

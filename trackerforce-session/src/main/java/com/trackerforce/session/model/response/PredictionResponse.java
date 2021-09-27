@@ -1,7 +1,10 @@
 package com.trackerforce.session.model.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PredictionResponse {
 
+	@JsonProperty("prediction_accuracy")
 	private long accuracy;
 
 	private String predicted;
