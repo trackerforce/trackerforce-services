@@ -1,5 +1,6 @@
 package com.trackerforce.management.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
+import com.trackerforce.common.tenant.model.type.GlobalKeyType;
 import com.trackerforce.management.model.request.GlobalRequest;
+import com.trackerforce.management.model.response.GlobalResponse;
 import com.trackerforce.management.service.GlobalService;
 
 @CrossOrigin(allowedHeaders = { "X-Tenant" })
@@ -49,6 +52,15 @@ public class GlobalController {
 			@RequestParam(defaultValue = "10") int size) {
 		var queryable = new QueryableRequest(query, sortBy, output, page, size);
 		return ResponseEntity.ok(globalService.findAllProjectedBy(queryable));
+	}
+	
+	@GetMapping(value = "/v1/list")
+	public ResponseEntity<ArrayList<GlobalResponse>> listGlobals() {
+		var keys = new ArrayList<GlobalResponse>();
+		for (GlobalKeyType gk : GlobalKeyType.values())
+			keys.add(new GlobalResponse(gk.name(), gk.getSummary(), gk.getAttributes()));
+
+		return ResponseEntity.ok(keys);
 	}
 	
 	@GetMapping(value = "/v1/{key}")
