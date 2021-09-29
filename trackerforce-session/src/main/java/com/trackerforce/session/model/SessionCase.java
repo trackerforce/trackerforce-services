@@ -73,4 +73,11 @@ public class SessionCase extends AbstractBusinessDocument {
 		this.context = context;
 	}
 
+	public boolean isClosingProcedure() {
+		for (SessionProcedure p : procedures)
+			if (p.getTasks().size() > 0)
+				return false;
+		return true;
+	}
+
 }

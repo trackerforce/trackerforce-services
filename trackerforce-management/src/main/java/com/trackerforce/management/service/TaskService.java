@@ -30,9 +30,13 @@ public class TaskService extends AbstractBusinessService<Task> {
 			Assert.notNull(entity, "The class must not be null");
 			Assert.notNull(entity.getType(), "'type' must not be empty");
 			Assert.hasText(entity.getDescription(), "'description' must not be empty");
-
+			
+			if (entity.isLearn())
+				Assert.isTrue(entity.getType().isLearnable(), "Type cannot be trained");
+			
 			if (entity.getHelper() != null)
 				RenderType.validate(entity.getHelper().getRenderType());
+			
 		} catch (final Exception e) {
 			throw new ServiceException(e.getMessage(), e);
 		}

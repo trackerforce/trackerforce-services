@@ -132,6 +132,10 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 
 		sessionCase.getProcedures().add(procedure);
 		sessionCaseDao.save(sessionCase);
+		
+		if (sessionCase.isClosingProcedure())
+			return submitProcedure(request, sessionProcedureRequest);
+			
 		return procedure;
 	}
 
