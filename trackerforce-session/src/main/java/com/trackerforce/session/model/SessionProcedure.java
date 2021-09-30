@@ -18,7 +18,7 @@ public class SessionProcedure extends CommonProcedure<SessionTask> {
 
 	private ProcedureStatus status = ProcedureStatus.OPENED;
 
-	protected LinkedList<SessionTask> tasks;
+	private LinkedList<SessionTask> tasks;
 
 	public SessionProcedure() {
 	}
