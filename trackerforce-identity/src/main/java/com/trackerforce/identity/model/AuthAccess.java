@@ -15,7 +15,7 @@ import com.trackerforce.identity.model.request.JwtRequest;
 @Document(collection = "auth-access")
 public class AuthAccess extends AbstractIdentityDocument {
 	
-	private String username;
+	private String email;
 	
 	@JsonIgnore
 	private String password;
@@ -32,7 +32,7 @@ public class AuthAccess extends AbstractIdentityDocument {
 	public AuthAccess() {}
 	
 	public AuthAccess(JwtRequest authRequest, Organization organization) {
-		this.username = authRequest.getUsername();
+		this.email = authRequest.getEmail();
 		this.password = authRequest.getPassword();
 		setOrganization(organization);
 	}
@@ -41,7 +41,7 @@ public class AuthAccess extends AbstractIdentityDocument {
 	 * Agents and Session users
 	 */
 	public AuthAccess(String username, String orgAlias) {
-		this.username = username;
+		this.email = username;
 		setOrganizationByAlias(orgAlias);
 		setRoot(false);
 	}
@@ -63,12 +63,12 @@ public class AuthAccess extends AbstractIdentityDocument {
 		return claims;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUsername(String userName) {
-		this.username = userName;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getPassword() {

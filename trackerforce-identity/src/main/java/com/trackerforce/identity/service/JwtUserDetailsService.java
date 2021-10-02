@@ -24,17 +24,17 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		final var user = authAccessRepository.findByUsername(username);
+		final var user = authAccessRepository.findByEmail(username);
 		
 		if (user == null)
 			throw new UsernameNotFoundException("User not found with username: " + username);
 			
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
 				new ArrayList<>());
 	}
 
 	public AuthAccess newUser(AuthAccess user) {
-		final var jwt = new JwtRequest(user.getUsername(), bcryptEncoder.encode(user.getPassword()));
+		final var jwt = new JwtRequest(user.getEmail(), bcryptEncoder.encode(user.getPassword()));
 		final var newUser = new AuthAccess(jwt, user.getOrganization());
 		return authAccessRepository.save(newUser);
 	}

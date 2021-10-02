@@ -65,14 +65,14 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		if (!entity.hasValidOrganization())
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Organization values");
 
-		if (!StringUtils.hasText(entity.getUsername()) || !StringUtils.hasText(entity.getPassword()))
+		if (!StringUtils.hasText(entity.getEmail()) || !StringUtils.hasText(entity.getPassword()))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid AuthAccess values");
 	}
 
 	private void authenticate(JwtRequest authRequest) {
 		try {
 			authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+					new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 		} catch (DisabledException e) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "USER_DISABLED");
 		} catch (BadCredentialsException e) {
@@ -83,7 +83,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 	public Map<String, Object> authenticateAccess(JwtRequest authRequest) {
 		authenticate(authRequest);
 
-		final var authAccess = authAccessRepository.findByUsername(authRequest.getUsername());
+		final var authAccess = authAccessRepository.findByEmail(authRequest.getEmail());
 		final var jwt = jwtTokenUtil.generateToken(authAccess.getId(), authAccess.getOrganization().getAlias(),
 				authAccess.getDefaultClaims());
 

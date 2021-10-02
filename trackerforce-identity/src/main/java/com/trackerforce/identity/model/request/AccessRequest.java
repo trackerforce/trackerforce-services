@@ -4,29 +4,29 @@ import com.trackerforce.identity.model.AbstractIdentityDocument;
 import com.trackerforce.identity.model.AuthAccess;
 
 public class AccessRequest extends AbstractIdentityDocument {
-	
-	private String username;
-	
+
+	private String email;
+
 	private String password;
-	
+
 	public AuthAccess getAuthAccess() {
 		final var organization = getOrganization();
 		organization.setAlias(organization.getName());
-		
+
 		final var authAccess = new AuthAccess();
-		authAccess.setUsername(username);
+		authAccess.setEmail(email);
 		authAccess.setPassword(password);
 		authAccess.setOrganization(organization);
-		
+
 		return authAccess;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUsername(String userName) {
-		this.username = userName;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getPassword() {
