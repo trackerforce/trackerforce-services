@@ -32,6 +32,7 @@ public class IdentitySecurityConfig extends SecurityConfig {
 				.antMatchers(
 						"/**/authenticate/", 
 						"/**/register/",
+						"/**/refresh/",
 						"/**/activate/").permitAll()
 				.antMatchers("/**").access("isAuthenticated()")
 			

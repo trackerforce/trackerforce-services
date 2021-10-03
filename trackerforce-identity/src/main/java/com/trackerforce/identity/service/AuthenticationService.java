@@ -27,8 +27,8 @@ import com.trackerforce.common.model.type.ServicesRole;
 import com.trackerforce.common.service.JwtTokenService;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.identity.model.AuthAccess;
-import com.trackerforce.identity.model.Organization;
 import com.trackerforce.identity.model.request.AccessRequest;
+import com.trackerforce.identity.model.request.JwtRefreshRequest;
 import com.trackerforce.identity.model.request.JwtRequest;
 import com.trackerforce.identity.repository.AuthAccessRepository;
 
@@ -97,8 +97,45 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 
 		return response;
 	}
+	
+	public Map<String, Object> authenticateRefreshAccess(HttpServletRequest request,
+			JwtRefreshRequest authRefreshRequest) throws ServiceException {
+		
+		// Validates Bearer token was sent
+		var tokenOpt = JwtRequestFilter.getJwtFromRequest(request);
+		if (!tokenOpt.isPresent())
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
-	public Object getAuthenticated(HttpServletRequest request) throws ServiceException {
+		// Read token/playload
+		var token = tokenOpt.get();
+		var payload = jwtTokenUtil.readClaims(token);
+
+		// Validates refresh token
+		if (!jwtTokenUtil.isRefreshTokenValid(token, authRefreshRequest.getRefreshToken()))
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+		// Build Claims and new JWT
+		var claims = new HashMap<String, Object>();
+		claims.put(JwtKeys.ROLES.toString(), payload.getRoles());
+		final var jwt = jwtTokenUtil.generateToken(payload.getSub(), payload.getAud(), claims);
+
+		// Prepare response
+		var response = new HashMap<String, Object>();
+		response.put(JwtKeys.TOKEN.toString(), jwt[0]);
+		response.put(JwtKeys.REFRESH_TOKEN.toString(), jwt[1]);
+		
+		// Update root user
+		if (payload.getRoles().contains(ServicesRole.ROOT.name())) {
+			final var authAccessOpt = authAccessRepository.findById(payload.getSub());
+			final var authAccess = authAccessOpt.get();
+			authAccess.setTokenHash(bcrypt.encode(jwt[0]));
+			authAccessRepository.save(authAccess);
+		}
+
+		return response;
+	}
+
+	public AuthAccess getAuthenticated(HttpServletRequest request) throws ServiceException {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		var token = JwtRequestFilter.getJwtFromRequest(request);
@@ -130,11 +167,6 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		return authAccess;
-	}
-	
-	public Organization getOrganization(String tenantId) {
-		
-		return null;
 	}
 
 	public AuthAccess getInternalAuthenticated(HttpServletRequest request, String token, List<?> roles) {

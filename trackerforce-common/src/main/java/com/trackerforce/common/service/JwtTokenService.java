@@ -1,6 +1,7 @@
 package com.trackerforce.common.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
@@ -11,7 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+import com.trackerforce.common.model.JwtPayload;
+
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -24,6 +29,36 @@ public class JwtTokenService {
 	@Value("${service.jwt.secret}")
 	private String secret;
 	
+	public Jws<Claims> getClaims(String token) {
+		return Jwts.parserBuilder().setSigningKey(secret.getBytes()).build().parseClaimsJws(token);
+	}
+	
+	public Claims getAllClaimsFromToken(String token) {
+		return Jwts.parserBuilder()
+				.setSigningKey(secret.getBytes())
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+	}
+	
+	public JwtPayload readClaims(String token) {
+		Base64.Decoder decoder = Base64.getDecoder();
+		String[] chunks = token.split("\\.");
+		final var payload = new String(decoder.decode(chunks[1]));
+		
+		Gson gson = new Gson();
+		return gson.fromJson(payload, JwtPayload.class);
+	}
+	
+	private Boolean isTokenExpired(String token) {
+		final Date expiration = getExpirationDateFromToken(token);
+		return expiration.before(new Date());
+	}
+	
+	private String generateRefreshToken(String token) {
+		return new BCryptPasswordEncoder().encode(token.split("\\.")[2]);
+	}
+	
 	public String getUsernameFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
@@ -35,19 +70,6 @@ public class JwtTokenService {
 	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
 		final Claims claims = getAllClaimsFromToken(token);
 		return claimsResolver.apply(claims);
-	}
-	
-	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parserBuilder()
-				.setSigningKey(secret.getBytes())
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
-	}
-	
-	private Boolean isTokenExpired(String token) {
-		final Date expiration = getExpirationDateFromToken(token);
-		return expiration.before(new Date());
 	}
 	
 	public String[] generateToken(String subject, String organizationAlias, Map<String, Object> claims) {
@@ -63,8 +85,8 @@ public class JwtTokenService {
 		return new String[] { token, generateRefreshToken(token) };
 	}
 	
-	private String generateRefreshToken(String token) {
-		return new BCryptPasswordEncoder().encode(token.split("\\.")[2]);
+	public boolean isRefreshTokenValid(String token, String refreshToken) {
+		return new BCryptPasswordEncoder().matches(token.split("\\.")[2], refreshToken);
 	}
 	
 	public Boolean validateToken(String token, String subject) {

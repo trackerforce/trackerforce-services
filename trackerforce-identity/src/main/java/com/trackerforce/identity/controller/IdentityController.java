@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.identity.model.request.AccessRequest;
+import com.trackerforce.identity.model.request.JwtRefreshRequest;
 import com.trackerforce.identity.model.request.JwtRequest;
 import com.trackerforce.identity.service.AuthenticationService;
 
@@ -33,6 +34,16 @@ public class IdentityController {
 	@PostMapping(value = "/v1/authenticate")
 	public ResponseEntity<Map<String, Object>> authenticateRoot(@RequestBody JwtRequest authRequest) {
 		return ResponseEntity.ok(authorizationService.authenticateAccess(authRequest));
+	}
+	
+	@PostMapping(value = "/v1/refresh")
+	public ResponseEntity<?> refreshAuth(HttpServletRequest request,
+			@RequestBody JwtRefreshRequest authRefreshRequest) {
+		try {
+			return ResponseEntity.ok(authorizationService.authenticateRefreshAccess(request, authRefreshRequest));
+		} catch (ServiceException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
 	}
 	
 	@PostMapping(value = "/v1/register")
