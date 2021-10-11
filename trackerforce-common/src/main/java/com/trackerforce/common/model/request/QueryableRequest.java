@@ -14,10 +14,19 @@ public class QueryableRequest {
 
 	private int size;
 
-	public QueryableRequest(Map<String, Object> query, String sortBy, String output, int page, int size) {
+	public QueryableRequest(Map<String, Object> query, 
+			String sortBy, String output,
+			int page, int size) {
 		this.query = query;
 		this.sortBy = sortBy;
 		this.output = output;
+		this.page = page;
+		this.size = size;
+	}
+	
+	public QueryableRequest(Map<String, Object> query,
+			int page, int size) {
+		this.query = query;
 		this.page = page;
 		this.size = size;
 	}

@@ -36,9 +36,11 @@ public class SessionCaseController {
 	}
 
 	@PostMapping(value = "/v1")
-	public ResponseEntity<?> create(HttpServletRequest request, @RequestBody SessionCaseRequest sessionCaseRequest) {
+	public ResponseEntity<?> create(HttpServletRequest request,
+			@RequestBody SessionCaseRequest sessionCaseRequest) {
 		try {
-			return ResponseEntity.ok(sessionCaseService.create(request, sessionCaseRequest));
+			return ResponseEntity
+					.ok(sessionCaseService.create(request, sessionCaseRequest));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}
@@ -48,31 +50,33 @@ public class SessionCaseController {
 	public ResponseEntity<?> handler(HttpServletRequest request,
 			@RequestBody SessionProcedureRequest sessionProcedureRequest) {
 		try {
-			return ResponseEntity.ok(sessionCaseService.handlerProcedure(request, sessionProcedureRequest));
+			return ResponseEntity.ok(sessionCaseService.handlerProcedure(request,
+					sessionProcedureRequest));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}
 	}
 
 	@GetMapping(value = "/v1/ids")
-	public ResponseEntity<?> findByIds(HttpServletRequest request, 
+	public ResponseEntity<?> findByIds(HttpServletRequest request,
 			@RequestBody SessionCaseRequest sessionCaseRequest,
-			@RequestParam(required = false) String sortBy, 
+			@RequestParam(required = false) String sortBy,
 			@RequestParam(required = false) String output,
-			@RequestParam(defaultValue = "0") int page, 
+			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
-		return ResponseEntity.ok(
-				sessionCaseService.findByIdsProjectedBy(sessionCaseRequest.getCaseIds(), sortBy, output, page, size));
+		return ResponseEntity.ok(sessionCaseService.findByIdsProjectedBy(
+				sessionCaseRequest.getCaseIds(), sortBy, output, page, size));
 	}
 
 	@GetMapping(value = "/v1/protocol/{protocol}")
-	public ResponseEntity<SessionCase> findByProtocol(@PathVariable("protocol") String protocol) {
+	public ResponseEntity<SessionCase> findByProtocol(
+			@PathVariable("protocol") String protocol) {
 		return ResponseEntity.ok(sessionCaseService.getSessionCaseByProtocol(protocol));
 	}
-	
+
 	@GetMapping(value = "/v1/next")
 	public ResponseEntity<?> next(HttpServletRequest request,
-			@RequestBody SessionProcedureRequest sessionProcedureRequest, 
+			@RequestBody SessionProcedureRequest sessionProcedureRequest,
 			@RequestParam(required = false) String name,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
@@ -80,8 +84,9 @@ public class SessionCaseController {
 			var query = new HashMap<String, Object>();
 			query.put("name", name != null ? name : StringUtils.EMPTY);
 
-			var queryable = new QueryableRequest(query, null, null, page, 10);
-			return ResponseEntity.ok(sessionCaseService.next(request, sessionProcedureRequest, queryable));
+			var queryable = new QueryableRequest(query, page, 10);
+			return ResponseEntity.ok(
+					sessionCaseService.next(request, sessionProcedureRequest, queryable));
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}
