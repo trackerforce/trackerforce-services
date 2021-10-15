@@ -48,6 +48,7 @@ public class IdentitySecurityConfig extends SecurityConfig {
 				.csrf().disable();
 		
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+		http.cors();
 	}
 
 	@Autowired
