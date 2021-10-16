@@ -24,7 +24,7 @@ import com.trackerforce.session.model.request.SessionCaseRequest;
 import com.trackerforce.session.model.request.SessionProcedureRequest;
 import com.trackerforce.session.service.SessionCaseService;
 
-@CrossOrigin(methods = { RequestMethod.POST })
+@CrossOrigin(methods = { RequestMethod.POST }, allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
 @RequestMapping("session/case")
 public class SessionCaseController {

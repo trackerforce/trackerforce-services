@@ -24,7 +24,7 @@ import com.trackerforce.management.model.Procedure;
 import com.trackerforce.management.model.request.TemplateRequest;
 import com.trackerforce.management.service.TemplateService;
 
-@CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization" })
+@CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
 @RequestMapping("management/template")
 public class TemplateController {

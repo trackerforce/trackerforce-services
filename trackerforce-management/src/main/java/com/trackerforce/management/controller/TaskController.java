@@ -22,7 +22,7 @@ import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.model.request.TaskRequest;
 import com.trackerforce.management.service.TaskService;
 
-@CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization" })
+@CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
 @RequestMapping("management/task")
 public class TaskController {

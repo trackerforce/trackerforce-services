@@ -21,7 +21,7 @@ import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.service.AgentService;
 
-@CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization" })
+@CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
 @RequestMapping("management/agent")
 public class AgentController {
@@ -75,7 +75,7 @@ public class AgentController {
 	
 	@GetMapping(value = "/v1/")
 	public ResponseEntity<Map<String, Object>> findAll(
-			@RequestBody(required = false) Map<String, Object> query,
+			@RequestParam(required = false) Map<String, Object> query,
 			@RequestParam(required = false) String sortBy,
 			@RequestParam(required = false) String output,
 			@RequestParam(defaultValue = "0") int page,
