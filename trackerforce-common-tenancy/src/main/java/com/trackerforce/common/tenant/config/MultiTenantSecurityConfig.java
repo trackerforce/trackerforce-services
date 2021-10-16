@@ -30,6 +30,9 @@ public class MultiTenantSecurityConfig extends SecurityConfig {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			
 			.and()
+				.cors()
+				
+			.and()
 				.csrf().disable();
 		
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

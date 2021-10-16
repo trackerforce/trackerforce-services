@@ -75,7 +75,7 @@ public class AgentController {
 	
 	@GetMapping(value = "/v1/")
 	public ResponseEntity<Map<String, Object>> findAll(
-			@RequestBody(required = true) Map<String, Object> query,
+			@RequestBody(required = false) Map<String, Object> query,
 			@RequestParam(required = false) String sortBy,
 			@RequestParam(required = false) String output,
 			@RequestParam(defaultValue = "0") int page,
