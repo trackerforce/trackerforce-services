@@ -29,7 +29,6 @@ public class ManagementService {
 	}
 
 	public AgentResponse activateAgent(HttpServletRequest request, AgentRequest agentRequest) {
-
 		var headers = new HttpHeaders();
 		setHeaders(request, headers);
 
@@ -44,7 +43,6 @@ public class ManagementService {
 	}
 
 	public AgentResponse login(HttpServletRequest request, AgentRequest agentRequest) {
-
 		var headers = new HttpHeaders();
 		setHeaders(request, headers);
 

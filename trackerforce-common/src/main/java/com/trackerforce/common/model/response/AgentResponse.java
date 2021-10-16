@@ -15,8 +15,6 @@ public class AgentResponse {
 
 	private String email;
 
-	private String department;
-
 	@JsonProperty("temp_access")
 	private String tempAccess;
 
@@ -87,14 +85,6 @@ public class AgentResponse {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(String department) {
-		this.department = department;
 	}
 
 	public String getTempAccess() {
