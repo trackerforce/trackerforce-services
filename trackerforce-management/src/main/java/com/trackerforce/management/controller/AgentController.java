@@ -1,5 +1,6 @@
 package com.trackerforce.management.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,11 +76,16 @@ public class AgentController {
 	
 	@GetMapping(value = "/v1/")
 	public ResponseEntity<Map<String, Object>> findAll(
-			@RequestParam(required = false) Map<String, Object> query,
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) String email,
 			@RequestParam(required = false) String sortBy,
 			@RequestParam(required = false) String output,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
+		var query = new HashMap<String, Object>();
+		query.put("name", name);
+		query.put("email", email);
+		
 		var queryable = new QueryableRequest(query, sortBy, output, page, size);
 		return ResponseEntity.ok(agentService.findAllProjectedBy(queryable));
 	}
