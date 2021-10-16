@@ -21,7 +21,7 @@ import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.service.AgentService;
 
-@CrossOrigin(allowedHeaders = { "X-Tenant" })
+@CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization" })
 @RestController
 @RequestMapping("management/agent")
 public class AgentController {

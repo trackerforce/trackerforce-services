@@ -26,7 +26,7 @@ import com.trackerforce.management.model.request.GlobalRequest;
 import com.trackerforce.management.model.response.GlobalResponse;
 import com.trackerforce.management.service.GlobalService;
 
-@CrossOrigin(allowedHeaders = { "X-Tenant" })
+@CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization" })
 @RestController
 @RequestMapping("management/global")
 public class GlobalController {

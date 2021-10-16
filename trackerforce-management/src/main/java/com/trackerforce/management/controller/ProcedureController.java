@@ -24,7 +24,7 @@ import com.trackerforce.management.model.Task;
 import com.trackerforce.management.model.request.ProcedureRequest;
 import com.trackerforce.management.service.ProcedureService;
 
-@CrossOrigin(allowedHeaders = { "X-Tenant" })
+@CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization" })
 @RestController
 @RequestMapping("management/procedure")
 public class ProcedureController {
