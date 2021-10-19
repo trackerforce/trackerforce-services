@@ -1,6 +1,7 @@
 package com.trackerforce.session.controller;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -57,7 +58,7 @@ public class SessionCaseController {
 		}
 	}
 
-	@GetMapping(value = "/v1/ids")
+	@PostMapping(value = "/v1/ids")
 	public ResponseEntity<?> findByIds(HttpServletRequest request,
 			@RequestBody SessionCaseRequest sessionCaseRequest,
 			@RequestParam(required = false) String sortBy,
@@ -67,14 +68,8 @@ public class SessionCaseController {
 		return ResponseEntity.ok(sessionCaseService.findByIdsProjectedBy(
 				sessionCaseRequest.getCaseIds(), sortBy, output, page, size));
 	}
-
-	@GetMapping(value = "/v1/protocol/{protocol}")
-	public ResponseEntity<SessionCase> findByProtocol(
-			@PathVariable("protocol") String protocol) {
-		return ResponseEntity.ok(sessionCaseService.getSessionCaseByProtocol(protocol));
-	}
-
-	@GetMapping(value = "/v1/next")
+	
+	@PostMapping(value = "/v1/next")
 	public ResponseEntity<?> next(HttpServletRequest request,
 			@RequestBody SessionProcedureRequest sessionProcedureRequest,
 			@RequestParam(required = false) String name,
@@ -90,6 +85,23 @@ public class SessionCaseController {
 		} catch (ServiceException e) {
 			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
 		}
+	}
+
+	@GetMapping(value = "/v1/protocol/{protocol}")
+	public ResponseEntity<SessionCase> findByProtocol(
+			@PathVariable("protocol") String protocol) {
+		return ResponseEntity.ok(sessionCaseService.getSessionCaseByProtocol(protocol));
+	}
+	
+	@GetMapping(value = "/v1/agent/{agentid}")
+	public ResponseEntity<Map<String, Object>> findByAgent(HttpServletRequest request,
+			@PathVariable("agentid") String agentid,
+			@RequestParam(required = false) String sortBy,
+			@RequestParam(required = false) String output,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(sessionCaseService.getSessionCaseByAgent(request, agentid, sortBy,
+				output, page, size));
 	}
 
 }

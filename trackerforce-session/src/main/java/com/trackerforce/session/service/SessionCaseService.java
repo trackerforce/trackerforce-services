@@ -91,6 +91,13 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		return optCase;
 	}
 	
+	public Map<String, Object> getSessionCaseByAgent(HttpServletRequest request,
+			String agentid, String sortBy, String output, int page, int size) {
+		var agent = managementService.findAgentCases(request, agentid);
+		return findByIdsProjectedBy(agent.getCases().toArray(new String[0]), sortBy,
+				output, page, size);
+	}
+	
 	public Map<String, Object> next(HttpServletRequest request, SessionProcedureRequest sessionProcedureRequest,
 			QueryableRequest queryable) throws ServiceException {
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
