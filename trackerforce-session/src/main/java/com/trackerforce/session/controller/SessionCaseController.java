@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +24,7 @@ import com.trackerforce.session.model.request.SessionCaseRequest;
 import com.trackerforce.session.model.request.SessionProcedureRequest;
 import com.trackerforce.session.service.SessionCaseService;
 
-@CrossOrigin(methods = { RequestMethod.POST }, allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
+@CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
 @RequestMapping("session/case")
 public class SessionCaseController {
