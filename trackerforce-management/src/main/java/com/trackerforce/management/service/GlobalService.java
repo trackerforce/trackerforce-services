@@ -34,7 +34,7 @@ public class GlobalService extends AbstractBusinessService<Global> {
 
 	public Global create(final GlobalRequest globalRequest) throws ServiceException {
 		var global = globalRequest.getGlobal();
-		global.setDescription(global.getKey().getSummary());
+		global.setDescription(global.getKey().getDescription());
 		return super.create(global);
 	}
 

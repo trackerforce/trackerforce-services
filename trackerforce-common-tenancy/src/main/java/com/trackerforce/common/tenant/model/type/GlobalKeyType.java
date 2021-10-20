@@ -2,14 +2,15 @@ package com.trackerforce.common.tenant.model.type;
 
 public enum GlobalKeyType {
 
-	ML_SERVICE("Machine Learning Engine Service", "url", "accuracy");
+	ML_SERVICE("Machine Learning Engine Service", "url", "accuracy"),
+	AGENT_PLAN("Agent subscription", "quantity");
 
-	private String summary;
+	private String description;
 
 	private String[] attributes;
 
-	private GlobalKeyType(String summary, String... attributes) {
-		this.summary = summary;
+	private GlobalKeyType(String description, String... attributes) {
+		this.description = description;
 		this.attributes = attributes;
 	}
 
@@ -20,8 +21,8 @@ public enum GlobalKeyType {
 		return false;
 	}
 
-	public String getSummary() {
-		return this.summary;
+	public String getDescription() {
+		return this.description;
 	}
 
 	public String[] getAttributes() {

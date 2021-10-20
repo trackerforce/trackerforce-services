@@ -45,11 +45,16 @@ public class GlobalController {
 	
 	@GetMapping(value = "/v1/")
 	public ResponseEntity<Map<String, Object>> findAll(
-			@RequestBody(required = true) Map<String, Object> query,
+			@RequestParam(required = false) String description,
+			@RequestParam(required = false) String key,
 			@RequestParam(required = false) String sortBy,
 			@RequestParam(required = false) String output,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
+		Map<String, Object> query = new HashMap<String, Object>();
+		query.put("key", key);
+		query.put("description", description);
+		
 		var queryable = new QueryableRequest(query, sortBy, output, page, size);
 		return ResponseEntity.ok(globalService.findAllProjectedBy(queryable));
 	}
@@ -58,7 +63,7 @@ public class GlobalController {
 	public ResponseEntity<ArrayList<GlobalResponse>> listGlobals() {
 		var keys = new ArrayList<GlobalResponse>();
 		for (GlobalKeyType gk : GlobalKeyType.values())
-			keys.add(new GlobalResponse(gk.name(), gk.getSummary(), gk.getAttributes()));
+			keys.add(new GlobalResponse(gk.name(), gk.getDescription(), gk.getAttributes()));
 
 		return ResponseEntity.ok(keys);
 	}

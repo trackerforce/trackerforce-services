@@ -4,14 +4,14 @@ public class GlobalResponse {
 
 	private String key;
 
-	private String summary;
+	private String description;
 
-	private String[] attrbutes;
+	private String[] attributes;
 
-	public GlobalResponse(String name, String summary, String[] attributes) {
+	public GlobalResponse(String name, String description, String[] attributes) {
 		this.key = name;
-		this.summary = summary;
-		this.attrbutes = attributes;
+		this.description = description;
+		this.attributes = attributes;
 	}
 
 	public String getKey() {
@@ -22,20 +22,20 @@ public class GlobalResponse {
 		this.key = key;
 	}
 
-	public String getSummary() {
-		return summary;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setSummary(String summary) {
-		this.summary = summary;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public String[] getAttrbutes() {
-		return attrbutes;
+	public String[] getAttributes() {
+		return attributes;
 	}
 
-	public void setAttrbutes(String[] attrbutes) {
-		this.attrbutes = attrbutes;
+	public void setAttributes(String[] attrbutes) {
+		this.attributes = attrbutes;
 	}
 
 }
