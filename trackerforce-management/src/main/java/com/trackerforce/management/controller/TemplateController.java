@@ -43,6 +43,7 @@ public class TemplateController {
 	
 	@GetMapping(value = "/v1/")
 	public ResponseEntity<Map<String, Object>> findAll(
+			@RequestParam(required = false) String name,
 			@RequestParam(required = false) String description,
 			@RequestParam(required = false) String sortBy,
 			@RequestParam(required = false) String output,
@@ -50,6 +51,7 @@ public class TemplateController {
 			@RequestParam(defaultValue = "10") int size) {
 		var query = new HashMap<String, Object>();
 		query.put("description", description);
+		query.put("name", name);
 		
 		var queryable = new QueryableRequest(query, sortBy, output, page, size);
 		return ResponseEntity.ok(templateService.findAllProjectedBy(queryable));
