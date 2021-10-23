@@ -3,6 +3,7 @@ package com.trackerforce.management.service;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,7 +22,8 @@ import com.trackerforce.common.tenant.service.exception.InvalidServiceUpdateExce
  * 
  * @author Roger Floriano
  */
-public abstract class AbstractBusinessService<T extends AbstractBusinessDocument> extends AbstractTenantService<T> {
+public abstract class AbstractBusinessService<T extends AbstractBusinessDocument, R extends MongoRepository<T, String>> 
+	extends AbstractTenantService<T, R> {
 
 	public static final String[] ALLOWED_HELPER_UPDATE = { "content", "renderType" };
 
@@ -30,7 +32,7 @@ public abstract class AbstractBusinessService<T extends AbstractBusinessDocument
 	 */
 	protected final String entityName;
 
-	public AbstractBusinessService(final AbstractProjectedDao<T> dao, final Class<T> serviceModel,
+	public AbstractBusinessService(final AbstractProjectedDao<T, R> dao, final Class<T> serviceModel,
 			final String entityName) {
 		super(dao, serviceModel);
 		this.entityName = entityName;

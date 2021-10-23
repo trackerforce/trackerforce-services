@@ -8,7 +8,7 @@ import com.trackerforce.management.model.Agent;
 import com.trackerforce.management.model.Template;
 
 @Repository
-public class AgentRepositoryDao extends AbstractProjectedDao<Agent> {
+public class AgentRepositoryDao extends AbstractProjectedDao<Agent, AgentRepository> {
 	
 	@Autowired
 	private AgentRepository agentRepository;
@@ -20,8 +20,9 @@ public class AgentRepositoryDao extends AbstractProjectedDao<Agent> {
 	public void deleteById(final String id) {
 		agentRepository.deleteById(id);
 	}
-
-	public AgentRepository getAgentRepository() {
+	
+	@Override
+	public AgentRepository getRepository() {
 		return agentRepository;
 	}
 	

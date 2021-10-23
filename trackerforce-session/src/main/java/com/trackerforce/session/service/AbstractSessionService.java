@@ -1,13 +1,16 @@
 package com.trackerforce.session.service;
 
+import org.springframework.data.mongodb.repository.MongoRepository;
+
 import com.trackerforce.common.model.AbstractDocument;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
 import com.trackerforce.common.tenant.service.AbstractTenantService;
 
-public abstract class AbstractSessionService<T extends AbstractDocument> extends AbstractTenantService<T> {
+public abstract class AbstractSessionService<T extends AbstractDocument, R extends MongoRepository<T, String>> 
+	extends AbstractTenantService<T, R> {
 
-	public AbstractSessionService(AbstractProjectedDao<T> dao, Class<T> serviceModel) {
+	public AbstractSessionService(AbstractProjectedDao<T, R> dao, Class<T> serviceModel) {
 		super(dao, serviceModel);
 	}
 

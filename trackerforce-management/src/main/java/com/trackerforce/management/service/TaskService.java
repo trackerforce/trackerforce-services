@@ -10,10 +10,11 @@ import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.common.tenant.model.type.RenderType;
 import com.trackerforce.management.model.Task;
 import com.trackerforce.management.model.request.TaskRequest;
+import com.trackerforce.management.repository.TaskRepository;
 import com.trackerforce.management.repository.TaskRepositoryDao;
 
 @Service
-public class TaskService extends AbstractBusinessService<Task> {
+public class TaskService extends AbstractBusinessService<Task, TaskRepository> {
 
 	private static final String[] ALLOWED_TASK_UPDATE = { "description", "type", "options" };
 
@@ -48,7 +49,7 @@ public class TaskService extends AbstractBusinessService<Task> {
 	}
 
 	public Task update(final String id, final Map<String, Object> updates) throws ServiceException {
-		var promise = taskDao.getTaskRepository().findById(id);
+		var promise = taskDao.getRepository().findById(id);
 		var allowed = new HashMap<String, String[]>();
 		allowed.put(entityName, ALLOWED_TASK_UPDATE);
 		allowed.put("helper", ALLOWED_HELPER_UPDATE);

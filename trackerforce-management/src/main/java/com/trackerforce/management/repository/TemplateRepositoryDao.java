@@ -7,7 +7,7 @@ import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
 import com.trackerforce.management.model.Template;
 
 @Repository
-public class TemplateRepositoryDao extends AbstractProjectedDao<Template> {
+public class TemplateRepositoryDao extends AbstractProjectedDao<Template, TemplateRepository> {
 	
 	@Autowired
 	private TemplateRepository templateRepository;
@@ -20,7 +20,8 @@ public class TemplateRepositoryDao extends AbstractProjectedDao<Template> {
 		templateRepository.deleteById(id);
 	}
 
-	public TemplateRepository getTemplateRepository() {
+	@Override
+	public TemplateRepository getRepository() {
 		return templateRepository;
 	}
 	

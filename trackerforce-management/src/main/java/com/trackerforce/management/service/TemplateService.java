@@ -15,10 +15,11 @@ import com.trackerforce.management.model.Procedure;
 import com.trackerforce.management.model.Template;
 import com.trackerforce.management.model.request.TemplateRequest;
 import com.trackerforce.management.repository.ProcedureRepositoryDao;
+import com.trackerforce.management.repository.TemplateRepository;
 import com.trackerforce.management.repository.TemplateRepositoryDao;
 
 @Service
-public class TemplateService extends AbstractBusinessService<Template> {
+public class TemplateService extends AbstractBusinessService<Template, TemplateRepository> {
 	
 	private static final String[] ALLOWED_TEMPLATE_UPDATE = { "name", "description", "helper" };
 
@@ -55,7 +56,7 @@ public class TemplateService extends AbstractBusinessService<Template> {
 	
 	public Template update(final String id, final Map<String, Object> updates) 
 			throws ServiceException {
-		var promise = templateDao.getTemplateRepository().findById(id);
+		var promise = templateDao.getRepository().findById(id);
 		var allowed = new HashMap<String, String[]>();
 		allowed.put(entityName, ALLOWED_TEMPLATE_UPDATE);
 		allowed.put("helper", ALLOWED_HELPER_UPDATE);
@@ -64,7 +65,7 @@ public class TemplateService extends AbstractBusinessService<Template> {
 	}
 	
 	public LinkedList<Procedure> reorderProcedure(final String id, int from, int to) {
-		final var templatePromise = templateDao.getTemplateRepository().findById(id);
+		final var templatePromise = templateDao.getRepository().findById(id);
 		
 		if (!templatePromise.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Template not found");
@@ -74,13 +75,13 @@ public class TemplateService extends AbstractBusinessService<Template> {
 		procedure.getProcedures().remove(from);
 		procedure.getProcedures().add(to, task);
 		
-		templateDao.getTemplateRepository().save(procedure);
+		templateDao.getRepository().save(procedure);
 		return procedure.getProcedures();
 	}
 	
 	public Procedure updateProcedures(final String id, final String taskId, boolean add) {
-		final var templatePromise = templateDao.getTemplateRepository().findById(id);
-		final var procedurePromise = procedureDao.getProcedureRepository().findById(taskId);
+		final var templatePromise = templateDao.getRepository().findById(id);
+		final var procedurePromise = procedureDao.getRepository().findById(taskId);
 		
 		if (!templatePromise.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Template not found");
@@ -100,7 +101,7 @@ public class TemplateService extends AbstractBusinessService<Template> {
 					"Procedure already added to Template");
 		
 		template.getProcedures().push(procedure);
-		templateDao.getTemplateRepository().save(template);
+		templateDao.getRepository().save(template);
 		return procedure;
 	}
 	
@@ -110,7 +111,7 @@ public class TemplateService extends AbstractBusinessService<Template> {
 					"Procedure does not exist into Template");
 		
 		template.getProcedures().remove(procedure);
-		templateDao.getTemplateRepository().save(template);
+		templateDao.getRepository().save(template);
 		return procedure;
 	}
 

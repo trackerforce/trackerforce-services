@@ -7,7 +7,7 @@ import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
 import com.trackerforce.management.model.Procedure;
 
 @Repository
-public class ProcedureRepositoryDao extends AbstractProjectedDao<Procedure> {
+public class ProcedureRepositoryDao extends AbstractProjectedDao<Procedure, ProcedureRepository> {
 	
 	@Autowired
 	private ProcedureRepository procedureRepository;
@@ -20,7 +20,8 @@ public class ProcedureRepositoryDao extends AbstractProjectedDao<Procedure> {
 		procedureRepository.deleteById(id);
 	}
 
-	public ProcedureRepository getProcedureRepository() {
+	@Override
+	public ProcedureRepository getRepository() {
 		return procedureRepository;
 	}
 	

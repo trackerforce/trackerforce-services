@@ -7,12 +7,13 @@ import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
 import com.trackerforce.management.model.Global;
 
 @Repository
-public class GlobalRepositoryDao extends AbstractProjectedDao<Global> {
+public class GlobalRepositoryDao extends AbstractProjectedDao<Global, GlobalRepository> {
 	
 	@Autowired
 	private GlobalRepository globalRepository;
 
-	public GlobalRepository getGlobalRepository() {
+	@Override
+	public GlobalRepository getRepository() {
 		return globalRepository;
 	}
 	

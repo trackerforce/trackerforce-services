@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,13 +23,13 @@ import com.trackerforce.common.tenant.service.exception.InvalidServiceUpdateExce
  *
  * @param <T AbstractDocument>
  */
-public abstract class AbstractTenantService<T extends AbstractDocument> {
+public abstract class AbstractTenantService<T extends AbstractDocument, R extends MongoRepository<T, String>> {
 
-	protected final AbstractProjectedDao<T> dao;
+	protected final AbstractProjectedDao<T, R> dao;
 
 	protected final Class<T> serviceModel;
 
-	public AbstractTenantService(final AbstractProjectedDao<T> dao, final Class<T> serviceModel) {
+	public AbstractTenantService(final AbstractProjectedDao<T, R> dao, final Class<T> serviceModel) {
 		this.dao = dao;
 		this.serviceModel = serviceModel;
 	}

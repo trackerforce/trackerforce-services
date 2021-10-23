@@ -9,10 +9,11 @@ import org.springframework.util.Assert;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.model.Global;
 import com.trackerforce.management.model.request.GlobalRequest;
+import com.trackerforce.management.repository.GlobalRepository;
 import com.trackerforce.management.repository.GlobalRepositoryDao;
 
 @Service
-public class GlobalService extends AbstractBusinessService<Global> {
+public class GlobalService extends AbstractBusinessService<Global, GlobalRepository> {
 
 	private static final String[] ALLOWED_GLOBAL_UPDATE = { "key", "attributes" };
 
@@ -39,7 +40,7 @@ public class GlobalService extends AbstractBusinessService<Global> {
 	}
 
 	public Global update(final String id, final Map<String, Object> updates) throws ServiceException {
-		var promise = globalDao.getGlobalRepository().findById(id);
+		var promise = globalDao.getRepository().findById(id);
 		var allowed = new HashMap<String, String[]>();
 		allowed.put(entityName, ALLOWED_GLOBAL_UPDATE);
 
@@ -47,7 +48,7 @@ public class GlobalService extends AbstractBusinessService<Global> {
 	}
 
 	public void delete(final String id) {
-		globalDao.getGlobalRepository().deleteById(id);
+		globalDao.getRepository().deleteById(id);
 	}
 
 }

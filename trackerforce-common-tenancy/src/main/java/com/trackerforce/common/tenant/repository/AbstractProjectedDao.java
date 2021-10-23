@@ -11,14 +11,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import com.trackerforce.common.model.AbstractDocument;
 
-public abstract class AbstractProjectedDao<T extends AbstractDocument> {
+public abstract class AbstractProjectedDao<T extends AbstractDocument, R extends MongoRepository<T, String>> {
 
 	@Autowired
 	protected MongoTemplate mongoTemplate;
+	
+	/**
+	 * Retrieve repository from child class
+	 * 
+	 * @return
+	 */
+	public abstract R getRepository();
 
 	/**
 	 * Helper operation to save documents from the ProjectedDao
@@ -55,7 +63,7 @@ public abstract class AbstractProjectedDao<T extends AbstractDocument> {
 	public Page<T> findByIdsProjectedBy(String[] ids, Class<T> entityClass, int page, int size, String[] fields,
 			String[] sortBy) {
 		var pageable = PageRequest.of(page, size);
-		Query query = Query.query(Criteria.where("id").in(Arrays.asList(ids)));
+		Query query = Query.query(Criteria.where("id").in(Arrays.asList(ids))).with(pageable);
 
 		if (sortBy != null)
 			Arrays.stream(sortBy).forEach(

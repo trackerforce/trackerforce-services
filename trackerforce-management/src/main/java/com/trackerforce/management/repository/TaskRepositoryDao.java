@@ -12,10 +12,10 @@ import com.trackerforce.management.model.Procedure;
 import com.trackerforce.management.model.Task;
 
 @Repository
-public class TaskRepositoryDao extends AbstractProjectedDao<Task> {
+public class TaskRepositoryDao extends AbstractProjectedDao<Task, TaskRepository> {
 	
 	@Autowired
-	private TaskRerpository taskRepository;
+	private TaskRepository taskRepository;
 	
 	@Autowired
 	private ProcedureRepository procedureRepository;
@@ -51,7 +51,8 @@ public class TaskRepositoryDao extends AbstractProjectedDao<Task> {
 		procedureRepository.saveAll(parentProcedures);
 	}
 
-	public TaskRerpository getTaskRepository() {
+	@Override
+	public TaskRepository getRepository() {
 		return taskRepository;
 	}
 	

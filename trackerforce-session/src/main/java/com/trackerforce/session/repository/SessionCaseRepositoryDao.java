@@ -7,7 +7,7 @@ import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
 import com.trackerforce.session.model.SessionCase;
 
 @Repository
-public class SessionCaseRepositoryDao extends AbstractProjectedDao<SessionCase> {
+public class SessionCaseRepositoryDao extends AbstractProjectedDao<SessionCase, SessionCaseRepository> {
 
 	@Autowired
 	private SessionCaseRepository caseRepository;
@@ -20,7 +20,8 @@ public class SessionCaseRepositoryDao extends AbstractProjectedDao<SessionCase> 
 		caseRepository.deleteById(id);
 	}
 
-	public SessionCaseRepository getCaseRepository() {
+	@Override
+	public SessionCaseRepository getRepository() {
 		return caseRepository;
 	}
 

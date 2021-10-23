@@ -15,10 +15,11 @@ import com.trackerforce.common.model.response.AgentResponse;
 import com.trackerforce.common.service.JwtTokenService;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.model.Agent;
+import com.trackerforce.management.repository.AgentRepository;
 import com.trackerforce.management.repository.AgentRepositoryDao;
 
 @Service
-public class AgentService extends AbstractBusinessService<Agent> {
+public class AgentService extends AbstractBusinessService<Agent, AgentRepository> {
 
 	private final AgentRepositoryDao agentDao;
 
@@ -42,7 +43,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 	}
 
 	public AgentResponse watchCase(String agentId, String caseId) {
-		var optgent = agentDao.getAgentRepository().findById(agentId);
+		var optgent = agentDao.getRepository().findById(agentId);
 
 		if (!optgent.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -58,7 +59,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 	}
 
 	public AgentResponse unWatchCase(String agentId, String caseId) {
-		var optgent = agentDao.getAgentRepository().findById(agentId);
+		var optgent = agentDao.getRepository().findById(agentId);
 
 		if (!optgent.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -80,7 +81,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 	}
 
 	public AgentResponse activate(final AgentRequest agentRequest) {
-		var agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
+		var agent = agentDao.getRepository().findByEmail(agentRequest.getEmail());
 		var agentResponse = login(agentRequest, agent);
 
 		agent.setPassword(bcryptEncoder.encode(agentRequest.getNewPassword()));
@@ -94,7 +95,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 
 	public AgentResponse login(final AgentRequest agentRequest, Agent agent) {
 		if (agent == null) {
-			agent = agentDao.getAgentRepository().findByEmail(agentRequest.getEmail());
+			agent = agentDao.getRepository().findByEmail(agentRequest.getEmail());
 
 			if (!agent.isActive())
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -111,7 +112,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 
 	public void logoff(HttpServletRequest request) {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
-		var agent = agentDao.getAgentRepository().findById(authentication.getName()).get();
+		var agent = agentDao.getRepository().findById(authentication.getName()).get();
 
 		if (!agent.isActive() || !agent.isOnline())
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -122,7 +123,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 
 	public boolean isOnline(HttpServletRequest request) {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
-		var optAgent = agentDao.getAgentRepository().findById(authentication.getName());
+		var optAgent = agentDao.getRepository().findById(authentication.getName());
 
 		if (!optAgent.isPresent())
 			return false;
@@ -132,7 +133,7 @@ public class AgentService extends AbstractBusinessService<Agent> {
 
 	public Agent getAuthenticated(HttpServletRequest request) {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
-		var optAgent = agentDao.getAgentRepository().findById(authentication.getName());
+		var optAgent = agentDao.getRepository().findById(authentication.getName());
 
 		if (!optAgent.isPresent())
 			return null;

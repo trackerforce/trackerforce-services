@@ -14,11 +14,12 @@ import com.trackerforce.common.tenant.model.type.RenderType;
 import com.trackerforce.management.model.Procedure;
 import com.trackerforce.management.model.Task;
 import com.trackerforce.management.model.request.ProcedureRequest;
+import com.trackerforce.management.repository.ProcedureRepository;
 import com.trackerforce.management.repository.ProcedureRepositoryDao;
 import com.trackerforce.management.repository.TaskRepositoryDao;
 
 @Service
-public class ProcedureService extends AbstractBusinessService<Procedure> {
+public class ProcedureService extends AbstractBusinessService<Procedure, ProcedureRepository> {
 
 	private static final String[] ALLOWED_PROC_UPDATE = { "name", "description", "helper" };
 	private static final String[] ALLOWED_CP_UPDATE = { "agentId" };
@@ -53,7 +54,7 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 	}
 
 	public Procedure update(final String id, final Map<String, Object> updates) throws ServiceException {
-		var promise = procedureDao.getProcedureRepository().findById(id);
+		var promise = procedureDao.getRepository().findById(id);
 		var allowed = new HashMap<String, String[]>();
 		allowed.put(entityName, ALLOWED_PROC_UPDATE);
 		allowed.put("hook", ALLOWED_CP_UPDATE);
@@ -63,7 +64,7 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 	}
 
 	public LinkedList<Task> reorderTask(final String id, int from, int to) {
-		final var procedurePromise = procedureDao.getProcedureRepository().findById(id);
+		final var procedurePromise = procedureDao.getRepository().findById(id);
 
 		if (!procedurePromise.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Procedure not found");
@@ -73,13 +74,13 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 		procedure.getTasks().remove(from);
 		procedure.getTasks().add(to, task);
 
-		procedureDao.getProcedureRepository().save(procedure);
+		procedureDao.getRepository().save(procedure);
 		return procedure.getTasks();
 	}
 
 	public Task updateTasks(final String id, final String taskId, boolean add) {
-		final var procedurePromise = procedureDao.getProcedureRepository().findById(id);
-		final var taskPromise = taskDao.getTaskRepository().findById(taskId);
+		final var procedurePromise = procedureDao.getRepository().findById(id);
+		final var taskPromise = taskDao.getRepository().findById(taskId);
 
 		if (!procedurePromise.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Procedure not found");
@@ -98,7 +99,7 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task already added to Procedure");
 
 		procedure.getTasks().push(task);
-		procedureDao.getProcedureRepository().save(procedure);
+		procedureDao.getRepository().save(procedure);
 		return task;
 	}
 
@@ -107,7 +108,7 @@ public class ProcedureService extends AbstractBusinessService<Procedure> {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task does not exist into Procedure");
 
 		procedure.getTasks().remove(task);
-		procedureDao.getProcedureRepository().save(procedure);
+		procedureDao.getRepository().save(procedure);
 		return task;
 	}
 

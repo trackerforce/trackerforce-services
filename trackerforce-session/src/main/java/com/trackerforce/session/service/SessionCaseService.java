@@ -19,10 +19,11 @@ import com.trackerforce.session.model.SessionTask;
 import com.trackerforce.session.model.request.SessionCaseRequest;
 import com.trackerforce.session.model.request.SessionProcedureRequest;
 import com.trackerforce.session.model.type.ProcedureStatus;
+import com.trackerforce.session.repository.SessionCaseRepository;
 import com.trackerforce.session.repository.SessionCaseRepositoryDao;
 
 @Service
-public class SessionCaseService extends AbstractSessionService<SessionCase> {
+public class SessionCaseService extends AbstractSessionService<SessionCase, SessionCaseRepository> {
 
 	private final SessionCaseRepositoryDao sessionCaseDao;
 
@@ -83,7 +84,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 	}
 
 	public SessionCase getSessionCaseByProtocol(String protocol) {
-		var optCase = sessionCaseDao.getCaseRepository().findByProtocol(Long.parseLong(protocol));
+		var optCase = sessionCaseDao.getRepository().findByProtocol(Long.parseLong(protocol));
 
 		if (optCase == null)
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Case not found");
@@ -180,12 +181,11 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
 
 		try {
-			queueService.nextProcedure(request, procedure, sessionCase.getContextId());
-
 			procedure.setResolution(sessionProcedureRequest.getResolution());
 			procedure.changeStatus(ProcedureStatus.RESOLVED);
-			sessionCaseDao.save(sessionCase);
+			queueService.nextProcedure(request, procedure, sessionCase.getContextId());
 			
+			sessionCaseDao.save(sessionCase);
 			return procedure;
 		} catch (BusinessException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -221,7 +221,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 	}
 
 	private SessionCase getSessionCase(String sessionCaseId) {
-		var optCase = sessionCaseDao.getCaseRepository().findById(sessionCaseId);
+		var optCase = sessionCaseDao.getRepository().findById(sessionCaseId);
 
 		if (!optCase.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Case not found");
