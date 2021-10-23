@@ -48,8 +48,11 @@ public class AgentService extends AbstractBusinessService<Agent> {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
 		var agent = optgent.get();
-		agent.getCases().add(caseId);
-		agent = agentDao.save(agent);
+		
+		if (!agent.getCases().contains(caseId)) {
+			agent.getCases().add(caseId);
+			agent = agentDao.save(agent);			
+		}
 
 		return AgentResponse.watch(agent.getEmail(), agent.getCases());
 	}
