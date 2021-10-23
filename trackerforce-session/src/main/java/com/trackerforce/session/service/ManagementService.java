@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -60,7 +61,12 @@ public class ManagementService {
 		setHeaders(request, headers);
 
 		try {
-			var url = String.format("%s%s%s?output=%s", serviceUrl, "procedure/v1/", id, output);
+			var url = "";
+			if (StringUtils.isBlank(output))
+				url = String.format("%s%s%s", serviceUrl, "procedure/v1/", id);
+			else
+				url = String.format("%s%s%s?output=%s", serviceUrl, "procedure/v1/", id, output);
+				
 			var response = restTemplate.exchange(url, HttpMethod.GET,
 					new HttpEntity<>(null, headers), SessionProcedure.class);
 

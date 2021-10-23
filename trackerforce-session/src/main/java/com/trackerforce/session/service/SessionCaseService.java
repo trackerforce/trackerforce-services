@@ -140,7 +140,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 		sessionCase.getProcedures().add(procedure);
 		sessionCaseDao.save(sessionCase);
 		
-		if (sessionCase.isClosingProcedure())
+		if (procedure.isClosingProcedure())
 			return submitProcedure(request, sessionProcedureRequest);
 			
 		return procedure;
@@ -159,6 +159,12 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 			sessionCaseDao.save(sessionCase);
 
 			queueService.submitProcedure(request, procedure, sessionCase.getContextId());
+			
+			if (procedure.isClosingProcedure()) {
+				procedure.changeStatus(ProcedureStatus.RESOLVED);
+				sessionCaseDao.save(sessionCase);
+			}
+			
 			return procedure;
 		} catch (BusinessException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -174,11 +180,12 @@ public class SessionCaseService extends AbstractSessionService<SessionCase> {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
 
 		try {
+			queueService.nextProcedure(request, procedure, sessionCase.getContextId());
+
 			procedure.setResolution(sessionProcedureRequest.getResolution());
 			procedure.changeStatus(ProcedureStatus.RESOLVED);
 			sessionCaseDao.save(sessionCase);
-
-			queueService.nextProcedure(request, procedure, sessionCase.getContextId());
+			
 			return procedure;
 		} catch (BusinessException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

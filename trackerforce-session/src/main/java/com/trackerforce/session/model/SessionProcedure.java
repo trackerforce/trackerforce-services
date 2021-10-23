@@ -2,6 +2,7 @@ package com.trackerforce.session.model;
 
 import java.util.LinkedList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trackerforce.common.model.exception.BusinessException;
 import com.trackerforce.common.tenant.model.CommonProcedure;
@@ -85,6 +86,11 @@ public class SessionProcedure extends CommonProcedure<SessionTask> {
 		if (tasks == null)
 			tasks = new LinkedList<SessionTask>();
 		return tasks;
+	}
+	
+	@JsonIgnore
+	public boolean isClosingProcedure() {
+		return getTasks().size() == 0;
 	}
 
 }

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.trackerforce.common.tenant.model.AbstractBusinessDocument;
 import com.trackerforce.common.tenant.model.CommonProcedure;
 
@@ -72,14 +71,6 @@ public class SessionCase extends AbstractBusinessDocument {
 
 	public void setContext(String context) {
 		this.context = context;
-	}
-
-	@JsonIgnore
-	public boolean isClosingProcedure() {
-		for (SessionProcedure p : procedures)
-			if (p.getTasks().size() > 0)
-				return false;
-		return true;
 	}
 
 }
