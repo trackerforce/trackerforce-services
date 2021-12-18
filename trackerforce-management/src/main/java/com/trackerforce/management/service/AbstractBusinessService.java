@@ -94,7 +94,7 @@ public abstract class AbstractBusinessService<T extends AbstractBusinessDocument
 		for (String key : allowedUpdate.keySet()) {
 			if (key.equals(entityName)) {
 				super.update(entity, updates.get(key), allowedUpdate.get(key));
-			} else {
+			} else if (updates.containsKey(key)) {
 				var field = ReflectionUtils.findField(entity.getClass(), key);
 
 				if (field == null)
