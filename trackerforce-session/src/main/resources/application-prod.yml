@@ -12,7 +12,9 @@ service:
     expire: ${JWT_EXPIRETIME:60}
   endpoint:
     allowed-addresses: ${WHITELIST}
-    allowed-endpoints: /service/check,/management/agent/v1/activate
+    allowed-endpoints: >
+     /service/check,
+     /management/agent/v1/activate
   identity:
     url: http://127.0.0.1:8070
   management:

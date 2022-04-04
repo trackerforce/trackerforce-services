@@ -11,12 +11,12 @@
   },
   {
     "name": "service.endpoint.allowed-addresses",
-    "type": "java.lang.String",
+    "type": "java.lang.String[]",
     "description": "Address allowed to be accessed without authentication"
   },
   {
     "name": "service.endpoint.allowed-endpoints",
-    "type": "java.lang.String",
+    "type": "java.lang.String[]",
     "description": "Endpoints allowed to be accessed without authenticatio"
   },
   {

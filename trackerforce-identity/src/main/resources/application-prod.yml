@@ -12,7 +12,8 @@ service:
     expire: ${JWT_EXPIRETIME:15}
   endpoint:
     allowed-addresses: ${WHITELIST}
-    allowed-endpoints: /service/check
+    allowed-endpoints: >
+     /service/check
   management:
     url: http://127.0.0.1:8090
 

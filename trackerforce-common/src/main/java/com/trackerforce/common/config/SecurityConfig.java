@@ -10,10 +10,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public abstract class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Value("${service.endpoint.allowed-addresses}")
-	protected String allowedAddresses;
+	protected String[] allowedAddresses;
 	
 	@Value("${service.endpoint.allowed-endpoints}")
-	protected String allowedEndpoint;
+	protected String[] allowedEndpoint;
 	
 	@Autowired
 	protected JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -22,8 +22,7 @@ public abstract class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected JwtRequestFilter jwtRequestFilter;
 	
 	protected String buildAllowedIpList() {
-		final String[] addresses = allowedAddresses.split(",");
-		final String accessIpAddress = Arrays.stream(addresses)
+		final String accessIpAddress = Arrays.stream(allowedAddresses)
 				.map(address -> "hasIpAddress('" + address.trim() + "') or ")
 				.collect(Collectors.joining());
 

@@ -21,7 +21,7 @@ public class IdentityService {
 	private String serviceUrl;
 	
 	@Value("${service.endpoint.allowed-endpoints}")
-	protected String allowedEndpoints;
+	protected String[] allowedEndpoints;
 	
 	public boolean validateIdentity(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeaders();
@@ -42,7 +42,7 @@ public class IdentityService {
 		}
 	}
 
-	public String getAllowedEndpoints() {
+	public String[] getAllowedEndpoints() {
 		return allowedEndpoints;
 	}
 

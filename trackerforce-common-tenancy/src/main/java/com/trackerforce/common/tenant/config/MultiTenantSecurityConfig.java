@@ -18,8 +18,9 @@ public class MultiTenantSecurityConfig extends SecurityConfig {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				.antMatchers(getAllowedEndpoints()).permitAll()
-				.antMatchers("/**").access("isAuthenticated() and (" + buildAllowedIpList() + ")")
+				.antMatchers(allowedEndpoint).permitAll()
+				.antMatchers("/**").access(buildAllowedIpList())
+				.anyRequest().authenticated()
 			
 			.and()
 				.exceptionHandling()
@@ -36,10 +37,6 @@ public class MultiTenantSecurityConfig extends SecurityConfig {
 				.csrf().disable();
 		
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-	}
-	
-	private String[] getAllowedEndpoints() {
-		return allowedEndpoint.split(",");
 	}
 
 }
