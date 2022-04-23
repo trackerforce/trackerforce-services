@@ -29,11 +29,6 @@ public class IdentitySecurityConfig extends SecurityConfig {
 		http
 			.authorizeRequests()
 				.antMatchers(allowedEndpoint).permitAll()
-				.antMatchers(
-						"/**/authenticate/", 
-						"/**/register/",
-						"/**/refresh/",
-						"/**/activate/").permitAll()
 				.antMatchers("/**").access("isAuthenticated()")
 			
 			.and()

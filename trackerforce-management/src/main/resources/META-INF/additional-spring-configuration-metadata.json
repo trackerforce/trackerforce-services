@@ -23,5 +23,25 @@
     "name": "service.identity.url",
     "type": "java.lang.String",
     "description": "IAM endpoint"
+  },
+  {
+    "name": "service.package-name",
+    "type": "java.lang.String",
+    "description": "Service controller package name"
+  },
+  {
+    "name": "service.title",
+    "type": "java.lang.String",
+    "description": "Service title"
+  },
+  {
+    "name": "service.description",
+    "type": "java.lang.String",
+    "description": "Service short description"
+  },
+  {
+    "name": "service.version",
+    "type": "java.lang.String",
+    "description": "Service current version"
   }
 ]}

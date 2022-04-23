@@ -7,6 +7,10 @@ spring:
       uri: mongodb://master:masterpassword@localhost:27017
 
 service:
+  package-name: com.trackerforce.management.controller
+  title: Trackerforce Management
+  description: Business Service for Trackerforce API
+  version: 0.0.2
   jwt:
     secret: 2BB80D537B1DA3E38BD30361AA855686BDE0EACD7162FEF6A25FE97BF527A25B
     expire: 60
@@ -15,6 +19,8 @@ service:
      127.0.0.1,
      10.0.0.2
     allowed-endpoints: >
+     /v2/api-docs,
+     /swagger.*,
      /service/check,
      /management/agent/v1/activate,
      /management/agent/v1/login,
