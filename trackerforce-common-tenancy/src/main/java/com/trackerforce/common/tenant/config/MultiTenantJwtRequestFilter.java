@@ -31,7 +31,7 @@ public class MultiTenantJwtRequestFilter extends JwtRequestFilter {
 		jwt.ifPresent(token -> {
 			try {
 				String username = jwtTokenService.getUsernameFromToken(token);
-				if (jwtTokenService.validateToken(token, username)) {
+				if (Boolean.TRUE.equals(jwtTokenService.validateToken(token, username))) {
 					final UsernamePasswordAuthenticationToken authUser = 
 							new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
 					authUser.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

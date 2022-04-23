@@ -1,5 +1,6 @@
 package com.trackerforce.common.tenant.interceptor;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,11 +52,8 @@ public class TenantInterceptor implements HandlerInterceptor {
 	}
 	
 	private boolean isAllowedEndpoint(HttpServletRequest request) {
-		for (String endpoint : identityService.getAllowedEndpoints()) {
-			if (endpoint.equals(request.getRequestURI()))
-				return true;
-		}
-		return false;
+		return Arrays.stream(identityService.getAllowedEndpoints())
+			.anyMatch(endpoint -> request.getRequestURI().matches(endpoint));
 	}
 	
 }
