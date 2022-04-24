@@ -1,7 +1,5 @@
 package com.trackerforce.identity.controller;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trackerforce.common.model.response.ErrorResponse;
-import com.trackerforce.common.service.exception.ServiceException;
-import com.trackerforce.identity.model.request.AccessRequest;
-import com.trackerforce.identity.model.request.JwtRefreshRequest;
-import com.trackerforce.identity.model.request.JwtRequest;
+import com.trackerforce.identity.model.dto.request.AccessRequestDTO;
+import com.trackerforce.identity.model.dto.request.JwtRefreshRequestDTO;
+import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
+import com.trackerforce.identity.model.dto.response.AuthAdminResponseDTO;
+import com.trackerforce.identity.model.dto.response.AuthResponseDTO;
 import com.trackerforce.identity.service.AuthenticationService;
 
 @CrossOrigin
@@ -32,52 +30,36 @@ public class IdentityController {
 	}
 	
 	@PostMapping(value = "/authenticate")
-	public ResponseEntity<Map<String, Object>> authenticateRoot(@RequestBody JwtRequest authRequest) {
+	public ResponseEntity<AuthAdminResponseDTO> authenticateRoot(@RequestBody JwtRequestDTO authRequest) {
 		return ResponseEntity.ok(authorizationService.authenticateAccess(authRequest));
 	}
 	
 	@PostMapping(value = "/refresh")
-	public ResponseEntity<?> refreshAuth(HttpServletRequest request,
-			@RequestBody JwtRefreshRequest authRefreshRequest) {
-		try {
-			return ResponseEntity.ok(authorizationService.authenticateRefreshAccess(request, authRefreshRequest));
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}
+	public ResponseEntity<AuthResponseDTO> refreshAuth(HttpServletRequest request,
+			@RequestBody JwtRefreshRequestDTO authRefreshRequest) {
+		return ResponseEntity.ok(authorizationService.authenticateRefreshAccess(request, authRefreshRequest));
 	}
 	
 	@PostMapping(value = "/register")
-	public ResponseEntity<?> registerRoot(@RequestBody AccessRequest accessRequest) {
+	public ResponseEntity<AuthAdminResponseDTO> registerRoot(@RequestBody AccessRequestDTO accessRequest) {
 		return ResponseEntity.ok(authorizationService.registerAccess(accessRequest));
 	}
 	
 	@PostMapping(value = "/logout")
-	public ResponseEntity<?> logout(HttpServletRequest request, 
+	public ResponseEntity<Object> logout(HttpServletRequest request, 
 			HttpServletResponse response) {
-		try {
-			authorizationService.logoff(request, response);
-			return ResponseEntity.ok().build();
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}
+		authorizationService.logoff(request, response);
+		return ResponseEntity.ok().build();
 	}
 	
 	@GetMapping(value = "/me")
-	public ResponseEntity<?> getAuthenticated(HttpServletRequest request) {
-		try {
-			return ResponseEntity.ok(authorizationService.getAuthenticated(request));
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}
+	public ResponseEntity<AuthResponseDTO> getAuthenticated(HttpServletRequest request) {
+		return ResponseEntity.ok(authorizationService.getAuthenticated(request));
 	}
 	
 	@GetMapping(value = "/valid")
-	public ResponseEntity<?> isValid(HttpServletRequest request) {
-		try {
-			return ResponseEntity.ok(authorizationService.getAuthenticated(request) != null);
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}
+	public ResponseEntity<Boolean> isValid(HttpServletRequest request) {
+		return ResponseEntity.ok(authorizationService.getAuthenticated(request) != null);
 	}
 
 }

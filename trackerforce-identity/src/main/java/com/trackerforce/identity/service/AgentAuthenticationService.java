@@ -15,6 +15,7 @@ import com.trackerforce.common.model.response.AgentResponse;
 import com.trackerforce.common.model.type.JwtKeys;
 import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.common.service.JwtTokenService;
+import com.trackerforce.identity.model.dto.response.AuthAgentResponseDTO;
 
 @Service
 public class AgentAuthenticationService {
@@ -37,7 +38,7 @@ public class AgentAuthenticationService {
 	 * @param agentResponse
 	 * @return
 	 */
-	private HashMap<String, Object> authenticate(HttpServletRequest request, AgentResponse agentResponse) {
+	private AuthAgentResponseDTO authenticate(HttpServletRequest request, AgentResponse agentResponse) {
 		final UsernamePasswordAuthenticationToken authUser = 
 				new UsernamePasswordAuthenticationToken(
 						agentResponse.getEmail(), agentResponse.getTempAccess(), new ArrayList<>());
@@ -52,22 +53,17 @@ public class AgentAuthenticationService {
 				request.getHeader(RequestHeader.TENANT_HEADER.toString()), 
 				claims);
 		
-		var response = new HashMap<String, Object>();
 		agentResponse.setTempAccess(null);
-		response.put(JwtKeys.ACCESS.toString(), agentResponse);
-		response.put(JwtKeys.TOKEN.toString(), jwt[0]);
-		response.put(JwtKeys.REFRESH_TOKEN.toString(), jwt[1]);
-		
-		return response;
+		return new AuthAgentResponseDTO(agentResponse, jwt[0], jwt[1]);
 	}
 	
-	public HashMap<String, Object> activateAgent(HttpServletRequest request, 
+	public AuthAgentResponseDTO activateAgent(HttpServletRequest request, 
 			AgentRequest agentRequest) {
 		var agentResponse = managementService.activateAgent(request, agentRequest);
 		return authenticate(request, agentResponse);
 	}
 	
-	public HashMap<String, Object> authenticateAccess(HttpServletRequest request, 
+	public AuthAgentResponseDTO authenticateAccess(HttpServletRequest request, 
 			AgentRequest agentRequest) {
 		var agentResponse = managementService.login(request, agentRequest);
 		return authenticate(request, agentResponse);

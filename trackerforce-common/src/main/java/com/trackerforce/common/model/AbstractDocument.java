@@ -93,7 +93,7 @@ public abstract class AbstractDocument {
 		var other = (AbstractDocument) obj;
 		if (id == null && other.id != null) {
 			return false;
-		} else if (!id.equals(other.id))
+		} else if (id != null && !id.equals(other.id))
 			return false;
 		
 		return true;

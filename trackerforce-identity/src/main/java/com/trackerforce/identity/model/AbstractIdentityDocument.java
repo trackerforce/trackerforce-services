@@ -17,5 +17,15 @@ public abstract class AbstractIdentityDocument extends AbstractDocument {
 	public void setOrganizationByAlias(String orgAlias) {
 		this.organization = new Organization(orgAlias);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trackerforce.common.model.request.AgentRequest;
+import com.trackerforce.identity.model.dto.response.AuthAgentResponseDTO;
 import com.trackerforce.identity.service.AgentAuthenticationService;
 
 @CrossOrigin
@@ -24,13 +25,13 @@ public class AgentIdentityController {
 	}
 
 	@PostMapping(value = "/activate")
-	public ResponseEntity<?> activateAgent(HttpServletRequest request,
+	public ResponseEntity<AuthAgentResponseDTO> activateAgent(HttpServletRequest request,
 			@RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentAuthorizationService.activateAgent(request, agentRequest));	
 	}
 	
 	@PostMapping(value = "/authenticate")
-	public ResponseEntity<?> authenticateAccess(HttpServletRequest request,
+	public ResponseEntity<AuthAgentResponseDTO> authenticateAccess(HttpServletRequest request,
 			@RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentAuthorizationService.authenticateAccess(request, agentRequest));
 	}

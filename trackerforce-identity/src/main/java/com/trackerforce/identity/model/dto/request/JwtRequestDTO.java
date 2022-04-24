@@ -1,12 +1,12 @@
-package com.trackerforce.identity.model.request;
+package com.trackerforce.identity.model.dto.request;
 
-public class JwtRequest {
+public class JwtRequestDTO {
 
 	private String email;
 
 	private String password;
 
-	public JwtRequest(String email, String password) {
+	public JwtRequestDTO(String email, String password) {
 		this.email = email;
 		this.password = password;
 	}

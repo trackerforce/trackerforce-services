@@ -1,6 +1,6 @@
-package com.trackerforce.identity.model.request;
+package com.trackerforce.identity.model.dto.request;
 
-public class JwtRefreshRequest {
+public class JwtRefreshRequestDTO {
 
 	private String refreshToken;
 

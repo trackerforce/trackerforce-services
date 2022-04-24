@@ -24,7 +24,7 @@
     "type": "java.lang.String",
     "description": "Management endpoint'"
   },
-    {
+  {
     "name": "service.package-name",
     "type": "java.lang.String",
     "description": "Service controller package name"

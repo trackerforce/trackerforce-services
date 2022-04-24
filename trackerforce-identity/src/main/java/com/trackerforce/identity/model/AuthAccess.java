@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.trackerforce.common.model.type.JwtKeys;
 import com.trackerforce.common.model.type.ServicesRole;
-import com.trackerforce.identity.model.request.JwtRequest;
+import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
 
 @Document(collection = "auth-access")
 public class AuthAccess extends AbstractIdentityDocument {
@@ -31,7 +31,7 @@ public class AuthAccess extends AbstractIdentityDocument {
 	
 	public AuthAccess() {}
 	
-	public AuthAccess(JwtRequest authRequest, Organization organization) {
+	public AuthAccess(JwtRequestDTO authRequest, Organization organization) {
 		this.email = authRequest.getEmail();
 		this.password = authRequest.getPassword();
 		setOrganization(organization);
@@ -50,10 +50,7 @@ public class AuthAccess extends AbstractIdentityDocument {
 		if (super.organization == null)
 			return false;
 		
-		if (!StringUtils.hasText(super.organization.getName()))
-			return false;
-		
-		return true;
+		return StringUtils.hasText(super.organization.getName());
 	}
 	
 	@JsonIgnore
@@ -61,6 +58,16 @@ public class AuthAccess extends AbstractIdentityDocument {
 		var claims = new HashMap<String, Object>();
 		claims.put(JwtKeys.ROLES.toString(), Arrays.asList(ServicesRole.ROOT.name()));
 		return claims;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 
 	public String getEmail() {

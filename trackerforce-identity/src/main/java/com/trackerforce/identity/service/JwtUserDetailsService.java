@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.trackerforce.identity.model.AuthAccess;
-import com.trackerforce.identity.model.request.JwtRequest;
+import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
 import com.trackerforce.identity.repository.AuthAccessRepository;
 
 @Service
@@ -34,7 +34,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 	}
 
 	public AuthAccess newUser(AuthAccess user) {
-		final var jwt = new JwtRequest(user.getEmail(), bcryptEncoder.encode(user.getPassword()));
+		final var jwt = new JwtRequestDTO(user.getEmail(), bcryptEncoder.encode(user.getPassword()));
 		final var newUser = new AuthAccess(jwt, user.getOrganization());
 		return authAccessRepository.save(newUser);
 	}

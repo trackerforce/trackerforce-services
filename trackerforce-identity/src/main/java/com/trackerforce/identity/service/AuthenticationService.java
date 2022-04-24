@@ -2,7 +2,6 @@ package com.trackerforce.identity.service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,11 +24,13 @@ import com.trackerforce.common.model.type.JwtKeys;
 import com.trackerforce.common.model.type.RequestHeader;
 import com.trackerforce.common.model.type.ServicesRole;
 import com.trackerforce.common.service.JwtTokenService;
-import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.identity.model.AuthAccess;
-import com.trackerforce.identity.model.request.AccessRequest;
-import com.trackerforce.identity.model.request.JwtRefreshRequest;
-import com.trackerforce.identity.model.request.JwtRequest;
+import com.trackerforce.identity.model.dto.request.AccessRequestDTO;
+import com.trackerforce.identity.model.dto.request.JwtRefreshRequestDTO;
+import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
+import com.trackerforce.identity.model.dto.response.AuthAdminResponseDTO;
+import com.trackerforce.identity.model.dto.response.AuthResponseDTO;
+import com.trackerforce.identity.model.mapper.AuthAccessMapper;
 import com.trackerforce.identity.repository.AuthAccessRepository;
 
 import io.jsonwebtoken.Claims;
@@ -69,7 +70,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid AuthAccess values");
 	}
 
-	private void authenticate(JwtRequest authRequest) {
+	private void authenticate(JwtRequestDTO authRequest) {
 		try {
 			authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
@@ -79,86 +80,10 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS");
 		}
 	}
-
-	public Map<String, Object> authenticateAccess(JwtRequest authRequest) {
-		authenticate(authRequest);
-
-		final var authAccess = authAccessRepository.findByEmail(authRequest.getEmail());
-		final var jwt = jwtTokenUtil.generateToken(authAccess.getId(), authAccess.getOrganization().getAlias(),
-				authAccess.getDefaultClaims());
-
-		var response = new HashMap<String, Object>();
-		response.put(JwtKeys.ACCESS.toString(), authAccess);
-		response.put(JwtKeys.TOKEN.toString(), jwt[0]);
-		response.put(JwtKeys.REFRESH_TOKEN.toString(), jwt[1]);
-
-		authAccess.setTokenHash(bcrypt.encode(jwt[0]));
-		authAccessRepository.save(authAccess);
-
-		return response;
-	}
 	
-	public Map<String, Object> authenticateRefreshAccess(HttpServletRequest request,
-			JwtRefreshRequest authRefreshRequest) throws ServiceException {
-		
-		// Validates Bearer token was sent
-		var tokenOpt = JwtRequestFilter.getJwtFromRequest(request);
-		if (!tokenOpt.isPresent())
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-
-		// Read token/playload
-		var token = tokenOpt.get();
-		var payload = jwtTokenUtil.readClaims(token);
-
-		// Validates refresh token
-		if (!jwtTokenUtil.isRefreshTokenValid(token, authRefreshRequest.getRefreshToken()))
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-
-		// Build Claims and new JWT
-		var claims = new HashMap<String, Object>();
-		claims.put(JwtKeys.ROLES.toString(), payload.getRoles());
-		final var jwt = jwtTokenUtil.generateToken(payload.getSub(), payload.getAud(), claims);
-
-		// Prepare response
-		var response = new HashMap<String, Object>();
-		response.put(JwtKeys.TOKEN.toString(), jwt[0]);
-		response.put(JwtKeys.REFRESH_TOKEN.toString(), jwt[1]);
-		
-		// Update root user
-		if (payload.getRoles().contains(ServicesRole.ROOT.name())) {
-			final var authAccessOpt = authAccessRepository.findById(payload.getSub());
-			final var authAccess = authAccessOpt.get();
-			authAccess.setTokenHash(bcrypt.encode(jwt[0]));
-			authAccessRepository.save(authAccess);
-		}
-
-		return response;
-	}
-
-	public AuthAccess getAuthenticated(HttpServletRequest request) throws ServiceException {
-		var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		var token = JwtRequestFilter.getJwtFromRequest(request);
-		if (!token.isPresent())
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-
-		var roles = jwtTokenUtil.getClaimFromToken(token.get(),
-				claims -> claims.get(JwtKeys.ROLES.toString(), List.class));
-
-		if (roles.contains(ServicesRole.ROOT.name())) {
-			return getRootAuthenticated(request, authentication, token.get());
-		} else if (roles.contains(ServicesRole.AGENT.name()) || 
-				roles.contains(ServicesRole.SESSION.name()) ||
-				roles.contains(ServicesRole.INTERNAL.name())) {
-			return getInternalAuthenticated(request, token.get(), roles);
-		}
-
-		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-	}
-
-	public AuthAccess getRootAuthenticated(HttpServletRequest request, Authentication authentication, String token) {
-		var authAccess = authAccessRepository.findById(authentication.getName()).get();
-		if (authAccess == null || !bcrypt.matches(token, authAccess.getTokenHash()))
+	private AuthAccess getRootAuthenticated(HttpServletRequest request, Authentication authentication, String token) {
+		var authAccessOpt = authAccessRepository.findById(authentication.getName());
+		if (!authAccessOpt.isPresent() || !bcrypt.matches(token, authAccessOpt.get().getTokenHash()))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		var tenant = request.getHeader(RequestHeader.TENANT_HEADER.toString());
@@ -166,10 +91,10 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		if (!StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
-		return authAccess;
+		return authAccessOpt.get();
 	}
 
-	public AuthAccess getInternalAuthenticated(HttpServletRequest request, String token, List<?> roles) {
+	private AuthAccess getInternalAuthenticated(HttpServletRequest request, String token, List<?> roles) {
 		var online = false;
 		if (roles.contains(ServicesRole.AGENT.name()))
 			online = managementService.isOnline(request);
@@ -185,19 +110,99 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		return new AuthAccess(jwtTokenUtil.getUsernameFromToken(token), orgAlias);
 	}
 
-	public AuthAccess registerAccess(AccessRequest accessRequest) {
-		var authAccess = accessRequest.getAuthAccess();
-		this.validate(authAccess);
+	public AuthAdminResponseDTO authenticateAccess(JwtRequestDTO authRequest) {
+		authenticate(authRequest);
 
-		return userDetailsService.newUser(authAccess);
+		final var authAccess = authAccessRepository.findByEmail(authRequest.getEmail());
+		final var jwt = jwtTokenUtil.generateToken(authAccess.getId(), authAccess.getOrganization().getAlias(),
+				authAccess.getDefaultClaims());
+
+		var authResponse = new AuthAdminResponseDTO(authAccess, jwt[0], jwt[1]);
+		authAccess.setTokenHash(bcrypt.encode(jwt[0]));
+		authAccessRepository.save(authAccess);
+
+		return authResponse;
+	}
+	
+	public AuthResponseDTO authenticateRefreshAccess(HttpServletRequest request,
+			JwtRefreshRequestDTO authRefreshRequest) {
+		
+		// Validates Bearer token was sent
+		var tokenOpt = JwtRequestFilter.getJwtFromRequest(request);
+		if (!tokenOpt.isPresent())
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+		// Read from token
+		var token = tokenOpt.get();
+		var payload = jwtTokenUtil.readClaims(token);
+
+		// Validates refresh token
+		if (!jwtTokenUtil.isRefreshTokenValid(token, authRefreshRequest.getRefreshToken()))
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+		// Build Claims and new JWT
+		var claims = new HashMap<String, Object>();
+		claims.put(JwtKeys.ROLES.toString(), payload.getRoles());
+		final var jwt = jwtTokenUtil.generateToken(payload.getSub(), payload.getAud(), claims);
+		
+		// Update root user
+		if (payload.getRoles().contains(ServicesRole.ROOT.name())) {
+			final var authAccessOpt = authAccessRepository.findById(payload.getSub());
+			
+			if (authAccessOpt.isPresent()) {
+				final var authAccess = authAccessOpt.get();
+				authAccess.setTokenHash(bcrypt.encode(jwt[0]));
+				authAccessRepository.save(authAccess);
+				
+				return new AuthResponseDTO(jwt[0], jwt[1], null);
+			}
+		}
+		
+		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 	}
 
-	public void logoff(HttpServletRequest request, HttpServletResponse response) throws ServiceException {
-		final AuthAccess authAccess = (AuthAccess) getAuthenticated(request);
+	public AuthResponseDTO getAuthenticated(HttpServletRequest request) {
+		var authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		if (authAccess.isRoot()) {
-			authAccess.setTokenHash(null);
-			authAccessRepository.save(authAccess);
+		var token = JwtRequestFilter.getJwtFromRequest(request);
+		if (!token.isPresent())
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+		var roles = jwtTokenUtil.getClaimFromToken(token.get(),
+				claims -> claims.get(JwtKeys.ROLES.toString(), List.class));
+
+		if (roles.contains(ServicesRole.ROOT.name())) {
+			return new AuthAdminResponseDTO(
+					getRootAuthenticated(request, authentication, token.get()), token.get(), null);
+		} else if (roles.contains(ServicesRole.AGENT.name()) 
+				|| roles.contains(ServicesRole.SESSION.name())
+				|| roles.contains(ServicesRole.INTERNAL.name())) {
+			return new AuthAdminResponseDTO(
+					getInternalAuthenticated(request, token.get(), roles), token.get(), null);
+		}
+
+		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+	}
+
+	public AuthAdminResponseDTO registerAccess(AccessRequestDTO accessRequest) {
+		var authAccess = AuthAccessMapper.getAuthAccess(accessRequest);
+		this.validate(authAccess);
+
+		final var newRootAccess = userDetailsService.newUser(authAccess);
+		return new AuthAdminResponseDTO(newRootAccess, null, null);
+	}
+
+	public void logoff(HttpServletRequest request, HttpServletResponse response) {
+		final AuthResponseDTO authAccess = getAuthenticated(request);
+
+		if (Boolean.TRUE.equals(authAccess.isRoot())) {
+			var authRootOpt = authAccessRepository.findById(authAccess.getId());
+			
+			if (authRootOpt.isPresent()) {
+				var authRoot = authRootOpt.get();
+				authRoot.setTokenHash(null);
+				authAccessRepository.save(authRoot);				
+			}
 		} else {
 			managementService.logoff(request);
 		}
