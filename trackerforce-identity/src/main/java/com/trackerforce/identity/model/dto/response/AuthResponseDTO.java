@@ -1,7 +1,9 @@
 package com.trackerforce.identity.model.dto.response;
 
-import org.apache.commons.lang3.StringUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonInclude(Include.NON_NULL)
 public class AuthResponseDTO {
 	
 	protected String token;
@@ -29,7 +31,7 @@ public class AuthResponseDTO {
 	}
 	
 	public String getId() {
-		return StringUtils.EMPTY;
+		return null;
 	}
 	
 }

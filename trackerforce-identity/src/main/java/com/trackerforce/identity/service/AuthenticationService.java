@@ -2,6 +2,8 @@ package com.trackerforce.identity.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +30,8 @@ import com.trackerforce.identity.model.AuthAccess;
 import com.trackerforce.identity.model.dto.request.AccessRequestDTO;
 import com.trackerforce.identity.model.dto.request.JwtRefreshRequestDTO;
 import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
-import com.trackerforce.identity.model.dto.response.AuthAdminResponseDTO;
+import com.trackerforce.identity.model.dto.response.AuthRootResponseDTO;
+import com.trackerforce.identity.model.dto.response.AuthAgentResponseDTO;
 import com.trackerforce.identity.model.dto.response.AuthResponseDTO;
 import com.trackerforce.identity.model.mapper.AuthAccessMapper;
 import com.trackerforce.identity.repository.AuthAccessRepository;
@@ -81,7 +84,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		}
 	}
 	
-	private AuthAccess getRootAuthenticated(HttpServletRequest request, Authentication authentication, String token) {
+	private AuthRootResponseDTO getRootAuthenticated(HttpServletRequest request, Authentication authentication, String token) {
 		var authAccessOpt = authAccessRepository.findById(authentication.getName());
 		if (!authAccessOpt.isPresent() || !bcrypt.matches(token, authAccessOpt.get().getTokenHash()))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -91,10 +94,10 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		if (!StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
-		return authAccessOpt.get();
+		return new AuthRootResponseDTO(authAccessOpt.get(), token, null);
 	}
 
-	private AuthAccess getInternalAuthenticated(HttpServletRequest request, String token, List<?> roles) {
+	private AuthAgentResponseDTO getInternalAuthenticated(HttpServletRequest request, String token, List<?> roles) {
 		var online = false;
 		if (roles.contains(ServicesRole.AGENT.name()))
 			online = managementService.isOnline(request);
@@ -107,21 +110,22 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		if (!online || !StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
-		return new AuthAccess(jwtTokenUtil.getUsernameFromToken(token), orgAlias);
+		final var roleList = roles.stream().map(object -> Objects.toString(object, null)).collect(Collectors.toList());
+
+		return new AuthAgentResponseDTO(new AuthAccess(jwtTokenUtil.getUsernameFromToken(token), orgAlias), roleList,
+				online);
 	}
 
-	public AuthAdminResponseDTO authenticateAccess(JwtRequestDTO authRequest) {
+	public AuthRootResponseDTO authenticateRootAccess(JwtRequestDTO authRequest) {
 		authenticate(authRequest);
 
 		final var authAccess = authAccessRepository.findByEmail(authRequest.getEmail());
 		final var jwt = jwtTokenUtil.generateToken(authAccess.getId(), authAccess.getOrganization().getAlias(),
 				authAccess.getDefaultClaims());
 
-		var authResponse = new AuthAdminResponseDTO(authAccess, jwt[0], jwt[1]);
 		authAccess.setTokenHash(bcrypt.encode(jwt[0]));
 		authAccessRepository.save(authAccess);
-
-		return authResponse;
+		return new AuthRootResponseDTO(authAccess, jwt[0], jwt[1]);
 	}
 	
 	public AuthResponseDTO authenticateRefreshAccess(HttpServletRequest request,
@@ -133,32 +137,30 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		// Read from token
-		var token = tokenOpt.get();
-		var payload = jwtTokenUtil.readClaims(token);
+		final var token = tokenOpt.get();
+		final var payload = jwtTokenUtil.readClaims(token);
 
 		// Validates refresh token
 		if (!jwtTokenUtil.isRefreshTokenValid(token, authRefreshRequest.getRefreshToken()))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		// Build Claims and new JWT
-		var claims = new HashMap<String, Object>();
+		final var claims = new HashMap<String, Object>();
 		claims.put(JwtKeys.ROLES.toString(), payload.getRoles());
 		final var jwt = jwtTokenUtil.generateToken(payload.getSub(), payload.getAud(), claims);
 		
 		// Update root user
 		if (payload.getRoles().contains(ServicesRole.ROOT.name())) {
-			final var authAccessOpt = authAccessRepository.findById(payload.getSub());
+			var authAccessOpt = authAccessRepository.findById(payload.getSub());
+			if (!authAccessOpt.isPresent())
+				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 			
-			if (authAccessOpt.isPresent()) {
-				final var authAccess = authAccessOpt.get();
-				authAccess.setTokenHash(bcrypt.encode(jwt[0]));
-				authAccessRepository.save(authAccess);
-				
-				return new AuthResponseDTO(jwt[0], jwt[1], null);
-			}
+			final var authAccess = authAccessOpt.get();
+			authAccess.setTokenHash(bcrypt.encode(jwt[0]));
+			authAccessRepository.save(authAccess);
 		}
 		
-		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+		return new AuthResponseDTO(jwt[0], jwt[1], null);
 	}
 
 	public AuthResponseDTO getAuthenticated(HttpServletRequest request) {
@@ -172,24 +174,22 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 				claims -> claims.get(JwtKeys.ROLES.toString(), List.class));
 
 		if (roles.contains(ServicesRole.ROOT.name())) {
-			return new AuthAdminResponseDTO(
-					getRootAuthenticated(request, authentication, token.get()), token.get(), null);
+			return getRootAuthenticated(request, authentication, token.get());
 		} else if (roles.contains(ServicesRole.AGENT.name()) 
 				|| roles.contains(ServicesRole.SESSION.name())
 				|| roles.contains(ServicesRole.INTERNAL.name())) {
-			return new AuthAdminResponseDTO(
-					getInternalAuthenticated(request, token.get(), roles), token.get(), null);
+			return getInternalAuthenticated(request, token.get(), roles);
 		}
 
 		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 	}
 
-	public AuthAdminResponseDTO registerAccess(AccessRequestDTO accessRequest) {
+	public AuthRootResponseDTO registerAccess(AccessRequestDTO accessRequest) {
 		var authAccess = AuthAccessMapper.getAuthAccess(accessRequest);
 		this.validate(authAccess);
 
 		final var newRootAccess = userDetailsService.newUser(authAccess);
-		return new AuthAdminResponseDTO(newRootAccess, null, null);
+		return new AuthRootResponseDTO(newRootAccess, null, null);
 	}
 
 	public void logoff(HttpServletRequest request, HttpServletResponse response) {

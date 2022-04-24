@@ -26,41 +26,41 @@ public class AgentResponse {
 
 	private boolean active;
 
-	public AgentResponse() {
-	}
-
-	private AgentResponse(String name, String email, String password, List<String> roles) {
-		setName(name);
-		setEmail(email);
-		setRoles(roles);
-		setTempAccess(password);
-	}
-
-	private AgentResponse(String id, String email, List<String> roles) {
-		setId(id);
-		setEmail(email);
-		setRoles(roles);
-		setOnline(true);
-		setActive(true);
-	}
-
-	private AgentResponse(String email, List<String> cases) {
-		setEmail(email);
-		setCases(cases);
-		setOnline(true);
-		setActive(true);
-	}
-
 	public static AgentResponse createAgent(String name, String email, String password, List<String> roles) {
-		return new AgentResponse(name, email, password, roles);
+		final var agent = new AgentResponse();
+		agent.setName(name);
+		agent.setEmail(email);
+		agent.setRoles(roles);
+		agent.setTempAccess(password);
+		return agent;
 	}
 
 	public static AgentResponse login(String id, String email, List<String> roles) {
-		return new AgentResponse(id, email, roles);
+		final var agent = new AgentResponse();
+		agent.setId(id);
+		agent.setEmail(email);
+		agent.setRoles(roles);
+		agent.setOnline(true);
+		agent.setActive(true);
+		return agent;
+	}
+
+	public static AgentResponse auth(String email, List<String> roles, boolean online) {
+		final var agent = new AgentResponse();
+		agent.setEmail(email);
+		agent.setRoles(roles);
+		agent.setOnline(online);
+		agent.setActive(true);
+		return agent;
 	}
 
 	public static AgentResponse watch(String email, List<String> cases) {
-		return new AgentResponse(email, cases);
+		final var agent = new AgentResponse();
+		agent.setEmail(email);
+		agent.setCases(cases);
+		agent.setOnline(true);
+		agent.setActive(true);
+		return agent;
 	}
 
 	public String getId() {

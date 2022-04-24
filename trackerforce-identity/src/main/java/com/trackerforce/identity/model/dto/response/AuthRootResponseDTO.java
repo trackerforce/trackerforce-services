@@ -6,11 +6,11 @@ import com.trackerforce.identity.model.AuthAccess;
 import com.trackerforce.identity.model.Organization;
 
 @JsonInclude(Include.NON_NULL)
-public class AuthAdminResponseDTO extends AuthResponseDTO {
+public class AuthRootResponseDTO extends AuthResponseDTO {
 
 	private AccessDetails access;
 
-	public AuthAdminResponseDTO(AuthAccess access, String token, String refreshToken) {
+	public AuthRootResponseDTO(AuthAccess access, String token, String refreshToken) {
 		super(token, refreshToken, true);
 		this.access = new AccessDetails(access.getId(), access.getOrganization(), access.getEmail());
 	}

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trackerforce.identity.model.dto.request.AccessRequestDTO;
 import com.trackerforce.identity.model.dto.request.JwtRefreshRequestDTO;
 import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
-import com.trackerforce.identity.model.dto.response.AuthAdminResponseDTO;
+import com.trackerforce.identity.model.dto.response.AuthRootResponseDTO;
 import com.trackerforce.identity.model.dto.response.AuthResponseDTO;
 import com.trackerforce.identity.service.AuthenticationService;
 
@@ -30,8 +30,8 @@ public class IdentityController {
 	}
 	
 	@PostMapping(value = "/authenticate")
-	public ResponseEntity<AuthAdminResponseDTO> authenticateRoot(@RequestBody JwtRequestDTO authRequest) {
-		return ResponseEntity.ok(authorizationService.authenticateAccess(authRequest));
+	public ResponseEntity<AuthRootResponseDTO> authenticateRoot(@RequestBody JwtRequestDTO authRequest) {
+		return ResponseEntity.ok(authorizationService.authenticateRootAccess(authRequest));
 	}
 	
 	@PostMapping(value = "/refresh")
@@ -41,7 +41,7 @@ public class IdentityController {
 	}
 	
 	@PostMapping(value = "/register")
-	public ResponseEntity<AuthAdminResponseDTO> registerRoot(@RequestBody AccessRequestDTO accessRequest) {
+	public ResponseEntity<AuthRootResponseDTO> registerRoot(@RequestBody AccessRequestDTO accessRequest) {
 		return ResponseEntity.ok(authorizationService.registerAccess(accessRequest));
 	}
 	
