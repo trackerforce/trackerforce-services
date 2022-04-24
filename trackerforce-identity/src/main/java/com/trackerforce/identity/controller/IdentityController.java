@@ -22,7 +22,7 @@ import com.trackerforce.identity.service.AuthenticationService;
 
 @CrossOrigin
 @RestController
-@RequestMapping("identity")
+@RequestMapping("identity/v1")
 public class IdentityController {
 	
 	private final AuthenticationService authorizationService;
@@ -31,12 +31,12 @@ public class IdentityController {
 		this.authorizationService = authorizationService;
 	}
 	
-	@PostMapping(value = "/v1/authenticate")
+	@PostMapping(value = "/authenticate")
 	public ResponseEntity<Map<String, Object>> authenticateRoot(@RequestBody JwtRequest authRequest) {
 		return ResponseEntity.ok(authorizationService.authenticateAccess(authRequest));
 	}
 	
-	@PostMapping(value = "/v1/refresh")
+	@PostMapping(value = "/refresh")
 	public ResponseEntity<?> refreshAuth(HttpServletRequest request,
 			@RequestBody JwtRefreshRequest authRefreshRequest) {
 		try {
@@ -46,12 +46,12 @@ public class IdentityController {
 		}
 	}
 	
-	@PostMapping(value = "/v1/register")
+	@PostMapping(value = "/register")
 	public ResponseEntity<?> registerRoot(@RequestBody AccessRequest accessRequest) {
 		return ResponseEntity.ok(authorizationService.registerAccess(accessRequest));
 	}
 	
-	@PostMapping(value = "/v1/logout")
+	@PostMapping(value = "/logout")
 	public ResponseEntity<?> logout(HttpServletRequest request, 
 			HttpServletResponse response) {
 		try {
@@ -62,7 +62,7 @@ public class IdentityController {
 		}
 	}
 	
-	@GetMapping(value = "/v1/me")
+	@GetMapping(value = "/me")
 	public ResponseEntity<?> getAuthenticated(HttpServletRequest request) {
 		try {
 			return ResponseEntity.ok(authorizationService.getAuthenticated(request));
@@ -71,7 +71,7 @@ public class IdentityController {
 		}
 	}
 	
-	@GetMapping(value = "/v1/valid")
+	@GetMapping(value = "/valid")
 	public ResponseEntity<?> isValid(HttpServletRequest request) {
 		try {
 			return ResponseEntity.ok(authorizationService.getAuthenticated(request) != null);

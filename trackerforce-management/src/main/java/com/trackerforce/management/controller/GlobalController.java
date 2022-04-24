@@ -28,13 +28,13 @@ import com.trackerforce.management.service.GlobalService;
 
 @CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
-@RequestMapping("management/global")
+@RequestMapping("management/global/v1")
 public class GlobalController {
 
 	@Autowired
 	private GlobalService globalService;
 
-	@PostMapping(value = "/v1/create")
+	@PostMapping(value = "/create")
 	public ResponseEntity<?> create(@RequestBody GlobalRequest globalRequest) {
 		try {
 			return ResponseEntity.ok(globalService.create(globalRequest));
@@ -43,7 +43,7 @@ public class GlobalController {
 		}
 	}
 	
-	@GetMapping(value = "/v1/")
+	@GetMapping(value = "/")
 	public ResponseEntity<Map<String, Object>> findAll(
 			@RequestParam(required = false) String description,
 			@RequestParam(required = false) String key,
@@ -59,7 +59,7 @@ public class GlobalController {
 		return ResponseEntity.ok(globalService.findAllProjectedBy(queryable));
 	}
 	
-	@GetMapping(value = "/v1/list")
+	@GetMapping(value = "/list")
 	public ResponseEntity<ArrayList<GlobalResponse>> listGlobals() {
 		var keys = new ArrayList<GlobalResponse>();
 		for (GlobalKeyType gk : GlobalKeyType.values())
@@ -68,7 +68,7 @@ public class GlobalController {
 		return ResponseEntity.ok(keys);
 	}
 	
-	@GetMapping(value = "/v1/{key}")
+	@GetMapping(value = "/{key}")
 	public ResponseEntity<?> findOneByKey(@PathVariable(value="key") String key, String output) {
 		Map<String, Object> query = new HashMap<String, Object>();
 		query.put("key", key);
@@ -83,7 +83,7 @@ public class GlobalController {
 		return ResponseEntity.ok( data.get(0));
 	}
 	
-	@PatchMapping(value = "/v1/{id}")
+	@PatchMapping(value = "/{id}")
 	public ResponseEntity<?> update(
 			@PathVariable(value="id") String id, 
 			@RequestBody Map<String, Object> updates) {
@@ -94,7 +94,7 @@ public class GlobalController {
 		}
 	}
 	
-	@DeleteMapping(value = "/v1/{id}")
+	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<?> delete(@PathVariable(value="id") String id) {
 		globalService.delete(id);
 		return ResponseEntity.ok().build();

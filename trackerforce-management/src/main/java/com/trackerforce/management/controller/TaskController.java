@@ -24,13 +24,13 @@ import com.trackerforce.management.service.TaskService;
 
 @CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
-@RequestMapping("management/task")
+@RequestMapping("management/task/v1")
 public class TaskController {
 
 	@Autowired
 	private TaskService taskService;
 
-	@PostMapping(value = "/v1/create")
+	@PostMapping(value = "/create")
 	public ResponseEntity<?> create(@RequestBody TaskRequest taskRequest) {
 		try {
 			return ResponseEntity.ok(taskService.create(taskRequest));
@@ -39,7 +39,7 @@ public class TaskController {
 		}
 	}
 	
-	@GetMapping(value = "/v1/")
+	@GetMapping(value = "/")
 	public ResponseEntity<Map<String, Object>> findAll(
 			@RequestParam(required = false) String description,
 			@RequestParam(required = false) String sortBy,
@@ -53,12 +53,12 @@ public class TaskController {
 		return ResponseEntity.ok(taskService.findAllProjectedBy(queryable));
 	}
 	
-	@GetMapping(value = "/v1/{id}")
+	@GetMapping(value = "/{id}")
 	public ResponseEntity<?> findOne(@PathVariable(value="id") String id, String output) {
 		return ResponseEntity.ok(taskService.findByIdProjectedBy(id, output));
 	}
 	
-	@PatchMapping(value = "/v1/{id}")
+	@PatchMapping(value = "/{id}")
 	public ResponseEntity<?> update(
 			@PathVariable(value="id") String id, 
 			@RequestBody Map<String, Object> updates) {
@@ -69,7 +69,7 @@ public class TaskController {
 		}
 	}
 	
-	@DeleteMapping(value = "/v1/{id}")
+	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<?> delete(@PathVariable(value="id") String id) {
 		taskService.delete(id);
 		return ResponseEntity.ok().build();

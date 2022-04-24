@@ -14,7 +14,7 @@ import com.trackerforce.identity.service.AgentAuthenticationService;
 
 @CrossOrigin
 @RestController
-@RequestMapping("identity/agent")
+@RequestMapping("identity/agent/v1")
 public class AgentIdentityController {
 	
 	private final AgentAuthenticationService agentAuthorizationService;
@@ -23,13 +23,13 @@ public class AgentIdentityController {
 		this.agentAuthorizationService = agentAuthorizationService;
 	}
 
-	@PostMapping(value = "/v1/activate")
+	@PostMapping(value = "/activate")
 	public ResponseEntity<?> activateAgent(HttpServletRequest request,
 			@RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentAuthorizationService.activateAgent(request, agentRequest));	
 	}
 	
-	@PostMapping(value = "/v1/authenticate")
+	@PostMapping(value = "/authenticate")
 	public ResponseEntity<?> authenticateAccess(HttpServletRequest request,
 			@RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentAuthorizationService.authenticateAccess(request, agentRequest));

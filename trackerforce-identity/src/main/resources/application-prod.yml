@@ -18,6 +18,9 @@ service:
     allowed-addresses: ${WHITELIST}
     allowed-endpoints: >
      /v2/api-docs,
+     /**/authenticate,
+     /**/register,
+     /**/activate,
      /service/check
   management:
     url: http://127.0.0.1:8090

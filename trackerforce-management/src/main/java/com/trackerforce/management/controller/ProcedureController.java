@@ -26,13 +26,13 @@ import com.trackerforce.management.service.ProcedureService;
 
 @CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
-@RequestMapping("management/procedure")
+@RequestMapping("management/procedure/v1")
 public class ProcedureController {
 
 	@Autowired
 	private ProcedureService procedureService;
 
-	@PostMapping(value = "/v1/create")
+	@PostMapping(value = "/create")
 	public ResponseEntity<?> create(@RequestBody ProcedureRequest procedureRequest) {
 		try {
 			return ResponseEntity.ok(procedureService.create(procedureRequest));
@@ -41,7 +41,7 @@ public class ProcedureController {
 		}
 	}
 	
-	@GetMapping(value = "/v1/")
+	@GetMapping(value = "/")
 	public ResponseEntity<Map<String, Object>> findAll(
 			@RequestParam(required = false) String name,
 			@RequestParam(required = false) String description,
@@ -57,14 +57,14 @@ public class ProcedureController {
 		return ResponseEntity.ok(procedureService.findAllProjectedBy(queryable));
 	}
 	
-	@GetMapping(value = "/v1/{id}")
+	@GetMapping(value = "/{id}")
 	public ResponseEntity<?> findOne(
 			@PathVariable(value = "id") String id,
 			@RequestParam(required = false) String output) {
 		return ResponseEntity.ok(procedureService.findByIdProjectedBy(id, output));
 	}
 	
-	@PatchMapping(value = "/v1/{id}")
+	@PatchMapping(value = "/{id}")
 	public ResponseEntity<?> update(
 			@PathVariable(value="id") String id, 
 			@RequestBody Map<String, Object> updates) {
@@ -75,7 +75,7 @@ public class ProcedureController {
 		}
 	}
 	
-	@PostMapping(value = "/v1/{id}/task/reorder")
+	@PostMapping(value = "/{id}/task/reorder")
 	public ResponseEntity<LinkedList<Task>> reorderTask(
 			@PathVariable(value="id") String id,
 			@RequestParam(required = true) int from,
@@ -83,21 +83,21 @@ public class ProcedureController {
 		return ResponseEntity.ok(procedureService.reorderTask(id, from, to));
 	}
 	
-	@PostMapping(value = "/v1/{id}/task/add/{taskId}")
+	@PostMapping(value = "/{id}/task/add/{taskId}")
 	public ResponseEntity<Task> addTask(
 			@PathVariable(value="id") String id,
 			@PathVariable(value="taskId") String taskId) {
 		return ResponseEntity.ok(procedureService.updateTasks(id, taskId, true));
 	}
 	
-	@PostMapping(value = "/v1/{id}/task/remove/{taskId}")
+	@PostMapping(value = "/{id}/task/remove/{taskId}")
 	public ResponseEntity<Task> removeTask(
 			@PathVariable(value="id") String id,
 			@PathVariable(value="taskId") String taskId) {
 		return ResponseEntity.ok(procedureService.updateTasks(id, taskId, false));
 	}
 	
-	@DeleteMapping(value = "/v1/{id}")
+	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<?> delete(@PathVariable(value="id") String id) {
 		procedureService.delete(id);
 		return ResponseEntity.ok().build();

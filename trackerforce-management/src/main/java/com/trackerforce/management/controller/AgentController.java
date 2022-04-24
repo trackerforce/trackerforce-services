@@ -24,13 +24,13 @@ import com.trackerforce.management.service.AgentService;
 
 @CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
-@RequestMapping("management/agent")
+@RequestMapping("management/agent/v1")
 public class AgentController {
 
 	@Autowired
 	private AgentService agentService;
 
-	@PostMapping(value = "/v1/create")
+	@PostMapping(value = "/create")
 	public ResponseEntity<?> create(HttpServletRequest request, @RequestBody AgentRequest agentRequest) {
 		try {
 			return ResponseEntity.ok(agentService.create(request, agentRequest));
@@ -39,42 +39,42 @@ public class AgentController {
 		}
 	}
 
-	@PostMapping(value = "/v1/activate")
+	@PostMapping(value = "/activate")
 	public ResponseEntity<?> activate(@RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentService.activate(agentRequest));
 	}
 
-	@PostMapping(value = "/v1/login")
+	@PostMapping(value = "/login")
 	public ResponseEntity<?> login(@RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentService.login(agentRequest, null));
 	}
 
-	@PostMapping(value = "/v1/logoff")
+	@PostMapping(value = "/logoff")
 	public ResponseEntity<?> logoff(HttpServletRequest request) {
 		agentService.logoff(request);
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping(value = "/v1/watch/{agentId}/{caseId}")
+	@PostMapping(value = "/watch/{agentId}/{caseId}")
 	public ResponseEntity<?> watch(
 			@PathVariable(value = "agentId") String agentId,
 			@PathVariable(value = "caseId") String caseId) {
 		return ResponseEntity.ok(agentService.watchCase(agentId, caseId));
 	}
 	
-	@PostMapping(value = "/v1/unwatch/{agentId}/{caseId}")
+	@PostMapping(value = "/unwatch/{agentId}/{caseId}")
 	public ResponseEntity<?> unwatch(
 			@PathVariable(value = "agentId") String agentId,
 			@PathVariable(value = "caseId") String caseId) {
 		return ResponseEntity.ok(agentService.unWatchCase(agentId, caseId));
 	}
 
-	@GetMapping(value = "/v1/{id}")
+	@GetMapping(value = "/{id}")
 	public ResponseEntity<?> findOne(@PathVariable(value="id") String id, String output) {
 		return ResponseEntity.ok(agentService.findByIdProjectedBy(id, output));
 	}
 	
-	@GetMapping(value = "/v1/")
+	@GetMapping(value = "/")
 	public ResponseEntity<Map<String, Object>> findAll(
 			@RequestParam(required = false) String name,
 			@RequestParam(required = false) String email,
@@ -90,12 +90,12 @@ public class AgentController {
 		return ResponseEntity.ok(agentService.findAllProjectedBy(queryable));
 	}
 
-	@GetMapping(value = "/v1/me")
+	@GetMapping(value = "/me")
 	public ResponseEntity<?> getAuthenticated(HttpServletRequest request) {
 		return ResponseEntity.ok(agentService.getAuthenticated(request));
 	}
 
-	@GetMapping(value = "/v1/check")
+	@GetMapping(value = "/check")
 	public ResponseEntity<?> check(HttpServletRequest request) {
 		return ResponseEntity.ok(agentService.isOnline(request));
 	}

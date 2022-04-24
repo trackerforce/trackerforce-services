@@ -26,7 +26,7 @@ import com.trackerforce.session.service.SessionCaseService;
 
 @CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
-@RequestMapping("session/case")
+@RequestMapping("session/case/v1")
 public class SessionCaseController {
 
 	private final SessionCaseService sessionCaseService;
@@ -35,7 +35,7 @@ public class SessionCaseController {
 		this.sessionCaseService = sessionCaseService;
 	}
 
-	@PostMapping(value = "/v1")
+	@PostMapping(value = "/")
 	public ResponseEntity<?> create(HttpServletRequest request,
 			@RequestBody SessionCaseRequest sessionCaseRequest) {
 		try {
@@ -46,7 +46,7 @@ public class SessionCaseController {
 		}
 	}
 
-	@PostMapping(value = "/v1/handler")
+	@PostMapping(value = "/handler")
 	public ResponseEntity<?> handler(HttpServletRequest request,
 			@RequestBody SessionProcedureRequest sessionProcedureRequest) {
 		try {
@@ -57,7 +57,7 @@ public class SessionCaseController {
 		}
 	}
 
-	@PostMapping(value = "/v1/ids")
+	@PostMapping(value = "/ids")
 	public ResponseEntity<?> findByIds(HttpServletRequest request,
 			@RequestBody SessionCaseRequest sessionCaseRequest,
 			@RequestParam(required = false) String sortBy,
@@ -68,7 +68,7 @@ public class SessionCaseController {
 				sessionCaseRequest.getCaseIds(), sortBy, output, page, size));
 	}
 	
-	@PostMapping(value = "/v1/next")
+	@PostMapping(value = "/next")
 	public ResponseEntity<?> next(HttpServletRequest request,
 			@RequestBody SessionProcedureRequest sessionProcedureRequest,
 			@RequestParam(required = false) String name,
@@ -86,13 +86,13 @@ public class SessionCaseController {
 		}
 	}
 
-	@GetMapping(value = "/v1/protocol/{protocol}")
+	@GetMapping(value = "/protocol/{protocol}")
 	public ResponseEntity<SessionCase> findByProtocol(
 			@PathVariable("protocol") String protocol) {
 		return ResponseEntity.ok(sessionCaseService.getSessionCaseByProtocol(protocol));
 	}
 	
-	@GetMapping(value = "/v1/agent/{agentid}")
+	@GetMapping(value = "/agent/{agentid}")
 	public ResponseEntity<Map<String, Object>> findByAgent(HttpServletRequest request,
 			@PathVariable("agentid") String agentid,
 			@RequestParam(required = false) String sortBy,
