@@ -6,6 +6,17 @@ spring:
       database: tfm
       uri: mongodb://master:masterpassword@localhost:27017
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      group:
+        custom:
+          show-components: always
+          show-details: always
+
 service:
   package-name: com.trackerforce.management.controller
   title: Trackerforce Management

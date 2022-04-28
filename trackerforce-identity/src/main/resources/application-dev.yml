@@ -6,6 +6,17 @@ spring:
       database: trackerforce
       uri: mongodb://master:masterpassword@localhost:27017
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      group:
+        custom:
+          show-components: always
+          show-details: always
+
 service:
   package-name: com.trackerforce.identity.controller
   title: Trackerforce Identity
