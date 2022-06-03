@@ -1,16 +1,14 @@
-name: Identity Service CI
+name: Master CI
 
 on:
   push:
     branches: [master]
     paths:
-      - 'trackerforce-identity/**'
-      - 'trackerforce-common/**'
+      - 'pom.xml'
   pull_request:
     branches: [master]
     paths:
-      - 'trackerforce-identity/**'
-      - 'trackerforce-common/**'
+      - 'pom.xml'
 
 jobs:
   build-test:
@@ -29,4 +27,4 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B clean verify -Pidentity
+      run: mvn -B clean verify

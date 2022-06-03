@@ -40,14 +40,45 @@
 	      **/model/**/*.java,
 	    </sonar.coverage.exclusions>
 	</properties>
-
-	<modules>
-		<module>trackerforce-common</module>
-		<module>trackerforce-common-tenancy</module>
-		<module>trackerforce-identity</module>
-		<module>trackerforce-management</module>
-		<module>trackerforce-session</module>
-	</modules>
+	
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+	            <activeByDefault>true</activeByDefault>
+	         </activation>
+			<modules>
+				<module>trackerforce-common</module>
+				<module>trackerforce-common-tenancy</module>
+				<module>trackerforce-identity</module>
+				<module>trackerforce-management</module>
+				<module>trackerforce-session</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>identity</id>
+			<modules>
+				<module>trackerforce-common</module>
+				<module>trackerforce-identity</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>management</id>
+			<modules>
+				<module>trackerforce-common</module>
+				<module>trackerforce-common-tenancy</module>
+				<module>trackerforce-management</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>session</id>
+			<modules>
+				<module>trackerforce-common</module>
+				<module>trackerforce-common-tenancy</module>
+				<module>trackerforce-session</module>
+			</modules>
+		</profile>
+	</profiles>
 	
 	<build>
 		<pluginManagement>

@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: trackerforce-identity-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      group:
+        custom:
+          show-components: always
+          show-details: always
+
+service:
+  package-name: com.trackerforce.identity.controller
+  title: Trackerforce Identity
+  description: Identity Service for Trackerforce API
+  version: 0.0.2
+  jwt:
+    secret: JWT_SECRET
+    expire: 15
+  endpoint:
+    allowed-addresses: >
+     127.0.0.1
+    allowed-endpoints: >
+     /v2/api-docs,
+     /**/swagger*/**,
+     /**/authenticate,
+     /**/register,
+     /**/activate,
+     /service/check
+  management:
+    url: http://127.0.0.1:8090
+
+server:
+  port: 8070
+  error:
+    include-message: always
