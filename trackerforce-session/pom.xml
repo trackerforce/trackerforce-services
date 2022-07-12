@@ -35,7 +35,7 @@
 
 	<properties>
 		<trackerforce-common-tenancy.version>0.0.2-SNAPSHOT</trackerforce-common-tenancy.version>
-		<switcherclient.version>1.3.4</switcherclient.version>
+		<switcherclient.version>1.3.5</switcherclient.version>
 	</properties>
 	
 	<profiles>

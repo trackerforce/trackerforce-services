@@ -97,7 +97,7 @@ public class AgentService extends AbstractBusinessService<Agent, AgentRepository
 		if (agent == null) {
 			agent = agentDao.getRepository().findByEmail(agentRequest.getEmail());
 
-			if (!agent.isActive())
+			if (agent == null || !agent.isActive())
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 		}
 
