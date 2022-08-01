@@ -35,7 +35,7 @@ public class SessionCaseController {
 		this.sessionCaseService = sessionCaseService;
 	}
 
-	@PostMapping(value = "/")
+	@PostMapping(value = "/create")
 	public ResponseEntity<?> create(HttpServletRequest request,
 			@RequestBody SessionCaseRequest sessionCaseRequest) {
 		try {
