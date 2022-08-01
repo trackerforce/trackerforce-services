@@ -1,5 +1,8 @@
 package com.trackerforce.common.tenant.model;
 
+import lombok.Data;
+
+@Data
 public class ComponentHelper {
 	
 	private String content;
@@ -8,21 +11,5 @@ public class ComponentHelper {
 	 * {@link RenderType}
 	 */
 	private String renderType;
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public String getRenderType() {
-		return renderType;
-	}
-
-	public void setRenderType(String renderType) {
-		this.renderType = renderType;
-	}
 
 }
