@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Data;
+
+@Data
 @JsonInclude(Include.NON_NULL)
 public class AgentResponse {
 
@@ -61,70 +64,6 @@ public class AgentResponse {
 		agent.setOnline(true);
 		agent.setActive(true);
 		return agent;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getTempAccess() {
-		return tempAccess;
-	}
-
-	public void setTempAccess(String tempAccess) {
-		this.tempAccess = tempAccess;
-	}
-
-	public List<String> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<String> roles) {
-		this.roles = roles;
-	}
-
-	public List<String> getCases() {
-		return cases;
-	}
-
-	public void setCases(List<String> cases) {
-		this.cases = cases;
-	}
-
-	public boolean isOnline() {
-		return online;
-	}
-
-	public void setOnline(boolean online) {
-		this.online = online;
-	}
-
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
 	}
 
 }

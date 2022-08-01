@@ -6,6 +6,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.trackerforce.common.tenant.model.type.TaskType;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class CommonTask extends AbstractBusinessDocument {
 
@@ -20,29 +27,10 @@ public class CommonTask extends AbstractBusinessDocument {
 
 	protected List<TaskOption> options;
 
-	public CommonTask() {
-	}
-
 	public CommonTask(TaskType type, String description, List<TaskOption> options) {
 		setDescription(description);
 		this.type = type;
 		this.options = options;
-	}
-
-	public TaskType getType() {
-		return type;
-	}
-
-	public List<TaskOption> getOptions() {
-		return options;
-	}
-
-	public boolean isLearn() {
-		return learn;
-	}
-
-	public boolean isHidden() {
-		return hidden;
 	}
 
 }
