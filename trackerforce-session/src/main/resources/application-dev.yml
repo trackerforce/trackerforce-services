@@ -18,10 +18,6 @@ management:
           show-details: always
 
 service:
-  package-name: com.trackerforce.session.controller
-  title: Trackerforce Session
-  description: Session Service for Trackerforce API
-  version: 0.0.2
   jwt:
     secret: 2BB80D537B1DA3E38BD30361AA855686BDE0EACD7162FEF6A25FE97BF527A25B
     expire: 60
@@ -30,7 +26,7 @@ service:
      127.0.0.1,
      10.0.0.2
     allowed-endpoints: >
-     /v2/api-docs,
+     /v3/api-docs.*,
      /swagger.*,
      /service/check,
      /management/agent/v1/activate

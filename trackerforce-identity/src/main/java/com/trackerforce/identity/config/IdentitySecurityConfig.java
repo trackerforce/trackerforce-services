@@ -21,9 +21,6 @@ import com.trackerforce.common.config.SecurityConfig;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class IdentitySecurityConfig extends SecurityConfig {
 	
-	@Autowired
-	private UserDetailsService jwtUserDetailsService;
-	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
@@ -44,11 +41,6 @@ public class IdentitySecurityConfig extends SecurityConfig {
 		
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 		http.cors();
-	}
-
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
 	}
 
 	@Bean

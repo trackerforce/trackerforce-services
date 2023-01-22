@@ -18,17 +18,13 @@ management:
           show-details: always
 
 service:
-  package-name: com.trackerforce.management.controller
-  title: Trackerforce Management
-  description: Business Service for Trackerforce API
-  version: 0.0.2
   jwt:
     secret: ${JWT_SECRET}
     expire: ${JWT_EXPIRETIME:60}
   endpoint:
     allowed-addresses: ${WHITELIST}
     allowed-endpoints: >
-     /v2/api-docs,
+     /v3/api-docs.*,
      /service/check,
      /management/agent/v1/activate,
      /management/agent/v1/login,
