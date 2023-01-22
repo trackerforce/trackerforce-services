@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: test
+  mongodb:
+    port: 27017
+    embedded:
+      version: 5.0.6
+
+service:
+  docs:
+    title: Trackerforce Management
+    description: Business Service for Trackerforce API
+    version: 0.0.2-SNAPSHOT
+    url: ${SERVER_URL:http://localhost:8090}
+    license:
+      type: MIT
+      url: https://github.com/trackerforce/trackerforce-services/blob/master/LICENSE
+    contact:
+      author: Roger Floriano (petruki)
+      email: trackerforce.project@gmail.com

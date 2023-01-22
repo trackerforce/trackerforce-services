@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: dev
+
+service:
+  docs:
+    title: Trackerforce Identity
+    description: Identity Service for Trackerforce API
+    version: @project.version@
+    url: ${SERVER_URL:http://localhost:8070}
+    license:
+      type: MIT
+      url: https://github.com/trackerforce/trackerforce-services/blob/master/LICENSE
+    contact:
+      author: Roger Floriano (petruki)
+      email: trackerforce.project@gmail.com

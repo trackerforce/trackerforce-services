@@ -52,7 +52,7 @@ public class IdentityController {
 		return ResponseEntity.ok().build();
 	}
 	
-	@GetMapping(value = "/me")
+	@GetMapping(value = "/me", headers = "X-Tenant")
 	public ResponseEntity<AuthResponseDTO> getAuthenticated(HttpServletRequest request) {
 		return ResponseEntity.ok(authorizationService.getAuthenticated(request));
 	}

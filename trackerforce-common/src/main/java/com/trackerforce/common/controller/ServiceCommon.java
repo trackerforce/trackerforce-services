@@ -3,10 +3,7 @@ package com.trackerforce.common.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.trackerforce.common.model.response.TokenResponse;
 import com.trackerforce.common.service.JwtTokenService;
@@ -19,13 +16,13 @@ public class ServiceCommon {
 	@Autowired
 	private JwtTokenService jwtTokenUtil;
 
-	@RequestMapping(value = "/check")
+	@RequestMapping(method = RequestMethod.GET, value = "/check")
 	public ResponseEntity<String> check() {
 		return ResponseEntity.ok("All good");
 	}
 	
 	@Deprecated
-	@RequestMapping(value = "/check/auth")
+	@RequestMapping(method = RequestMethod.POST, value = "/check/auth")
 	public ResponseEntity<TokenResponse> auth(@RequestParam("user") String user) {
 		if (!StringUtils.hasText(user)) {
 			return ResponseEntity.badRequest().build();

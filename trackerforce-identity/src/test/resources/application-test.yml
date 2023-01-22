@@ -14,10 +14,6 @@ management:
           show-details: always
 
 service:
-  package-name: com.trackerforce.identity.controller
-  title: Trackerforce Identity
-  description: Identity Service for Trackerforce API
-  version: 0.0.2
   jwt:
     secret: JWT_SECRET
     expire: 15
