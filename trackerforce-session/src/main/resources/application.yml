@@ -6,8 +6,8 @@ service:
   docs:
     title: Trackerforce Session
     description: Session Service for Trackerforce API
-    version: 0.0.2-SNAPSHOT
-    url: ${SERVER_URL}
+    version: 0.0.2
+    url: ${SERVER_URL:http://localhost:8080}
     license:
       type: MIT
       url: https://github.com/trackerforce/trackerforce-services/blob/master/LICENSE

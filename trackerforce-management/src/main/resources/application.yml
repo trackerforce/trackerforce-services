@@ -6,7 +6,7 @@ service:
   docs:
     title: Trackerforce Management
     description: Business Service for Trackerforce API
-    version: @project.version@
+    version: 0.0.2
     url: ${SERVER_URL:http://localhost:8090}
     license:
       type: MIT
