@@ -1,13 +1,12 @@
 package com.trackerforce.common.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
-public abstract class SecurityConfig extends WebSecurityConfigurerAdapter {
+public abstract class SecurityConfig {
 	
 	@Value("${service.endpoint.allowed-addresses}")
 	protected String[] allowedAddresses;
