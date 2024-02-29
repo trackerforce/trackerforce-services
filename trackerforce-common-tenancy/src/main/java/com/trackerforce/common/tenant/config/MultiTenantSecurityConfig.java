@@ -3,39 +3,35 @@ package com.trackerforce.common.tenant.config;
 import com.trackerforce.common.config.SecurityConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class MultiTenantSecurityConfig extends SecurityConfig {
+
+	private static final String[] SWAGGER_MATCHERS = {
+			"/v3/api-docs/**",
+			"/swagger-ui/**",
+			"/swagger-ui.html",
+	};
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
-			.authorizeRequests()
-			.antMatchers(allowedEndpoint).permitAll()
-			.antMatchers("/**").access(buildAllowedIpList())
-			.anyRequest().authenticated()
+		http.authorizeHttpRequests(auth ->
+				auth.requestMatchers(allowedEndpoint).permitAll()
+					.requestMatchers("/**").access((authentication, object) -> buildAllowedIpList())
+					.requestMatchers(SWAGGER_MATCHERS).authenticated());
 
-			.and()
-			.exceptionHandling()
-			.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-
-			.and()
-			.sessionManagement()
-			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-			.and()
-			.cors()
-
-			.and()
-			.csrf().disable();
+		http.exceptionHandling(auth -> auth.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+		http.sessionManagement(auth -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		http.csrf(AbstractHttpConfigurer::disable);
 
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

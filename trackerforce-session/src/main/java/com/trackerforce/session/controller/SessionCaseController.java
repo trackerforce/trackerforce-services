@@ -3,8 +3,7 @@ package com.trackerforce.session.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -37,7 +36,7 @@ public class SessionCaseController {
 
 	@PostMapping(value = "/create")
 	public ResponseEntity<?> create(HttpServletRequest request,
-			@RequestBody SessionCaseRequest sessionCaseRequest) {
+									@RequestBody SessionCaseRequest sessionCaseRequest) {
 		try {
 			return ResponseEntity
 					.ok(sessionCaseService.create(request, sessionCaseRequest));

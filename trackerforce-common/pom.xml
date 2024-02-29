@@ -17,7 +17,6 @@
 	
 	<name>Trackerforce Common Module</name>
 	<description>Defines common implementations and architecture standards for all Trackerforce Services</description>
-	<url></url>
 	
 	<developers>
 		<developer>
@@ -27,16 +26,13 @@
 			<organizationUrl>https://www.linkedin.com/company/trackerforce</organizationUrl>
 		</developer>
  	</developers>
- 	
- 	<scm>
-		<connection></connection>
-		<developerConnection></developerConnection>
-		<url></url>
-	</scm>
 
 	<properties>
 		<jsonwebtoken.version>0.11.2</jsonwebtoken.version>
 		<springdoc.version>1.6.12</springdoc.version>
+
+		<!-- Test-->
+		<flapdoodle.embed.mongo.version>4.12.2</flapdoodle.embed.mongo.version>
 	</properties>
 
 	<dependencies>
@@ -79,6 +75,13 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo.spring3x</artifactId>
+			<version>${flapdoodle.embed.mongo.version}</version>
+			<scope>test</scope>
 		</dependency>
 		
 		<!-- JWT -->

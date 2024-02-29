@@ -16,23 +16,6 @@
 	
 	<name>Trackerforce Management</name>
 	<description>Business Service for Trackerforce API</description>
-	<url></url>
-	
-	<developers>
-		<developer>
-			<id>petruki</id>
-			<name>Roger Floriano</name>
-			<email>trackerforce.project@gmail.com</email>
-			<organization>Trackerforce</organization>
-			<organizationUrl>https://www.linkedin.com/company/trackerforce</organizationUrl>
-		</developer>
- 	</developers>
- 	
- 	<scm>
-		<connection></connection>
-		<developerConnection></developerConnection>
-		<url></url>
-	</scm>
 
 	<properties>
 		<trackerforce-common-tenancy.version>0.0.2-SNAPSHOT</trackerforce-common-tenancy.version>
@@ -67,12 +50,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		
-		<dependency>
-		    <groupId>de.flapdoodle.embed</groupId>
-		    <artifactId>de.flapdoodle.embed.mongo</artifactId>
-		    <scope>test</scope>
 		</dependency>
 	</dependencies>
 
