@@ -17,22 +17,6 @@
 	
 	<name>Trackerforce Common MongoDB Multi Tenancy Module</name>
 	<description>Defines common implementations for multi-tenant for MongoDB</description>
-	<url></url>
-	
-	<developers>
-		<developer>
-			<name>Roger Floriano</name>
-			<email>trackerforce.project@gmail.com</email>
-			<organization>Trackerforce</organization>
-			<organizationUrl>https://www.linkedin.com/company/trackerforce</organizationUrl>
-		</developer>
- 	</developers>
- 	
- 	<scm>
-		<connection></connection>
-		<developerConnection></developerConnection>
-		<url></url>
-	</scm>
 	
 	<properties>
 		<trackerforce-common.version>0.0.2-SNAPSHOT</trackerforce-common.version>

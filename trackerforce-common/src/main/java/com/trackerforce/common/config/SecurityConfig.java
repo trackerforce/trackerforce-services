@@ -2,9 +2,8 @@ package com.trackerforce.common.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 public abstract class SecurityConfig {
 	
@@ -19,13 +18,17 @@ public abstract class SecurityConfig {
 	
 	@Autowired
 	protected JwtRequestFilter jwtRequestFilter;
-	
-	protected String buildAllowedIpList() {
-		final String accessIpAddress = Arrays.stream(allowedAddresses)
-				.map(address -> "hasIpAddress('" + address.trim() + "') or ")
-				.collect(Collectors.joining());
 
-		return accessIpAddress.substring(0, accessIpAddress.length() - 4);
+	protected AuthorizationDecision buildAllowedIpList() {
+		AuthorizationDecision decision = new AuthorizationDecision(true);
+		for (String address : allowedAddresses) {
+			IpAddressMatcher ipAddressMatcher = new IpAddressMatcher(address);
+			if (!ipAddressMatcher.matches(address)) {
+				decision = new AuthorizationDecision(false);
+				break;
+			}
+		}
+		return decision;
 	}
 
 }

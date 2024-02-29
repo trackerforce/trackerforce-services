@@ -1,7 +1,6 @@
 package com.trackerforce.identity.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +25,7 @@ public class AgentIdentityController {
 
 	@PostMapping(value = "/activate")
 	public ResponseEntity<AuthAgentResponseDTO> activateAgent(HttpServletRequest request,
-			@RequestBody AgentRequest agentRequest) {
+															  @RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentAuthorizationService.activateAgent(request, agentRequest));	
 	}
 	

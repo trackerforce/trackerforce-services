@@ -42,8 +42,8 @@ For the Global Service:
 
 **Requirements**
 - MongoDB
-- Java 11
-- Maven 3.8
+- Java 21
+- Maven 3.9
 
 Run the services indicated by the module name:
 ```
@@ -51,11 +51,3 @@ mvn spring-boot:run -pl trackerforce-identity
 mvn spring-boot:run -pl trackerforce-management
 mvn spring-boot:run -pl trackerforce-session
 ```
-
-* * *
-
-## Donations
-Donations for coffee, cookies or pizza are extremely welcomed.<br>
-Please, find the sponsor button at the top for more options.
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?business=A5R6K3JAD8SW4&no_recurring=0&item_name=Thank+you+for+supporting+the+Open+Source+Community&currency_code=CAD)

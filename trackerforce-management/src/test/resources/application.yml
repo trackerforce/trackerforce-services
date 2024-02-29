@@ -1,10 +1,12 @@
+de.flapdoodle.mongodb.embedded.version: 6.0.12
+
 spring:
   profiles:
     active: test
   mongodb:
     port: 27017
     embedded:
-      version: 5.0.6
+      version: 6.0.12
 
 service:
   docs:
