@@ -27,20 +27,19 @@ public class MultiTenantJwtRequestFilter extends JwtRequestFilter {
 			throws ServletException, IOException {
 		
 		final Optional<String> jwt = getJwtFromRequest(request);
-		jwt.ifPresent(token -> {
-			try {
-				String username = jwtTokenService.getUsernameFromToken(token);
-				if (Boolean.TRUE.equals(jwtTokenService.validateToken(token, username))) {
-					final UsernamePasswordAuthenticationToken authUser = 
-							new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
-					authUser.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-					
-					SecurityContextHolder.getContext().setAuthentication(authUser);
-				}
-			} catch (IllegalArgumentException | MalformedJwtException | ExpiredJwtException | SignatureException e) {
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			}
-		});
+		try {
+            jwt.ifPresent(token -> {
+                String username = jwtTokenService.getUsernameFromToken(token);
+                if (Boolean.TRUE.equals(jwtTokenService.validateToken(token, username))) {
+                    final var authUser = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+                    authUser.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authUser);
+                }
+            });
+		} catch (IllegalArgumentException | MalformedJwtException | ExpiredJwtException | SignatureException e) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		}
 		
 		filterChain.doFilter(request, response);
 	}

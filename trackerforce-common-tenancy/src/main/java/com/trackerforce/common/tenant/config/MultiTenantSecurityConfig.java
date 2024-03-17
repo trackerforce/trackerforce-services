@@ -26,8 +26,8 @@ public class MultiTenantSecurityConfig extends SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests(auth ->
 				auth.requestMatchers(allowedEndpoint).permitAll()
-					.requestMatchers("/**").access((authentication, object) -> buildAllowedIpList())
-					.requestMatchers(SWAGGER_MATCHERS).authenticated());
+					.requestMatchers(SWAGGER_MATCHERS).permitAll()
+					.requestMatchers("/**").access(this::authorize));
 
 		http.exceptionHandling(auth -> auth.authenticationEntryPoint(jwtAuthenticationEntryPoint));
 		http.sessionManagement(auth -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
