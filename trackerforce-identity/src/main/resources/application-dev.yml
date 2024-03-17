@@ -4,7 +4,7 @@ spring:
   data:
     mongodb:
       database: trackerforce
-      uri: mongodb://master:masterpassword@localhost:27017
+      uri: mongodb://localhost:27017
 
 management:
   endpoints:
@@ -27,10 +27,10 @@ service:
      10.0.0.2
     allowed-endpoints: >
      /v3/api-docs,
-     /**/swagger*/**,
-     /**/authenticate,
-     /**/register,
-     /**/activate,
+     /*/swagger*/**,
+     /*/authenticate,
+     /*/register,
+     /*/activate,
      /service/check
   management:
     url: http://127.0.0.1:8090

@@ -24,7 +24,7 @@ public class IdentitySecurityConfig extends SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests(auth ->
 				auth.requestMatchers(allowedEndpoint).permitAll()
-						.requestMatchers("/**").authenticated());
+					.anyRequest().access(this::authorize));
 
 		http.exceptionHandling(auth -> auth.authenticationEntryPoint(jwtAuthenticationEntryPoint));
 		http.sessionManagement(auth -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
