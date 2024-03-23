@@ -1,10 +1,20 @@
 package com.trackerforce.identity.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+import com.trackerforce.common.config.JwtRequestFilter;
+import com.trackerforce.common.model.type.JwtKeys;
+import com.trackerforce.common.model.type.RequestHeader;
+import com.trackerforce.common.model.type.ServicesRole;
+import com.trackerforce.common.service.JwtTokenService;
+import com.trackerforce.identity.model.AuthAccess;
+import com.trackerforce.identity.model.dto.request.AccessRequestDTO;
+import com.trackerforce.identity.model.dto.request.JwtRefreshRequestDTO;
+import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
+import com.trackerforce.identity.model.dto.response.AuthAgentResponseDTO;
+import com.trackerforce.identity.model.dto.response.AuthResponseDTO;
+import com.trackerforce.identity.model.dto.response.AuthRootResponseDTO;
+import com.trackerforce.identity.model.mapper.AuthAccessMapper;
+import com.trackerforce.identity.repository.AuthAccessRepository;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -20,22 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.trackerforce.common.config.JwtRequestFilter;
-import com.trackerforce.common.model.type.JwtKeys;
-import com.trackerforce.common.model.type.RequestHeader;
-import com.trackerforce.common.model.type.ServicesRole;
-import com.trackerforce.common.service.JwtTokenService;
-import com.trackerforce.identity.model.AuthAccess;
-import com.trackerforce.identity.model.dto.request.AccessRequestDTO;
-import com.trackerforce.identity.model.dto.request.JwtRefreshRequestDTO;
-import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
-import com.trackerforce.identity.model.dto.response.AuthRootResponseDTO;
-import com.trackerforce.identity.model.dto.response.AuthAgentResponseDTO;
-import com.trackerforce.identity.model.dto.response.AuthResponseDTO;
-import com.trackerforce.identity.model.mapper.AuthAccessMapper;
-import com.trackerforce.identity.repository.AuthAccessRepository;
-
-import io.jsonwebtoken.Claims;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
@@ -85,12 +82,12 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 	
 	private AuthRootResponseDTO getRootAuthenticated(HttpServletRequest request, Authentication authentication, String token) {
 		var authAccessOpt = authAccessRepository.findById(authentication.getName());
-		if (!authAccessOpt.isPresent() || !bcrypt.matches(token, authAccessOpt.get().getTokenHash()))
+		if (authAccessOpt.isEmpty() || !bcrypt.matches(token, authAccessOpt.get().getTokenHash()))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		var tenant = request.getHeader(RequestHeader.TENANT_HEADER.toString());
 		var orgAlias = jwtTokenUtil.getClaimFromToken(token, Claims::getAudience);
-		if (!StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
+		if (!orgAlias.contains(tenant))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		return new AuthRootResponseDTO(authAccessOpt.get(), token, null);
@@ -106,12 +103,12 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		var tenant = request.getHeader(RequestHeader.TENANT_HEADER.toString());
 		var orgAlias = jwtTokenUtil.getClaimFromToken(token, Claims::getAudience);
 
-		if (!online || !StringUtils.hasText(orgAlias) || !orgAlias.equals(tenant))
+		if (!orgAlias.contains(tenant))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
-		final var roleList = roles.stream().map(object -> Objects.toString(object, null)).collect(Collectors.toList());
+		final var roleList = roles.stream().map(object -> Objects.toString(object, null)).toList();
 
-		return new AuthAgentResponseDTO(new AuthAccess(jwtTokenUtil.getUsernameFromToken(token), orgAlias), roleList,
+		return new AuthAgentResponseDTO(new AuthAccess(jwtTokenUtil.getUsernameFromToken(token), String.valueOf(orgAlias)), roleList,
 				online);
 	}
 
@@ -119,12 +116,12 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		authenticate(authRequest);
 
 		final var authAccess = authAccessRepository.findByEmail(authRequest.getEmail());
-		final var jwt = jwtTokenUtil.generateToken(authAccess.getId(), authAccess.getOrganization().getAlias(),
+		final var jwt = jwtTokenUtil.generateToken(authAccess.getId(), List.of(authAccess.getOrganization().getAlias()),
 				authAccess.getDefaultClaims());
 
-		authAccess.setTokenHash(bcrypt.encode(jwt[0]));
+		authAccess.setTokenHash(bcrypt.encode(jwt.getLeft()));
 		authAccessRepository.save(authAccess);
-		return new AuthRootResponseDTO(authAccess, jwt[0], jwt[1]);
+		return new AuthRootResponseDTO(authAccess, jwt.getLeft(), jwt.getRight());
 	}
 	
 	public AuthResponseDTO authenticateRefreshAccess(HttpServletRequest request,
@@ -132,7 +129,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		
 		// Validates Bearer token was sent
 		var tokenOpt = JwtRequestFilter.getJwtFromRequest(request);
-		if (!tokenOpt.isPresent())
+		if (tokenOpt.isEmpty())
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		// Read from token
@@ -151,22 +148,22 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		// Update root user
 		if (payload.getRoles().contains(ServicesRole.ROOT.name())) {
 			var authAccessOpt = authAccessRepository.findById(payload.getSub());
-			if (!authAccessOpt.isPresent())
+			if (authAccessOpt.isEmpty())
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 			
 			final var authAccess = authAccessOpt.get();
-			authAccess.setTokenHash(bcrypt.encode(jwt[0]));
+			authAccess.setTokenHash(bcrypt.encode(jwt.getLeft()));
 			authAccessRepository.save(authAccess);
 		}
 		
-		return new AuthResponseDTO(jwt[0], jwt[1], null);
+		return new AuthResponseDTO(jwt.getLeft(), jwt.getRight(), null);
 	}
 
 	public AuthResponseDTO getAuthenticated(HttpServletRequest request) {
 		var authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		var token = JwtRequestFilter.getJwtFromRequest(request);
-		if (!token.isPresent())
+		if (token.isEmpty())
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		var roles = jwtTokenUtil.getClaimFromToken(token.get(),
