@@ -33,6 +33,9 @@
 
 		<!-- Test-->
 		<flapdoodle.embed.mongo.version>4.12.2</flapdoodle.embed.mongo.version>
+
+		<!-- Managed Dependencies -->
+		<commons-compress.version>1.26.1</commons-compress.version>
 	</properties>
 
 	<dependencies>
@@ -118,4 +121,14 @@
 			<version>${springdoc-openapi-starter-webmvc-ui.version}</version>
 		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>${commons-compress.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
