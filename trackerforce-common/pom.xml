@@ -28,7 +28,7 @@
  	</developers>
 
 	<properties>
-		<jsonwebtoken.version>0.11.2</jsonwebtoken.version>
+		<jsonwebtoken.version>0.12.5</jsonwebtoken.version>
 		<springdoc-openapi-starter-webmvc-ui.version>2.4.0</springdoc-openapi-starter-webmvc-ui.version>
 
 		<!-- Test-->
@@ -79,13 +79,6 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>de.flapdoodle.embed</groupId>
-			<artifactId>de.flapdoodle.embed.mongo.spring3x</artifactId>
-			<version>${flapdoodle.embed.mongo.version}</version>
-			<scope>test</scope>
-		</dependency>
 		
 		<!-- JWT -->
 		<dependency>
@@ -119,6 +112,14 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc-openapi-starter-webmvc-ui.version}</version>
+		</dependency>
+
+		<!-- Test -->
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo.spring3x</artifactId>
+			<version>${flapdoodle.embed.mongo.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

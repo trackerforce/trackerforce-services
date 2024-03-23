@@ -1,35 +1,38 @@
 package com.trackerforce.common.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.trackerforce.common.model.response.TokenResponse;
+import com.trackerforce.common.service.JwtTokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import com.trackerforce.common.model.response.TokenResponse;
-import com.trackerforce.common.service.JwtTokenService;
+import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
 @RequestMapping("service")
 public class ServiceCommon {
-	
-	@Autowired
-	private JwtTokenService jwtTokenUtil;
 
-	@RequestMapping(method = RequestMethod.GET, value = "/check")
-	public ResponseEntity<String> check() {
-		return ResponseEntity.ok("All good");
+	private final JwtTokenService jwtTokenUtil;
+
+	public ServiceCommon(final JwtTokenService jwtTokenUtil) {
+		this.jwtTokenUtil = jwtTokenUtil;
 	}
-	
-	@Deprecated
-	@RequestMapping(method = RequestMethod.POST, value = "/check/auth")
+
+	@GetMapping("/check")
+	public ResponseEntity<Map<String, String>> check() {
+		return ResponseEntity.ok(Map.of("status", "All good"));
+	}
+
+	@PostMapping("/check/auth")
 	public ResponseEntity<TokenResponse> auth(@RequestParam("user") String user) {
 		if (!StringUtils.hasText(user)) {
 			return ResponseEntity.badRequest().build();
 		}
 		
 		final TokenResponse tokenResponse = new TokenResponse();
-		tokenResponse.setToken(jwtTokenUtil.generateToken(user, "test-org", null)[0]);
+		tokenResponse.setToken(jwtTokenUtil.generateToken(user, List.of("test-org"), null).getLeft());
 		return ResponseEntity.ok(tokenResponse);
 	}
 

@@ -9,7 +9,7 @@ public class JwtPayload {
 
 	private String sub;
 
-	private String aud;
+	private List<String> aud;
 
 	private List<String> roles;
 

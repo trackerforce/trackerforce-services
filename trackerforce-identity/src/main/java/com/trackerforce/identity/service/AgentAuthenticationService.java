@@ -2,6 +2,7 @@ package com.trackerforce.identity.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,10 +33,6 @@ public class AgentAuthenticationService {
 	
 	/**
 	 * Add Agent to context and generate JWT credentials
-	 * 
-	 * @param request
-	 * @param agentResponse
-	 * @return
 	 */
 	private AuthAgentResponseDTO authenticate(HttpServletRequest request, AgentResponse agentResponse) {
 		final UsernamePasswordAuthenticationToken authUser = 
@@ -48,12 +45,12 @@ public class AgentAuthenticationService {
 		var claims = new HashMap<String, Object>();
 		claims.put(JwtKeys.ROLES.toString(), agentResponse.getRoles());
 		
-		final var jwt = jwtTokenUtil.generateToken(agentResponse.getId(), 
-				request.getHeader(RequestHeader.TENANT_HEADER.toString()), 
+		final var jwt = jwtTokenUtil.generateToken(agentResponse.getId(),
+				List.of(request.getHeader(RequestHeader.TENANT_HEADER.toString())),
 				claims);
 		
 		agentResponse.setTempAccess(null);
-		return new AuthAgentResponseDTO(agentResponse, jwt[0], jwt[1]);
+		return new AuthAgentResponseDTO(agentResponse, jwt.getLeft(), jwt.getRight());
 	}
 	
 	public AuthAgentResponseDTO activateAgent(HttpServletRequest request, 

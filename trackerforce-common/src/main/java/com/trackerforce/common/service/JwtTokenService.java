@@ -1,44 +1,40 @@
 package com.trackerforce.common.service;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Map;
-import java.util.function.Function;
-
-import javax.crypto.SecretKey;
-
+import com.google.gson.Gson;
+import com.trackerforce.common.model.JwtPayload;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-import com.trackerforce.common.model.JwtPayload;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 @Service
 public class JwtTokenService {
 
-	@Value("${service.jwt.expire}")
-	private int JWT_TOKEN_VALIDITY;
+	private final int jwtTokenExpire;
 
-	@Value("${service.jwt.secret}")
-	private String secret;
-	
-	public Jws<Claims> getClaims(String token) {
-		return Jwts.parserBuilder().setSigningKey(secret.getBytes()).build().parseClaimsJws(token);
+	private final String jwtSecret;
+
+	public JwtTokenService(
+			@Value("${service.jwt.expire}") int jwtTokenExpire,
+			@Value("${service.jwt.secret}") String jwtSecret) {
+		this.jwtTokenExpire = jwtTokenExpire * 60 * 1000;
+		this.jwtSecret = jwtSecret;
 	}
-	
+
 	public Claims getAllClaimsFromToken(String token) {
-		return Jwts.parserBuilder()
-				.setSigningKey(secret.getBytes())
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
+		final var key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+		final var jwtParser = Jwts.parser().verifyWith(key).build();
+		return jwtParser.parseSignedClaims(token).getPayload();
 	}
 	
 	public JwtPayload readClaims(String token) {
@@ -54,9 +50,10 @@ public class JwtTokenService {
 		final Date expiration = getExpirationDateFromToken(token);
 		return expiration.before(new Date());
 	}
-	
+
 	private String generateRefreshToken(String token) {
-		return new BCryptPasswordEncoder().encode(token.split("\\.")[2]);
+		var rawToken = new BCryptPasswordEncoder().encode(token.split("\\.")[2]);
+		return Base64.getEncoder().encodeToString(rawToken.getBytes());
 	}
 	
 	public String getUsernameFromToken(String token) {
@@ -71,22 +68,24 @@ public class JwtTokenService {
 		final Claims claims = getAllClaimsFromToken(token);
 		return claimsResolver.apply(claims);
 	}
-	
-	public String[] generateToken(String subject, String organizationAlias, Map<String, Object> claims) {
-		final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-		final String token = Jwts.builder()
-				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 60 * 1000))
-				.setSubject(subject)
-				.setAudience(organizationAlias)
-				.addClaims(claims)
-				.signWith(key)
-				.compact();
-		
-		return new String[] { token, generateRefreshToken(token) };
+
+	public Pair<String, String> generateToken(String subject, List<String> organizationAlias, Map<String, Object> claims) {
+		final var key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+		final var claimsBuild = Jwts.claims()
+				.expiration(new Date(System.currentTimeMillis() + jwtTokenExpire))
+				.audience().add(organizationAlias)
+				.and()
+				.add(claims)
+				.subject(subject).build();
+
+		final var token = Jwts.builder().claims(claimsBuild).signWith(key).compact();
+
+		return Pair.of(token, generateRefreshToken(token));
 	}
 	
 	public boolean isRefreshTokenValid(String token, String refreshToken) {
-		return new BCryptPasswordEncoder().matches(token.split("\\.")[2], refreshToken);
+		var decodedRefreshToken = Base64.getDecoder().decode(refreshToken);
+		return new BCryptPasswordEncoder().matches(token.split("\\.")[2], new String(decodedRefreshToken));
 	}
 	
 	public Boolean validateToken(String token, String subject) {
