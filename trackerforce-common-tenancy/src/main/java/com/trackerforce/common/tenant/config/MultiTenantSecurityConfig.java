@@ -16,18 +16,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class MultiTenantSecurityConfig extends SecurityConfig {
 
-	private static final String[] SWAGGER_MATCHERS = {
-			"/v3/api-docs/**",
-			"/swagger-ui/**",
-			"/swagger-ui.html",
-	};
-
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests(auth ->
 				auth.requestMatchers(allowedEndpoint).permitAll()
-					.requestMatchers(SWAGGER_MATCHERS).permitAll()
-					.requestMatchers("/**").access(this::authorize));
+					.anyRequest().access(this::authorize));
 
 		http.exceptionHandling(auth -> auth.authenticationEntryPoint(jwtAuthenticationEntryPoint));
 		http.sessionManagement(auth -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
