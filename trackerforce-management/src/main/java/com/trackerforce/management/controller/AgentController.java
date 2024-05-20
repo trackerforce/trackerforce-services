@@ -1,75 +1,64 @@
 package com.trackerforce.management.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.trackerforce.common.model.request.AgentRequest;
 import com.trackerforce.common.model.request.QueryableRequest;
-import com.trackerforce.common.model.response.ErrorResponse;
-import com.trackerforce.common.service.exception.ServiceException;
+import com.trackerforce.common.model.response.AgentResponse;
+import com.trackerforce.management.model.Agent;
 import com.trackerforce.management.service.AgentService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
 @RequestMapping("management/agent/v1")
 public class AgentController {
 
-	@Autowired
-	private AgentService agentService;
+	private final AgentService agentService;
+
+	public AgentController(AgentService agentService) {
+		this.agentService = agentService;
+	}
 
 	@PostMapping(value = "/create")
-	public ResponseEntity<?> create(HttpServletRequest request, @RequestBody AgentRequest agentRequest) {
-		try {
-			return ResponseEntity.ok(agentService.create(request, agentRequest));
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}
+	public ResponseEntity<AgentResponse> create(@RequestBody AgentRequest agentRequest) {
+		return ResponseEntity.ok(agentService.create(agentRequest));
 	}
 
 	@PostMapping(value = "/activate")
-	public ResponseEntity<?> activate(@RequestBody AgentRequest agentRequest) {
+	public ResponseEntity<AgentResponse> activate(@RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentService.activate(agentRequest));
 	}
 
 	@PostMapping(value = "/login")
-	public ResponseEntity<?> login(@RequestBody AgentRequest agentRequest) {
+	public ResponseEntity<AgentResponse> login(@RequestBody AgentRequest agentRequest) {
 		return ResponseEntity.ok(agentService.login(agentRequest, null));
 	}
 
 	@PostMapping(value = "/logoff")
-	public ResponseEntity<?> logoff(HttpServletRequest request) {
-		agentService.logoff(request);
+	public ResponseEntity<Object> logoff() {
+		agentService.logoff();
 		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping(value = "/watch/{agentId}/{caseId}")
-	public ResponseEntity<?> watch(
+	public ResponseEntity<AgentResponse> watch(
 			@PathVariable(value = "agentId") String agentId,
 			@PathVariable(value = "caseId") String caseId) {
 		return ResponseEntity.ok(agentService.watchCase(agentId, caseId));
 	}
 	
 	@PostMapping(value = "/unwatch/{agentId}/{caseId}")
-	public ResponseEntity<?> unwatch(
+	public ResponseEntity<AgentResponse> unwatch(
 			@PathVariable(value = "agentId") String agentId,
 			@PathVariable(value = "caseId") String caseId) {
 		return ResponseEntity.ok(agentService.unWatchCase(agentId, caseId));
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<?> findOne(@PathVariable(value="id") String id, String output) {
+	public ResponseEntity<Agent> findOne(@PathVariable(value="id") String id, String output) {
 		return ResponseEntity.ok(agentService.findByIdProjectedBy(id, output));
 	}
 	
@@ -90,13 +79,13 @@ public class AgentController {
 	}
 
 	@GetMapping(value = "/me")
-	public ResponseEntity<?> getAuthenticated(HttpServletRequest request) {
-		return ResponseEntity.ok(agentService.getAuthenticated(request));
+	public ResponseEntity<Agent> getAuthenticated() {
+		return ResponseEntity.ok(agentService.getAuthenticated());
 	}
 
 	@GetMapping(value = "/check")
-	public ResponseEntity<?> check(HttpServletRequest request) {
-		return ResponseEntity.ok(agentService.isOnline(request));
+	public ResponseEntity<Boolean> check() {
+		return ResponseEntity.ok(agentService.isOnline());
 	}
 
 }

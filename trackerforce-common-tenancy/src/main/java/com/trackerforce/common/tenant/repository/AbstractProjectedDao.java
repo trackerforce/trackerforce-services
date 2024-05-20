@@ -23,15 +23,12 @@ public abstract class AbstractProjectedDao<T extends AbstractDocument, R extends
 	
 	/**
 	 * Retrieve repository from child class
-	 * 
-	 * @return
 	 */
 	public abstract R getRepository();
 
 	/**
 	 * Helper operation to save documents from the ProjectedDao
 	 * 
-	 * @param entity
 	 * @return Saved entity
 	 */
 	public T save(T entity) {
@@ -40,11 +37,6 @@ public abstract class AbstractProjectedDao<T extends AbstractDocument, R extends
 
 	/**
 	 * Find one element by Id
-	 * 
-	 * @param id
-	 * @param entityClass
-	 * @param fields
-	 * @return
 	 */
 	public T findByIdProjectedBy(String id, Class<T> entityClass, String... fields) {
 		Query query = Query.query(Criteria.where("id").is(id));
@@ -54,11 +46,6 @@ public abstract class AbstractProjectedDao<T extends AbstractDocument, R extends
 
 	/**
 	 * Find elements by Ids
-	 * 
-	 * @param id
-	 * @param entityClass
-	 * @param fields
-	 * @return
 	 */
 	public Page<T> findByIdsProjectedBy(String[] ids, Class<T> entityClass, int page, int size, String[] fields,
 			String[] sortBy) {
@@ -79,8 +66,6 @@ public abstract class AbstractProjectedDao<T extends AbstractDocument, R extends
 	}
 
 	/**
-	 * {@link #findByProjectedBy(Criteria, int, int, Class, String[], String[])}
-	 * 
 	 * @param page        to be returned
 	 * @param size        of the page
 	 * @param entityClass as a Collection type

@@ -20,8 +20,6 @@ import com.trackerforce.common.tenant.service.exception.InvalidServiceUpdateExce
  * 
  * @author Roger Floriano
  * @since 2020-07-22
- *
- * @param <T AbstractDocument>
  */
 public abstract class AbstractTenantService<T extends AbstractDocument, R extends MongoRepository<T, String>> {
 
@@ -29,7 +27,7 @@ public abstract class AbstractTenantService<T extends AbstractDocument, R extend
 
 	protected final Class<T> serviceModel;
 
-	public AbstractTenantService(final AbstractProjectedDao<T, R> dao, final Class<T> serviceModel) {
+	protected AbstractTenantService(final AbstractProjectedDao<T, R> dao, final Class<T> serviceModel) {
 		this.dao = dao;
 		this.serviceModel = serviceModel;
 	}
@@ -39,11 +37,10 @@ public abstract class AbstractTenantService<T extends AbstractDocument, R extend
 	 * 
 	 * @param updates body request
 	 * @param allowed attributes
-	 * @throws InvalidServiceUpdateException
-	 */
+     */
 	private void validateUpdate(Map<String, Object> updates, String[] allowed) throws InvalidServiceUpdateException {
 		for (String update : updates.keySet())
-			if (!Arrays.stream(allowed).anyMatch(key -> key.equals(update)))
+			if (Arrays.stream(allowed).noneMatch(key -> key.equals(update)))
 				throw new InvalidServiceUpdateException(update);
 	}
 
@@ -86,9 +83,6 @@ public abstract class AbstractTenantService<T extends AbstractDocument, R extend
 		return update(entity, wrapper, allowed);
 	}
 
-	/**
-	 * {@link AbstractBusinessService#findByIdProjectedBy(String, String)}
-	 */
 	public T findByIdProjectedBy(String id, String output) {
 		final var outputOptional = Optional.ofNullable(output);
 
@@ -102,9 +96,6 @@ public abstract class AbstractTenantService<T extends AbstractDocument, R extend
 		return response;
 	}
 
-	/**
-	 * {@link AbstractBusinessService#findByIdProjectedBy(String, String)}
-	 */
 	public Map<String, Object> findByIdsProjectedBy(String[] ids, String sortBy, String output, int page,
 			int size) {
 
@@ -112,8 +103,8 @@ public abstract class AbstractTenantService<T extends AbstractDocument, R extend
 		final var sortOptional = Optional.ofNullable(sortBy);
 
 		var pageData = dao.findByIdsProjectedBy(ids, serviceModel, page, size,
-				outputOptional.isPresent() ? outputOptional.get().split(",") : null,
-				sortOptional.isPresent() ? sortOptional.get().split(",") : null);
+                outputOptional.map(s -> s.split(",")).orElse(null),
+                sortOptional.map(string -> string.split(",")).orElse(null));
 
 		var data = pageData.getContent();
 		var response = new HashMap<String, Object>();
@@ -125,9 +116,6 @@ public abstract class AbstractTenantService<T extends AbstractDocument, R extend
 		return response;
 	}
 
-	/**
-	 * {@link AbstractBusinessService#findAllProjectedBy(String, String, String, int, int)}
-	 */
 	public Map<String, Object> findAllProjectedBy(QueryableRequest queryable) {
 
 		final var criteriaOptional = Optional.ofNullable(queryable.getQuery());
@@ -136,8 +124,8 @@ public abstract class AbstractTenantService<T extends AbstractDocument, R extend
 
 		var criteria = dao.createCriteria(queryable.getQuery(), criteriaOptional);
 		var pageData = dao.findByProjectedBy(serviceModel, criteria, queryable.getPage(), queryable.getSize(),
-				outputOptional.isPresent() ? outputOptional.get().split(",") : null,
-				sortOptional.isPresent() ? sortOptional.get().split(",") : null);
+                outputOptional.map(s -> s.split(",")).orElse(null),
+                sortOptional.map(string -> string.split(",")).orElse(null));
 
 		var data = pageData.getContent();
 		var response = new HashMap<String, Object>();

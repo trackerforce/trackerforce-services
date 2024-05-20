@@ -3,6 +3,7 @@ package com.trackerforce.management.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -12,6 +13,7 @@ import com.trackerforce.management.model.Task;
 import com.trackerforce.management.model.request.TaskRequest;
 import com.trackerforce.management.repository.TaskRepository;
 import com.trackerforce.management.repository.TaskRepositoryDao;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TaskService extends AbstractBusinessService<Task, TaskRepository> {
@@ -43,18 +45,26 @@ public class TaskService extends AbstractBusinessService<Task, TaskRepository> {
 		}
 	}
 
-	public Task create(final TaskRequest taskRequest) throws ServiceException {
-		var task = taskRequest.getTask();
-		return super.create(task, taskRequest.getHelper());
+	public Task create(final TaskRequest taskRequest) {
+		try {
+			var task = taskRequest.getTask();
+			return super.create(task, taskRequest.getHelper());
+		} catch (final Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+		}
 	}
 
-	public Task update(final String id, final Map<String, Object> updates) throws ServiceException {
-		var promise = taskDao.getRepository().findById(id);
-		var allowed = new HashMap<String, String[]>();
-		allowed.put(entityName, ALLOWED_TASK_UPDATE);
-		allowed.put("helper", ALLOWED_HELPER_UPDATE);
+	public Task update(final String id, final Map<String, Object> updates) {
+		try {
+			var promise = taskDao.getRepository().findById(id);
+			var allowed = new HashMap<String, String[]>();
+			allowed.put(entityName, ALLOWED_TASK_UPDATE);
+			allowed.put("helper", ALLOWED_HELPER_UPDATE);
 
-		return super.update(promise, updates, allowed);
+			return super.update(promise, updates, allowed);
+		} catch (final Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+		}
 	}
 
 	public void delete(final String id) {

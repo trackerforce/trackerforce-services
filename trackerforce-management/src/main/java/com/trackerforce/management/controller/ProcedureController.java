@@ -1,44 +1,31 @@
 package com.trackerforce.management.controller;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.trackerforce.common.model.request.QueryableRequest;
-import com.trackerforce.common.model.response.ErrorResponse;
-import com.trackerforce.common.service.exception.ServiceException;
+import com.trackerforce.management.model.Procedure;
 import com.trackerforce.management.model.Task;
 import com.trackerforce.management.model.request.ProcedureRequest;
 import com.trackerforce.management.service.ProcedureService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
 @RequestMapping("management/procedure/v1")
 public class ProcedureController {
 
-	@Autowired
-	private ProcedureService procedureService;
+	private final ProcedureService procedureService;
+
+	public ProcedureController(ProcedureService procedureService) {
+		this.procedureService = procedureService;
+	}
 
 	@PostMapping(value = "/create")
-	public ResponseEntity<?> create(@RequestBody ProcedureRequest procedureRequest) {
-		try {
-			return ResponseEntity.ok(procedureService.create(procedureRequest));
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}
+	public ResponseEntity<Procedure> create(@RequestBody ProcedureRequest procedureRequest) {
+		return ResponseEntity.ok(procedureService.create(procedureRequest));
 	}
 	
 	@GetMapping(value = "/")
@@ -58,25 +45,21 @@ public class ProcedureController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<?> findOne(
+	public ResponseEntity<Procedure> findOne(
 			@PathVariable(value = "id") String id,
 			@RequestParam(required = false) String output) {
 		return ResponseEntity.ok(procedureService.findByIdProjectedBy(id, output));
 	}
 	
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<?> update(
+	public ResponseEntity<Procedure> update(
 			@PathVariable(value="id") String id, 
 			@RequestBody Map<String, Object> updates) {
-		try {
-			return ResponseEntity.ok(procedureService.update(id, updates));
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}
+		return ResponseEntity.ok(procedureService.update(id, updates));
 	}
 	
 	@PostMapping(value = "/{id}/task/reorder")
-	public ResponseEntity<LinkedList<Task>> reorderTask(
+	public ResponseEntity<List<Task>> reorderTask(
 			@PathVariable(value="id") String id,
 			@RequestParam(required = true) int from,
 			@RequestParam(required = true) int to) {
@@ -98,7 +81,7 @@ public class ProcedureController {
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<?> delete(@PathVariable(value="id") String id) {
+	public ResponseEntity<Object> delete(@PathVariable(value="id") String id) {
 		procedureService.delete(id);
 		return ResponseEntity.ok().build();
 	}
