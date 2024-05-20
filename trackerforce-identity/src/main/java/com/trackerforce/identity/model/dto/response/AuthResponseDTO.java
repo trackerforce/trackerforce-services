@@ -2,8 +2,10 @@ package com.trackerforce.identity.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.Data;
 
 @JsonInclude(Include.NON_NULL)
+@Data
 public class AuthResponseDTO {
 	
 	protected String token;
@@ -16,18 +18,6 @@ public class AuthResponseDTO {
 		this.token = token;
 		this.refreshToken = refreshToken;
 		this.root = root;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public String getRefreshToken() {
-		return refreshToken;
-	}
-
-	public Boolean isRoot() {
-		return root;
 	}
 	
 	public String getId() {

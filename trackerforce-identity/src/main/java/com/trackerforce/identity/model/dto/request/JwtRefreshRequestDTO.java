@@ -1,15 +1,10 @@
 package com.trackerforce.identity.model.dto.request;
 
+import lombok.Data;
+
+@Data
 public class JwtRefreshRequestDTO {
 
 	private String refreshToken;
-
-	public String getRefreshToken() {
-		return refreshToken;
-	}
-
-	public void setRefreshToken(String refreshToken) {
-		this.refreshToken = refreshToken;
-	}
 
 }

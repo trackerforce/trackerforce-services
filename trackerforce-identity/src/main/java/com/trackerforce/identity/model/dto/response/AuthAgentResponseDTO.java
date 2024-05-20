@@ -1,16 +1,18 @@
 package com.trackerforce.identity.model.dto.response;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.trackerforce.common.model.response.AgentResponse;
 import com.trackerforce.identity.model.AuthAccess;
+import lombok.Getter;
 
+import java.util.List;
+
+@Getter
 @JsonInclude(Include.NON_NULL)
 public class AuthAgentResponseDTO extends AuthResponseDTO {
 
-	private AgentResponse access;
+	private final AgentResponse access;
 	
 	public AuthAgentResponseDTO(AgentResponse access, String token, String refreshToken) {
 		super(token, refreshToken, false);
@@ -22,11 +24,7 @@ public class AuthAgentResponseDTO extends AuthResponseDTO {
 		this.access = AgentResponse.auth(access.getEmail(), roles, online);
 	}
 
-	public AgentResponse getAccess() {
-		return access;
-	}
-	
-	@Override
+    @Override
 	public String getId() {
 		return access.getId();
 	}

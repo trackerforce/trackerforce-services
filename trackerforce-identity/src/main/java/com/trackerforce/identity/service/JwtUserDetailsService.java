@@ -1,26 +1,27 @@
 package com.trackerforce.identity.service;
 
-import java.util.ArrayList;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.trackerforce.identity.model.AuthAccess;
+import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
+import com.trackerforce.identity.repository.AuthAccessRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.trackerforce.identity.model.AuthAccess;
-import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
-import com.trackerforce.identity.repository.AuthAccessRepository;
+import java.util.ArrayList;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
-	@Autowired
-	private AuthAccessRepository authAccessRepository;
+	private final AuthAccessRepository authAccessRepository;
 
-	@Autowired
-	private PasswordEncoder bcryptEncoder;
+	private final PasswordEncoder bcryptEncoder;
+
+	public JwtUserDetailsService(AuthAccessRepository authAccessRepository, PasswordEncoder bcryptEncoder) {
+		this.authAccessRepository = authAccessRepository;
+		this.bcryptEncoder = bcryptEncoder;
+	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

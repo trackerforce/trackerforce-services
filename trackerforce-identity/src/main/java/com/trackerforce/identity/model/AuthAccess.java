@@ -1,18 +1,23 @@
 package com.trackerforce.identity.model;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.util.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.trackerforce.common.model.type.JwtKeys;
 import com.trackerforce.common.model.type.ServicesRole;
 import com.trackerforce.identity.model.dto.request.JwtRequestDTO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = "auth-access")
+@Data
+@NoArgsConstructor
 public class AuthAccess extends AbstractIdentityDocument {
 	
 	private String email;
@@ -28,8 +33,6 @@ public class AuthAccess extends AbstractIdentityDocument {
 	
 	@JsonIgnore
 	private boolean root = true;
-	
-	public AuthAccess() {}
 	
 	public AuthAccess(JwtRequestDTO authRequest, Organization organization) {
 		this.email = authRequest.getEmail();
@@ -56,58 +59,8 @@ public class AuthAccess extends AbstractIdentityDocument {
 	@JsonIgnore
 	public Map<String, Object> getDefaultClaims() {
 		var claims = new HashMap<String, Object>();
-		claims.put(JwtKeys.ROLES.toString(), Arrays.asList(ServicesRole.ROOT.name()));
+		claims.put(JwtKeys.ROLES.toString(), List.of(ServicesRole.ROOT.name()));
 		return claims;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-	
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getRefreshToken() {
-		return refreshToken;
-	}
-
-	public void setRefreshToken(String refreshToken) {
-		this.refreshToken = refreshToken;
-	}
-
-	public String getTokenHash() {
-		return tokenHash;
-	}
-
-	public void setTokenHash(String tokenHash) {
-		this.tokenHash = tokenHash;
-	}
-
-	public boolean isRoot() {
-		return root;
-	}
-
-	public void setRoot(boolean root) {
-		this.root = root;
 	}
 
 }

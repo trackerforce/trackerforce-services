@@ -191,7 +191,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 	public void logoff(HttpServletRequest request, HttpServletResponse response) {
 		final AuthResponseDTO authAccess = getAuthenticated(request);
 
-		if (Boolean.TRUE.equals(authAccess.isRoot())) {
+		if (Boolean.TRUE.equals(authAccess.getRoot())) {
 			var authRootOpt = authAccessRepository.findById(authAccess.getId());
 			
 			if (authRootOpt.isPresent()) {
