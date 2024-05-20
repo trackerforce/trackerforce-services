@@ -19,7 +19,7 @@
 
 	<properties>
 		<trackerforce-common-tenancy.version>0.0.2-SNAPSHOT</trackerforce-common-tenancy.version>
-		<switcherclient.version>2.0.6</switcherclient.version>
+		<switcherclient.version>2.0.7</switcherclient.version>
 	</properties>
 	
 	<profiles>
@@ -51,6 +51,14 @@
 			<groupId>com.github.switcherapi</groupId>
 			<artifactId>switcher-client</artifactId>
 			<version>${switcherclient.version}</version>
+		</dependency>
+
+		<!-- Test -->
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo.spring3x</artifactId>
+			<version>${flapdoodle.embed.mongo.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>

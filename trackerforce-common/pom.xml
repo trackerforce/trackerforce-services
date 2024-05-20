@@ -29,10 +29,7 @@
 
 	<properties>
 		<jsonwebtoken.version>0.12.5</jsonwebtoken.version>
-		<springdoc-openapi-starter-webmvc-ui.version>2.4.0</springdoc-openapi-starter-webmvc-ui.version>
-
-		<!-- Test-->
-		<flapdoodle.embed.mongo.version>4.12.2</flapdoodle.embed.mongo.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.5.0</springdoc-openapi-starter-webmvc-ui.version>
 
 		<!-- Managed Dependencies -->
 		<commons-compress.version>1.26.1</commons-compress.version>
@@ -112,14 +109,6 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc-openapi-starter-webmvc-ui.version}</version>
-		</dependency>
-
-		<!-- Test -->
-		<dependency>
-			<groupId>de.flapdoodle.embed</groupId>
-			<artifactId>de.flapdoodle.embed.mongo.spring3x</artifactId>
-			<version>${flapdoodle.embed.mongo.version}</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
