@@ -1,16 +1,17 @@
 package com.trackerforce.management.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
 import com.trackerforce.management.model.Template;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class TemplateRepositoryDao extends AbstractProjectedDao<Template, TemplateRepository> {
-	
-	@Autowired
-	private TemplateRepository templateRepository;
+
+	private final TemplateRepository templateRepository;
+
+	public TemplateRepositoryDao(TemplateRepository templateRepository) {
+		this.templateRepository = templateRepository;
+	}
 	
 	public void delete(final Template procedure) {
 		this.deleteById(procedure.getId());

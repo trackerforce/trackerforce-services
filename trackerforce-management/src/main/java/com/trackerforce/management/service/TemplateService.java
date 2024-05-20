@@ -1,14 +1,5 @@
 package com.trackerforce.management.service;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.common.tenant.model.type.RenderType;
 import com.trackerforce.management.model.Procedure;
@@ -17,15 +8,23 @@ import com.trackerforce.management.model.request.TemplateRequest;
 import com.trackerforce.management.repository.ProcedureRepositoryDao;
 import com.trackerforce.management.repository.TemplateRepository;
 import com.trackerforce.management.repository.TemplateRepositoryDao;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class TemplateService extends AbstractBusinessService<Template, TemplateRepository> {
 	
 	private static final String[] ALLOWED_TEMPLATE_UPDATE = { "name", "description", "helper" };
 
-	private TemplateRepositoryDao templateDao;
+	private final TemplateRepositoryDao templateDao;
 	
-	private ProcedureRepositoryDao procedureDao;
+	private final ProcedureRepositoryDao procedureDao;
 	
 	public TemplateService(
 			TemplateRepositoryDao templateDao,
@@ -64,10 +63,10 @@ public class TemplateService extends AbstractBusinessService<Template, TemplateR
 		return super.update(promise, updates, allowed);
 	}
 	
-	public LinkedList<Procedure> reorderProcedure(final String id, int from, int to) {
+	public List<Procedure> reorderProcedure(final String id, int from, int to) {
 		final var templatePromise = templateDao.getRepository().findById(id);
 		
-		if (!templatePromise.isPresent())
+		if (templatePromise.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Template not found");
 		
 		final var procedure = templatePromise.get();
@@ -83,10 +82,10 @@ public class TemplateService extends AbstractBusinessService<Template, TemplateR
 		final var templatePromise = templateDao.getRepository().findById(id);
 		final var procedurePromise = procedureDao.getRepository().findById(taskId);
 		
-		if (!templatePromise.isPresent())
+		if (templatePromise.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Template not found");
 		
-		if (!procedurePromise.isPresent())
+		if (procedurePromise.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Procedure not found");
 		
 		if (add)

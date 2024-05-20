@@ -3,6 +3,7 @@ package com.trackerforce.management.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -11,6 +12,7 @@ import com.trackerforce.management.model.Global;
 import com.trackerforce.management.model.request.GlobalRequest;
 import com.trackerforce.management.repository.GlobalRepository;
 import com.trackerforce.management.repository.GlobalRepositoryDao;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class GlobalService extends AbstractBusinessService<Global, GlobalRepository> {
@@ -33,18 +35,26 @@ public class GlobalService extends AbstractBusinessService<Global, GlobalReposit
 		}
 	}
 
-	public Global create(final GlobalRequest globalRequest) throws ServiceException {
-		var global = globalRequest.getGlobal();
-		global.setDescription(global.getKey().getDescription());
-		return super.create(global);
+	public Global create(final GlobalRequest globalRequest) {
+		try {
+			var global = globalRequest.getGlobal();
+			global.setDescription(global.getKey().getDescription());
+			return super.create(global);
+		} catch (final Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+		}
 	}
 
-	public Global update(final String id, final Map<String, Object> updates) throws ServiceException {
-		var promise = globalDao.getRepository().findById(id);
-		var allowed = new HashMap<String, String[]>();
-		allowed.put(entityName, ALLOWED_GLOBAL_UPDATE);
+	public Global update(final String id, final Map<String, Object> updates) {
+		try {
+			var promise = globalDao.getRepository().findById(id);
+			var allowed = new HashMap<String, String[]>();
+			allowed.put(entityName, ALLOWED_GLOBAL_UPDATE);
 
-		return super.update(promise, updates, allowed);
+			return super.update(promise, updates, allowed);
+		} catch (final Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+		}
 	}
 
 	public void delete(final String id) {

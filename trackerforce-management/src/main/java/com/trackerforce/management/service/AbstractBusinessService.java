@@ -25,14 +25,14 @@ import com.trackerforce.common.tenant.service.exception.InvalidServiceUpdateExce
 public abstract class AbstractBusinessService<T extends AbstractBusinessDocument, R extends MongoRepository<T, String>> 
 	extends AbstractTenantService<T, R> {
 
-	public static final String[] ALLOWED_HELPER_UPDATE = { "content", "renderType" };
+	protected static final String[] ALLOWED_HELPER_UPDATE = { "content", "renderType" };
 
 	/**
 	 * Name given by request objects
 	 */
 	protected final String entityName;
 
-	public AbstractBusinessService(final AbstractProjectedDao<T, R> dao, final Class<T> serviceModel,
+	protected AbstractBusinessService(final AbstractProjectedDao<T, R> dao, final Class<T> serviceModel,
 			final String entityName) {
 		super(dao, serviceModel);
 		this.entityName = entityName;
@@ -56,8 +56,7 @@ public abstract class AbstractBusinessService<T extends AbstractBusinessDocument
 	 */
 	public T create(final T entity, final ComponentHelper helper) throws ServiceException {
 		var helperContentOptional = Optional.ofNullable(helper);
-		if (helperContentOptional.isPresent())
-			entity.setHelper(helperContentOptional.get());
+        helperContentOptional.ifPresent(entity::setHelper);
 
 		validate(entity);
 		return dao.save(entity);
@@ -67,7 +66,6 @@ public abstract class AbstractBusinessService<T extends AbstractBusinessDocument
 	 * Generic entity creator
 	 * 
 	 * @param entity to be created
-	 * @param helper Optional helper component
 	 * @return Entity saved
 	 * @throws ServiceException if validation has errors
 	 */
@@ -87,7 +85,7 @@ public abstract class AbstractBusinessService<T extends AbstractBusinessDocument
 	public T update(final Optional<T> promise, final Map<String, Object> updates,
 			final Map<String, String[]> allowedUpdate) throws ServiceException {
 
-		if (!promise.isPresent())
+		if (promise.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, serviceModel.getSimpleName() + " not found");
 
 		var entity = promise.get();

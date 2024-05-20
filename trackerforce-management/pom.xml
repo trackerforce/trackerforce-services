@@ -46,6 +46,12 @@
 			<version>${trackerforce-common-tenancy.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- Test -->
 		<dependency>
 			<groupId>de.flapdoodle.embed</groupId>

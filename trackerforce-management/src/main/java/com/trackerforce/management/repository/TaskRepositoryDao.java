@@ -1,24 +1,25 @@
 package com.trackerforce.management.repository;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
+import com.trackerforce.management.model.Procedure;
+import com.trackerforce.management.model.Task;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
-import com.trackerforce.management.model.Procedure;
-import com.trackerforce.management.model.Task;
+import java.util.List;
 
 @Repository
 public class TaskRepositoryDao extends AbstractProjectedDao<Task, TaskRepository> {
-	
-	@Autowired
-	private TaskRepository taskRepository;
-	
-	@Autowired
-	private ProcedureRepository procedureRepository;
+
+	private final TaskRepository taskRepository;
+
+	private final ProcedureRepository procedureRepository;
+
+	public TaskRepositoryDao(TaskRepository taskRepository, ProcedureRepository procedureRepository) {
+		this.taskRepository = taskRepository;
+		this.procedureRepository = procedureRepository;
+	}
 	
 	/**
 	 * {@link TaskRepositoryDao#deleteById(String)}

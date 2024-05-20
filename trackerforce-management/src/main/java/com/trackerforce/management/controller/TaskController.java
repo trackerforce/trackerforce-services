@@ -1,42 +1,29 @@
 package com.trackerforce.management.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.trackerforce.common.model.request.QueryableRequest;
-import com.trackerforce.common.model.response.ErrorResponse;
-import com.trackerforce.common.service.exception.ServiceException;
+import com.trackerforce.management.model.Task;
 import com.trackerforce.management.model.request.TaskRequest;
 import com.trackerforce.management.service.TaskService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
 @RequestMapping("management/task/v1")
 public class TaskController {
 
-	@Autowired
-	private TaskService taskService;
+	private final TaskService taskService;
+
+	public TaskController(TaskService taskService) {
+		this.taskService = taskService;
+	}
 
 	@PostMapping(value = "/create")
-	public ResponseEntity<?> create(@RequestBody TaskRequest taskRequest) {
-		try {
-			return ResponseEntity.ok(taskService.create(taskRequest));
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}
+	public ResponseEntity<Task> create(@RequestBody TaskRequest taskRequest) {
+		return ResponseEntity.ok(taskService.create(taskRequest));
 	}
 	
 	@GetMapping(value = "/")
@@ -54,23 +41,19 @@ public class TaskController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<?> findOne(@PathVariable(value="id") String id, String output) {
+	public ResponseEntity<Task> findOne(@PathVariable(value="id") String id, String output) {
 		return ResponseEntity.ok(taskService.findByIdProjectedBy(id, output));
 	}
 	
 	@PatchMapping(value = "/{id}")
-	public ResponseEntity<?> update(
+	public ResponseEntity<Task> update(
 			@PathVariable(value="id") String id, 
 			@RequestBody Map<String, Object> updates) {
-		try {
-			return ResponseEntity.ok(taskService.update(id, updates));
-		} catch (ServiceException e) {
-			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-		}
+		return ResponseEntity.ok(taskService.update(id, updates));
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<?> delete(@PathVariable(value="id") String id) {
+	public ResponseEntity<Object> delete(@PathVariable(value="id") String id) {
 		taskService.delete(id);
 		return ResponseEntity.ok().build();
 	}

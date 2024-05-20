@@ -1,28 +1,18 @@
 package com.trackerforce.management.controller;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.trackerforce.common.model.request.QueryableRequest;
 import com.trackerforce.common.model.response.ErrorResponse;
 import com.trackerforce.common.service.exception.ServiceException;
 import com.trackerforce.management.model.Procedure;
 import com.trackerforce.management.model.request.TemplateRequest;
 import com.trackerforce.management.service.TemplateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(allowedHeaders = { "X-Tenant", "Authorization", "Content-Type" })
 @RestController
@@ -74,7 +64,7 @@ public class TemplateController {
 	}
 	
 	@PostMapping(value = "/{id}/procedure/reorder")
-	public ResponseEntity<LinkedList<Procedure>> reorderProcedure(
+	public ResponseEntity<List<Procedure>> reorderProcedure(
 			@PathVariable(value="id") String id,
 			@RequestParam(required = true) int from,
 			@RequestParam(required = true) int to) {

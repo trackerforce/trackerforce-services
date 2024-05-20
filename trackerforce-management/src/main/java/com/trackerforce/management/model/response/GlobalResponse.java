@@ -1,5 +1,10 @@
 package com.trackerforce.management.model.response;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class GlobalResponse {
 
 	private String key;
@@ -12,30 +17,6 @@ public class GlobalResponse {
 		this.key = name;
 		this.description = description;
 		this.attributes = attributes;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String[] getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(String[] attrbutes) {
-		this.attributes = attrbutes;
 	}
 
 }
