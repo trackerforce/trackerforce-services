@@ -10,7 +10,7 @@ import com.trackerforce.common.tenant.service.AbstractTenantService;
 public abstract class AbstractSessionService<T extends AbstractDocument, R extends MongoRepository<T, String>> 
 	extends AbstractTenantService<T, R> {
 
-	public AbstractSessionService(AbstractProjectedDao<T, R> dao, Class<T> serviceModel) {
+	protected AbstractSessionService(AbstractProjectedDao<T, R> dao, Class<T> serviceModel) {
 		super(dao, serviceModel);
 	}
 

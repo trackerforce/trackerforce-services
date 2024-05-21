@@ -23,10 +23,13 @@ import com.trackerforce.session.model.response.GlobalResponse;
 @Service
 public class ManagementService {
 
-	private RestTemplate restTemplate = new RestTemplate();
+	private final RestTemplate restTemplate = new RestTemplate();
 
-	@Value("${service.management.url}/management/")
-	private String serviceUrl;
+	private final String serviceUrl;
+
+	public ManagementService(@Value("${service.management.url}/management/") String serviceUrl) {
+		this.serviceUrl = serviceUrl;
+	}
 
 	private void setHeaders(HttpServletRequest request, HttpHeaders headers) {
 		headers.add(RequestHeader.AUTHORIZATION.toString(), request.getHeader(RequestHeader.AUTHORIZATION.toString()));
@@ -43,7 +46,7 @@ public class ManagementService {
 
 			return response.getBody();
 		} catch (HttpClientErrorException e) {
-			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+			throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
 		}
 	}
 	
@@ -71,7 +74,7 @@ public class ManagementService {
 
 			return response.getBody();
 		} catch (HttpClientErrorException e) {
-			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+			throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
 		}
 	}
 	
@@ -89,7 +92,7 @@ public class ManagementService {
 
 			return response.getBody();
 		} catch (HttpClientErrorException e) {
-			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+			throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
 		}
 	}
 	
@@ -104,7 +107,7 @@ public class ManagementService {
 
 			return response.getBody();
 		} catch (HttpClientErrorException e) {
-			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+			throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
 		}
 	}
 
@@ -116,7 +119,7 @@ public class ManagementService {
 			var url = String.format("%s%s%s/%s", serviceUrl, "agent/v1/watch/", agentId, id);
 			restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(null, headers), Object.class);
 		} catch (HttpClientErrorException e) {
-			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+			throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
 		}
 	}
 	
@@ -131,7 +134,7 @@ public class ManagementService {
 
 			return response.getBody();
 		} catch (HttpClientErrorException e) {
-			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+			throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
 		}
 	}
 

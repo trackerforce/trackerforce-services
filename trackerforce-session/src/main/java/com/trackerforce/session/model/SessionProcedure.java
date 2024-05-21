@@ -9,7 +9,13 @@ import com.trackerforce.common.tenant.model.CommonProcedure;
 import com.trackerforce.common.tenant.model.CommonTask;
 import com.trackerforce.common.tenant.model.exception.InvalidStatusChangeException;
 import com.trackerforce.session.model.type.ProcedureStatus;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor
 public class SessionProcedure extends CommonProcedure<SessionTask> {
 	
 	@JsonProperty("context_id")
@@ -20,9 +26,6 @@ public class SessionProcedure extends CommonProcedure<SessionTask> {
 	private ProcedureStatus status = ProcedureStatus.OPENED;
 
 	private LinkedList<SessionTask> tasks;
-
-	public SessionProcedure() {
-	}
 
 	private SessionProcedure(CommonProcedure<?> input) {
 		super.name = input.getName();
@@ -61,36 +64,16 @@ public class SessionProcedure extends CommonProcedure<SessionTask> {
 		return true;
 	}
 
-	public String getResolution() {
-		return resolution;
-	}
-
-	public void setResolution(String resolution) {
-		this.resolution = resolution;
-	}
-
-	public ProcedureStatus getStatus() {
-		return status;
-	}
-
-	public String getContextId() {
-		return contextId;
-	}
-
-	public void setContextId(String contextId) {
-		this.contextId = contextId;
-	}
-
 	@Override
 	public LinkedList<SessionTask> getTasks() {
 		if (tasks == null)
-			tasks = new LinkedList<SessionTask>();
+			tasks = new LinkedList<>();
 		return tasks;
 	}
 	
 	@JsonIgnore
 	public boolean isClosingProcedure() {
-		return getTasks().size() == 0;
+		return getTasks().isEmpty();
 	}
 
 }

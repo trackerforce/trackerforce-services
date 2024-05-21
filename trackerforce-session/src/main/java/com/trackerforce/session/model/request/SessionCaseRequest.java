@@ -1,7 +1,9 @@
 package com.trackerforce.session.model.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class SessionCaseRequest {
 
 	@JsonProperty("cases")
@@ -11,29 +13,5 @@ public class SessionCaseRequest {
 	private String agentId;
 
 	private String template;
-
-	public String[] getCaseIds() {
-		return caseIds;
-	}
-
-	public void setCaseIds(String[] caseIds) {
-		this.caseIds = caseIds;
-	}
-
-	public String getAgentId() {
-		return agentId;
-	}
-
-	public void setAgentId(String agentId) {
-		this.agentId = agentId;
-	}
-
-	public String getTemplate() {
-		return template;
-	}
-
-	public void setTemplate(String template) {
-		this.template = template;
-	}
 
 }

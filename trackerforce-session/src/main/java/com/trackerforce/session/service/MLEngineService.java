@@ -15,7 +15,7 @@ import com.trackerforce.session.model.response.PredictionResponse;
 @Service
 public class MLEngineService {
 
-	private RestTemplate restTemplate = new RestTemplate();
+	private final RestTemplate restTemplate = new RestTemplate();
 
 	public PredictionResponse predictProcedure(String serviceUrl, String tenantId,
 			SessionProcedure procedure, String contextId) {

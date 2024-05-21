@@ -1,13 +1,16 @@
 package com.trackerforce.session.model;
 
 import com.trackerforce.common.tenant.model.CommonTask;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor
 public class SessionTask extends CommonTask {
 
 	private Object response;
-
-	public SessionTask() {
-	}
 
 	private SessionTask(CommonTask input) {
 		super.hidden = input.isHidden();
@@ -22,14 +25,6 @@ public class SessionTask extends CommonTask {
 
 	public static SessionTask createTaskResolution(CommonTask input) {
 		return new SessionTask(input);
-	}
-
-	public Object getResponse() {
-		return response;
-	}
-
-	public void setResponse(Object response) {
-		this.response = response;
 	}
 
 }

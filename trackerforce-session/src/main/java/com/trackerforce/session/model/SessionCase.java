@@ -1,26 +1,28 @@
 package com.trackerforce.session.model;
 
+import com.trackerforce.common.tenant.model.AbstractBusinessDocument;
+import com.trackerforce.common.tenant.model.CommonProcedure;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.trackerforce.common.tenant.model.AbstractBusinessDocument;
-import com.trackerforce.common.tenant.model.CommonProcedure;
-
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = "cases")
+@Data
+@NoArgsConstructor
 public class SessionCase extends AbstractBusinessDocument {
 
-	private long protocol;
+	private Long protocol;
 
 	private String contextId;
 
 	private String context;
 
 	private List<SessionProcedure> procedures;
-
-	public SessionCase() {
-	}
 
 	private SessionCase(SessionTemplate input) {
 		this.contextId = input.getId();
@@ -39,38 +41,10 @@ public class SessionCase extends AbstractBusinessDocument {
 		return sessionCase;
 	}
 
-	public long getProtocol() {
-		return protocol;
-	}
-
-	public void setProtocol(long protocol) {
-		this.protocol = protocol;
-	}
-
 	public List<SessionProcedure> getProcedures() {
 		if (procedures == null)
-			procedures = new ArrayList<SessionProcedure>();
+			procedures = new ArrayList<>();
 		return procedures;
-	}
-
-	public void setProcedures(List<SessionProcedure> procedures) {
-		this.procedures = procedures;
-	}
-
-	public String getContextId() {
-		return contextId;
-	}
-
-	public void setContextId(String contextId) {
-		this.contextId = contextId;
-	}
-
-	public String getContext() {
-		return context;
-	}
-
-	public void setContext(String context) {
-		this.context = context;
 	}
 
 }

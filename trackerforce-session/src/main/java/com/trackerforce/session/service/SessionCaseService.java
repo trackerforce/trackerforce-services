@@ -51,35 +51,30 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 		}
 	}
 
-	public SessionCase create(HttpServletRequest request, final SessionCaseRequest sessionCaseRequest)
-			throws ServiceException {
+	public SessionCase create(HttpServletRequest request, final SessionCaseRequest sessionCaseRequest) {
+		try {
+			var template = managementService.findTemplate(request, sessionCaseRequest.getTemplate());
+			var sessionCase = SessionCase.create(template);
 
-		var template = managementService.findTemplate(request, sessionCaseRequest.getTemplate());
-		var sessionCase = SessionCase.create(template);
+			this.validate(sessionCase);
+			sessionCase = sessionCaseDao.save(sessionCase);
+			managementService.watchCase(request, sessionCase.getId(), sessionCaseRequest.getAgentId());
 
-		this.validate(sessionCase);
-		sessionCase = sessionCaseDao.save(sessionCase);
-		managementService.watchCase(request, sessionCase.getId(), sessionCaseRequest.getAgentId());
-
-		return sessionCase;
+			return sessionCase;
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
 	}
 
 	public SessionProcedure handlerProcedure(HttpServletRequest request,
-			final SessionProcedureRequest sessionProcedureRequest) throws ServiceException {
-		switch (sessionProcedureRequest.getEvent()) {
-		case NEW:
-			return createProcedure(request, sessionProcedureRequest);
-		case SUBMIT:
-			return submitProcedure(request, sessionProcedureRequest);
-		case NEXT:
-			return nextProcedure(request, sessionProcedureRequest);
-		case SAVE:
-			return saveProcedure(sessionProcedureRequest);
-		case CANCEL:
-			return cancelProcedure(sessionProcedureRequest);
-		default:
-			throw new ServiceException("Invalid Session Procedure Event");
-		}
+			final SessionProcedureRequest sessionProcedureRequest) {
+        return switch (sessionProcedureRequest.getEvent()) {
+            case NEW -> createProcedure(request, sessionProcedureRequest);
+            case SUBMIT -> submitProcedure(request, sessionProcedureRequest);
+            case NEXT -> nextProcedure(request, sessionProcedureRequest);
+            case SAVE -> saveProcedure(sessionProcedureRequest);
+            case CANCEL -> cancelProcedure(sessionProcedureRequest);
+        };
 	}
 
 	public SessionCase getSessionCaseByProtocol(String protocol) {
@@ -99,14 +94,18 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 	}
 	
 	public Map<String, Object> next(HttpServletRequest request, SessionProcedureRequest sessionProcedureRequest,
-			QueryableRequest queryable) throws ServiceException {
-		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
-		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
+			QueryableRequest queryable) {
+		try {
+			var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
+			var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
-		if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
+			if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
 
-		return nextResult(request, procedure, sessionCase, queryable);
+			return nextResult(request, procedure, sessionCase, queryable);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
 	}
 	
 	private Map<String, Object> nextResult(HttpServletRequest request, SessionProcedure procedure,
@@ -122,7 +121,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 		
 		// Retrieve prediction and validate accuracy before aggregating
 		var predicted = mlEngineService.predictProcedure(mlUrl, tenantId, procedure, sessionCase.getContextId());
-		if (predicted.getAccuracy() >= Long.valueOf(mlAccuracy)) {
+		if (predicted.getAccuracy() >= Long.parseLong(mlAccuracy)) {
 			var predictedProcedure = managementService.findProcedureShort(request, predicted.getPredicted());
 			procedures.put("predicted", predictedProcedure);
 			procedures.put("prediction_accuracy", predicted.getAccuracy());
@@ -132,7 +131,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 	}
 
 	private SessionProcedure createProcedure(HttpServletRequest request,
-			final SessionProcedureRequest sessionProcedureRequest) throws ServiceException {
+			final SessionProcedureRequest sessionProcedureRequest) {
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 		var commonProcedure = managementService.findProcedure(request, sessionProcedureRequest.getProcedureId());
 		var procedure = SessionProcedure.create(commonProcedure);
@@ -147,7 +146,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 	}
 
 	private SessionProcedure submitProcedure(HttpServletRequest request,
-			final SessionProcedureRequest sessionProcedureRequest) throws ServiceException {
+			final SessionProcedureRequest sessionProcedureRequest) {
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
@@ -172,7 +171,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 	}
 
 	private SessionProcedure nextProcedure(HttpServletRequest request,
-			final SessionProcedureRequest sessionProcedureRequest) throws ServiceException {
+			final SessionProcedureRequest sessionProcedureRequest) {
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
@@ -198,8 +197,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 		for (SessionTask task : sessionProcedureRequest.getTasks()) {
 			var optTask = procedure.getTasks().stream().filter(t -> t.getId().equals(task.getId())).findFirst();
 
-			if (optTask.isPresent())
-				optTask.get().setResponse(task.getResponse());
+            optTask.ifPresent(sessionTask -> sessionTask.setResponse(task.getResponse()));
 		}
 
 		sessionCaseDao.save(sessionCase);
@@ -222,7 +220,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 	private SessionCase getSessionCase(String sessionCaseId) {
 		var optCase = sessionCaseDao.getRepository().findById(sessionCaseId);
 
-		if (!optCase.isPresent())
+		if (optCase.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Case not found");
 
 		return optCase.get();
@@ -232,7 +230,7 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 		var optProcedure = sessionCase.getProcedures().stream().filter(p -> p.getId().equals(sessionProcedureId))
 				.findFirst();
 
-		if (!optProcedure.isPresent())
+		if (optProcedure.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Procedure not found");
 
 		return optProcedure.get();

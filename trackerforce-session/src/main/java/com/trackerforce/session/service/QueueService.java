@@ -16,10 +16,13 @@ import com.trackerforce.session.model.SessionProcedure;
 @Service
 public class QueueService {
 
-	private RestTemplate restTemplate = new RestTemplate();
+	private final RestTemplate restTemplate = new RestTemplate();
 
-	@Value("${service.queue.url}/queue/session")
-	private String serviceUrl;
+	private final String serviceUrl;
+
+	public QueueService(@Value("${service.queue.url}/queue/session") String serviceUrl) {
+		this.serviceUrl = serviceUrl;
+	}
 
 	private void setHeaders(HttpServletRequest request, HttpHeaders headers) {
 		headers.add(RequestHeader.TENANT_HEADER.toString(), request.getHeader(RequestHeader.TENANT_HEADER.toString()));
@@ -34,7 +37,7 @@ public class QueueService {
 			var url = String.format("%s%s%s/%s", serviceUrl, "/v1/procedure/submit/", tenantId, contextId);
 			restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(procedure, headers), Object.class);
 		} catch (HttpClientErrorException e) {
-			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+			throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
 		}
 	}
 	
@@ -47,7 +50,7 @@ public class QueueService {
 			var url = String.format("%s%s%s/%s", serviceUrl, "/v1/procedure/next/", tenantId, contextId);
 			restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(procedure, headers), Object.class);
 		} catch (HttpClientErrorException e) {
-			throw new ResponseStatusException(e.getRawStatusCode(), e.getMessage(), e);
+			throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
 		}
 	}
 

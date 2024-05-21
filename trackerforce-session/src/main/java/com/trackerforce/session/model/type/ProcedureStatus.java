@@ -26,7 +26,7 @@ public enum ProcedureStatus {
 	 */
 	CANCELED;
 
-	private String[] canChangeTo;
+	private final String[] canChangeTo;
 
 	private ProcedureStatus(String... canChangeTo) {
 		this.canChangeTo = canChangeTo;
