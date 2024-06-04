@@ -3,6 +3,7 @@ package com.trackerforce.management.repository;
 import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
 import com.trackerforce.management.model.Procedure;
 import com.trackerforce.management.model.Task;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,8 @@ public class TaskRepositoryDao extends AbstractProjectedDao<Task, TaskRepository
 
 	private final ProcedureRepository procedureRepository;
 
-	public TaskRepositoryDao(TaskRepository taskRepository, ProcedureRepository procedureRepository) {
+	public TaskRepositoryDao(MongoTemplate mongoTemplate, TaskRepository taskRepository, ProcedureRepository procedureRepository) {
+		super(mongoTemplate);
 		this.taskRepository = taskRepository;
 		this.procedureRepository = procedureRepository;
 	}
