@@ -1,28 +1,31 @@
 package com.trackerforce.session.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.trackerforce.common.tenant.repository.AbstractProjectedDao;
 import com.trackerforce.session.model.SessionCase;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class SessionCaseRepositoryDao extends AbstractProjectedDao<SessionCase, SessionCaseRepository> {
 
-	@Autowired
-	private SessionCaseRepository caseRepository;
+    private final SessionCaseRepository caseRepository;
 
-	public void delete(final SessionCase sessionCase) {
-		this.deleteById(sessionCase.getId());
-	}
+    public SessionCaseRepositoryDao(MongoTemplate mongoTemplate, SessionCaseRepository caseRepository) {
+        super(mongoTemplate);
+        this.caseRepository = caseRepository;
+    }
 
-	public void deleteById(final String id) {
-		caseRepository.deleteById(id);
-	}
+    public void delete(final SessionCase sessionCase) {
+        this.deleteById(sessionCase.getId());
+    }
 
-	@Override
-	public SessionCaseRepository getRepository() {
-		return caseRepository;
-	}
+    public void deleteById(final String id) {
+        caseRepository.deleteById(id);
+    }
+
+    @Override
+    public SessionCaseRepository getRepository() {
+        return caseRepository;
+    }
 
 }
