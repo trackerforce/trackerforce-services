@@ -32,7 +32,7 @@
 		<springdoc-openapi-starter-webmvc-ui.version>2.5.0</springdoc-openapi-starter-webmvc-ui.version>
 
 		<!-- Managed Dependencies -->
-		<commons-compress.version>1.26.1</commons-compress.version>
+		<commons-compress.version>1.26.2</commons-compress.version>
 	</properties>
 
 	<dependencies>
