@@ -4,11 +4,13 @@ on:
   push:
     branches: [master]
     paths:
+      - 'pom.xml'
       - 'trackerforce-identity/**'
       - 'trackerforce-common/**'
   pull_request:
     branches: [master]
     paths:
+      - 'pom.xml'
       - 'trackerforce-identity/**'
       - 'trackerforce-common/**'
 
