@@ -25,7 +25,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.0</version>
+		<version>3.3.1</version>
 		<relativePath />
 	</parent>
 	
@@ -35,7 +35,12 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 
 		<!-- Test-->
-		<flapdoodle.embed.mongo.version>4.14.0</flapdoodle.embed.mongo.version>
+		<flapdoodle.embed.mongo.version>4.15.0</flapdoodle.embed.mongo.version>
+
+		<!-- Plugins -->
+		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+		<sonar-maven-plugin.version>3.10.0.2594</sonar-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
 		
 		<!-- Sonar -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -91,17 +96,17 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.12.1</version>
+					<version>${maven-compiler-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.10.0.2594</version>
+					<version>${sonar-maven-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.11</version>
+					<version>${jacoco-maven-plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
