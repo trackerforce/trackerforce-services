@@ -19,7 +19,7 @@
 
 	<properties>
 		<trackerforce-common-tenancy.version>0.0.2-SNAPSHOT</trackerforce-common-tenancy.version>
-		<switcherclient.version>2.0.7</switcherclient.version>
+		<switcherclient.version>2.1.0</switcherclient.version>
 	</properties>
 	
 	<profiles>
