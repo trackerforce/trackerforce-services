@@ -19,14 +19,15 @@ service:
     expire: 15
   endpoint:
     allowed-addresses: >
-     127.0.0.1
+      0:0:0:0:0:0:0:1,
+      127.0.0.1
     allowed-endpoints: >
-     /v2/api-docs,
-     /*/swagger*/**,
-     /*/authenticate,
-     /*/register,
-     /*/activate,
-     /service/check
+      /v2/api-docs,
+      /*/swagger*/**,
+      /*/authenticate,
+      /*/register,
+      /*/activate,
+      /service/check
   management:
     url: http://127.0.0.1:8090
 

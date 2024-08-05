@@ -80,8 +80,9 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 	public SessionCase getSessionCaseByProtocol(String protocol) {
 		var optCase = sessionCaseDao.getRepository().findByProtocol(Long.parseLong(protocol));
 
-		if (optCase == null)
+		if (optCase == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Case not found");
+		}
 
 		return optCase;
 	}
@@ -89,8 +90,8 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 	public Map<String, Object> getSessionCaseByAgent(HttpServletRequest request,
 			String agentid, String sortBy, String output, int page, int size) {
 		var agent = managementService.findAgentCases(request, agentid);
-		return findByIdsProjectedBy(agent.getCases().toArray(new String[0]), sortBy,
-				output, page, size);
+		return findByIdsProjectedBy(agent.getCases().toArray(
+				new String[0]), sortBy, output, page, size);
 	}
 	
 	public Map<String, Object> next(HttpServletRequest request, SessionProcedureRequest sessionProcedureRequest,
@@ -99,8 +100,9 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 			var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 			var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
-			if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
+			if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED)) {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
+			}
 
 			return nextResult(request, procedure, sessionCase, queryable);
 		} catch (Exception e) {
@@ -139,8 +141,9 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 		sessionCase.getProcedures().add(procedure);
 		sessionCaseDao.save(sessionCase);
 		
-		if (procedure.isClosingProcedure())
+		if (procedure.isClosingProcedure()) {
 			return submitProcedure(request, sessionProcedureRequest);
+		}
 			
 		return procedure;
 	}
@@ -151,8 +154,9 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
 		try {
-			if (!procedure.canSubmit())
+			if (!procedure.canSubmit()) {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Has pending tasks");
+			}
 
 			procedure.changeStatus(ProcedureStatus.SUBMITTED);
 			sessionCaseDao.save(sessionCase);
@@ -175,8 +179,9 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 		var sessionCase = getSessionCase(sessionProcedureRequest.getSessionCaseId());
 		var procedure = getSessionProcedure(sessionCase, sessionProcedureRequest.getProcedureId());
 
-		if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED))
+		if (!procedure.getStatus().equals(ProcedureStatus.SUBMITTED)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Procedure must be submitted");
+		}
 
 		try {
 			procedure.setResolution(sessionProcedureRequest.getResolution());
@@ -220,8 +225,9 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 	private SessionCase getSessionCase(String sessionCaseId) {
 		var optCase = sessionCaseDao.getRepository().findById(sessionCaseId);
 
-		if (optCase.isEmpty())
+		if (optCase.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Case not found");
+		}
 
 		return optCase.get();
 	}
@@ -230,8 +236,9 @@ public class SessionCaseService extends AbstractSessionService<SessionCase, Sess
 		var optProcedure = sessionCase.getProcedures().stream().filter(p -> p.getId().equals(sessionProcedureId))
 				.findFirst();
 
-		if (optProcedure.isEmpty())
+		if (optProcedure.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Procedure not found");
+		}
 
 		return optProcedure.get();
 	}

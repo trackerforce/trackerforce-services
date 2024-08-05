@@ -24,11 +24,11 @@ service:
   endpoint:
     allowed-addresses: ${WHITELIST}
     allowed-endpoints: >
-     /v3/api-docs.*,
-     /service/check,
-     /management/agent/v1/activate,
-     /management/agent/v1/login,
-     /management/agent/v1/check
+      /v3/api-docs.*,
+      /service/check,
+      /management/agent/v1/activate,
+      /management/agent/v1/login,
+      /management/agent/v1/check
   identity:
     url: http://127.0.0.1:8070
 

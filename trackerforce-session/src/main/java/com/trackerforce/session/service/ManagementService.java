@@ -23,6 +23,11 @@ import com.trackerforce.session.model.response.GlobalResponse;
 @Service
 public class ManagementService {
 
+	private static final String PROCEDURE_V1 = "procedure/v1/";
+	private static final String TEMPLATE_V1 = "template/v1/";
+	private static final String AGENT_V1 = "agent/v1/";
+	private static final String GLOBAL_V1 = "global/v1/";
+
 	private final RestTemplate restTemplate = new RestTemplate();
 
 	private final String serviceUrl;
@@ -41,7 +46,7 @@ public class ManagementService {
 		setHeaders(request, headers);
 
 		try {
-			var response = restTemplate.exchange(serviceUrl + "template/v1/" + id, HttpMethod.GET,
+			var response = restTemplate.exchange(serviceUrl + TEMPLATE_V1 + id, HttpMethod.GET,
 					new HttpEntity<>(null, headers), SessionTemplate.class);
 
 			return response.getBody();
@@ -64,10 +69,11 @@ public class ManagementService {
 
 		try {
 			var url = "";
-			if (StringUtils.isBlank(output))
-				url = String.format("%s%s%s", serviceUrl, "procedure/v1/", id);
-			else
-				url = String.format("%s%s%s?output=%s", serviceUrl, "procedure/v1/", id, output);
+			if (StringUtils.isBlank(output)) {
+				url = String.format("%s%s%s", serviceUrl, PROCEDURE_V1, id);
+			} else {
+				url = String.format("%s%s%s?output=%s", serviceUrl, PROCEDURE_V1, id, output);
+			}
 				
 			var response = restTemplate.exchange(url, HttpMethod.GET,
 					new HttpEntity<>(null, headers), SessionProcedure.class);
@@ -85,7 +91,7 @@ public class ManagementService {
 
 		try {
 			var name = queryableRequest.getQuery().get("name");
-			var url = String.format("%s%s?output=id,name,description&page=%s&name=%s", serviceUrl, "procedure/v1/",
+			var url = String.format("%s%s?output=id,name,description&page=%s&name=%s", serviceUrl, PROCEDURE_V1,
 					queryableRequest.getPage(), name);
 
 			var response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(null, headers), Map.class);
@@ -101,7 +107,7 @@ public class ManagementService {
 		setHeaders(request, headers);
 
 		try {
-			var url = String.format("%s%s", serviceUrl, "global/v1/ML_SERVICE");
+			var url = String.format("%s%s", serviceUrl, GLOBAL_V1 + "ML_SERVICE");
 			var response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(null, headers),
 					GlobalResponse.class);
 
@@ -116,7 +122,7 @@ public class ManagementService {
 		setHeaders(request, headers);
 
 		try {
-			var url = String.format("%s%s%s/%s", serviceUrl, "agent/v1/watch/", agentId, id);
+			var url = String.format("%s%s%s/%s", serviceUrl, AGENT_V1 + "watch/", agentId, id);
 			restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(null, headers), Object.class);
 		} catch (HttpClientErrorException e) {
 			throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
@@ -128,7 +134,7 @@ public class ManagementService {
 		setHeaders(request, headers);
 
 		try {
-			var url = String.format("%s%s/%s", serviceUrl, "agent/v1/", agentId);
+			var url = String.format("%s%s/%s", serviceUrl, AGENT_V1, agentId);
 			var response = restTemplate.exchange(url, HttpMethod.GET,
 					new HttpEntity<>(null, headers), AgentResponse.class);
 
