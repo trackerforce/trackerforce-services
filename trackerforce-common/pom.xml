@@ -30,9 +30,6 @@
 	<properties>
 		<jsonwebtoken.version>0.12.6</jsonwebtoken.version>
 		<springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
-
-		<!-- Managed Dependencies -->
-		<commons-compress.version>1.26.2</commons-compress.version>
 	</properties>
 
 	<dependencies>
@@ -112,13 +109,4 @@
 		</dependency>
 	</dependencies>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-compress</artifactId>
-				<version>${commons-compress.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 </project>

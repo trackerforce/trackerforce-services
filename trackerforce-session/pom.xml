@@ -19,7 +19,7 @@
 
 	<properties>
 		<trackerforce-common-tenancy.version>0.0.2-SNAPSHOT</trackerforce-common-tenancy.version>
-		<switcherclient.version>2.1.0</switcherclient.version>
+		<switcher-client.version>2.1.0</switcher-client.version>
 	</properties>
 	
 	<profiles>
@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>com.github.switcherapi</groupId>
 			<artifactId>switcher-client</artifactId>
-			<version>${switcherclient.version}</version>
+			<version>${switcher-client.version}</version>
 		</dependency>
 
 		<dependency>
