@@ -1,11 +1,11 @@
-de.flapdoodle.mongodb.embedded.version: 6.0.12
+de.flapdoodle.mongodb.embedded.version: 8.0.3
 
 spring:
   profiles:
     active: test
   mongodb:
     embedded:
-      version: 6.0.12
+      version: 8.0.3
 
 service:
   docs:
