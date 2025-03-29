@@ -29,7 +29,7 @@
 
 	<properties>
 		<jsonwebtoken.version>0.12.6</jsonwebtoken.version>
-		<springdoc-openapi-starter-webmvc-ui.version>2.8.5</springdoc-openapi-starter-webmvc-ui.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.8.6</springdoc-openapi-starter-webmvc-ui.version>
 	</properties>
 
 	<dependencies>
