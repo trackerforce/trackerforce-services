@@ -29,12 +29,12 @@ public class MultiTenantSecurityConfig extends SecurityConfig {
 		http.sessionManagement(auth -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.csrf(AbstractHttpConfigurer::disable);
 
+		http.addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class);
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
 
-	@Bean
 	public CorsFilter corsFilter() {
 		var source = new UrlBasedCorsConfigurationSource();
 		var config = new CorsConfiguration();

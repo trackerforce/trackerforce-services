@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -29,8 +30,8 @@ public class TenantInterceptor implements HandlerInterceptor {
 	}
 	
 	@Override
-	public boolean preHandle(HttpServletRequest request,
-							 HttpServletResponse response, Object handler) throws Exception {
+	public boolean preHandle(@NonNull HttpServletRequest request,
+							 @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
 		
 		var allowedEndpoint = isAllowedEndpoint(request);
 		var tenant = Optional.ofNullable(request.getHeader(RequestHeader.TENANT_HEADER.toString()));

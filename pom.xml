@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.4</version>
+		<version>3.5.0</version>
 		<relativePath />
 	</parent>
 	
@@ -34,12 +34,12 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 
 		<!-- Test-->
-		<flapdoodle.embed.mongo.version>4.18.0</flapdoodle.embed.mongo.version>
+		<flapdoodle.embed.mongo.version>4.20.0</flapdoodle.embed.mongo.version>
 
 		<!-- Plugins -->
 		<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-		<sonar-maven-plugin.version>3.10.0.2594</sonar-maven-plugin.version>
-		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+		<sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
 		
 		<!-- Sonar -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>

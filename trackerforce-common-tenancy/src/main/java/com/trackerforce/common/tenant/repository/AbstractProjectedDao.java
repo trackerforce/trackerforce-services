@@ -13,7 +13,6 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 
 public abstract class AbstractProjectedDao<T extends AbstractDocument, R extends MongoRepository<T, String>> {
 
@@ -38,7 +37,7 @@ public abstract class AbstractProjectedDao<T extends AbstractDocument, R extends
     }
 
     /**
-     * Find one element by Id
+     * Find one element by ID
      */
     public T findByIdProjectedBy(String id, Class<T> entityClass, String... fields) {
         var query = Query.query(Criteria.where("id").is(id));

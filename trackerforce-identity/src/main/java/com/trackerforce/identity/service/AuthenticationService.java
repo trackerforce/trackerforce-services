@@ -82,7 +82,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 	
 	private AuthRootResponseDTO getRootAuthenticated(HttpServletRequest request, Authentication authentication, String token) {
 		var authAccessOpt = authAccessRepository.findById(authentication.getName());
-		if (authAccessOpt.isEmpty() || !bcrypt.matches(token, authAccessOpt.get().getTokenHash()))
+		if (authAccessOpt.isEmpty() || !bcrypt.matches(getToken(token), authAccessOpt.get().getTokenHash()))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
 		var tenant = request.getHeader(RequestHeader.TENANT_HEADER.toString());
@@ -119,7 +119,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 		final var jwt = jwtTokenUtil.generateToken(authAccess.getId(), List.of(authAccess.getOrganization().getAlias()),
 				authAccess.getDefaultClaims());
 
-		authAccess.setTokenHash(bcrypt.encode(jwt.getLeft()));
+		authAccess.setTokenHash(bcrypt.encode(getToken(jwt.getLeft())));
 		authAccessRepository.save(authAccess);
 		return new AuthRootResponseDTO(authAccess, jwt.getLeft(), jwt.getRight());
 	}
@@ -152,7 +152,7 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 			
 			final var authAccess = authAccessOpt.get();
-			authAccess.setTokenHash(bcrypt.encode(jwt.getLeft()));
+			authAccess.setTokenHash(bcrypt.encode(getToken(jwt.getLeft())));
 			authAccessRepository.save(authAccess);
 		}
 		
@@ -205,6 +205,10 @@ public class AuthenticationService extends AbstractIdentityService<AuthAccess> {
 
 		new SecurityContextLogoutHandler().logout(request, response,
 				SecurityContextHolder.getContext().getAuthentication());
+	}
+
+	private String getToken(String token) {
+		return token.substring(token.length() - 72);
 	}
 
 }

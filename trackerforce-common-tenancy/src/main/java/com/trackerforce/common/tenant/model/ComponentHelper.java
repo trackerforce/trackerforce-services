@@ -1,5 +1,6 @@
 package com.trackerforce.common.tenant.model;
 
+import com.trackerforce.common.tenant.model.type.RenderType;
 import lombok.Data;
 
 @Data
