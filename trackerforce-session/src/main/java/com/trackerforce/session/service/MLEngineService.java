@@ -1,6 +1,6 @@
 package com.trackerforce.session.service;
 
-import static com.github.switcherapi.client.SwitcherContext.getSwitcher;
+import static com.switcherapi.client.SwitcherContext.getSwitcher;
 import static com.trackerforce.session.config.Features.ML_SERVICE;
 
 import org.springframework.http.HttpEntity;
