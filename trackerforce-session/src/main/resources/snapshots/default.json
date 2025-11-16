@@ -1,29 +1,27 @@
 {
-  "data": {
-    "domain": {
-      "name": "Trackerforce",
-      "version": 1632024551905,
-      "group": [
-        {
-          "name": "Services",
-          "config": [
-            {
-              "key": "ML_SERVICE",
-              "strategies": [],
-              "components": [
-                "queue-service",
-                "session-service"
-              ],
-              "description": "Invoke Machine Learning Engine Service",
-              "activated": true
-            }
-          ],
-          "description": "",
-          "activated": true
-        }
-      ],
-      "description": "",
-      "activated": true
-    }
+  "domain": {
+    "name": "Trackerforce",
+    "version": 1632024551905,
+    "group": [
+      {
+        "name": "Services",
+        "config": [
+          {
+            "key": "ML_SERVICE",
+            "strategies": [],
+            "components": [
+              "queue-service",
+              "session-service"
+            ],
+            "description": "Invoke Machine Learning Engine Service",
+            "activated": true
+          }
+        ],
+        "description": "",
+        "activated": true
+      }
+    ],
+    "description": "",
+    "activated": true
   }
 }

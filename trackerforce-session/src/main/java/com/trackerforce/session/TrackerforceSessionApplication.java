@@ -3,10 +3,14 @@ package com.trackerforce.session;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.ComponentScan;
 
 import static com.trackerforce.session.config.Features.*;
 
-@SpringBootApplication(scanBasePackages = "com.trackerforce")
+@SpringBootApplication
+@ConfigurationPropertiesScan(basePackages = { "com.trackerforce" })
+@ComponentScan(basePackages = { "com.trackerforce" })
 public class TrackerforceSessionApplication implements CommandLineRunner {
 	
 	public static void main(String[] args) {
