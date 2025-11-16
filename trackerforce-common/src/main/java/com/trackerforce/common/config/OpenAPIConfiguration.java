@@ -18,16 +18,16 @@ public class OpenAPIConfiguration {
 	
 	private static final String SCHEME = "Bearer";
 
-	private final ConfigProperties configProperties;
+	private final ServiceConfig.Docs docs;
 
-	public OpenAPIConfiguration(ConfigProperties configProperties) {
-		this.configProperties = configProperties;
+	public OpenAPIConfiguration(ServiceConfig serviceConfig) {
+		this.docs = serviceConfig.docs();
 	}
 
 	@Bean
 	public OpenAPI customOpenAPI() {
 		var openApi = new OpenAPI()
-				.addServersItem(new Server().url(configProperties.getUrl()))
+				.addServersItem(new Server().url(docs.url()))
 				.info(getInfo());
 
 		addSecurity(openApi);
@@ -36,23 +36,23 @@ public class OpenAPIConfiguration {
 
 	private Info getInfo() {
 		return new Info()
-				.title(configProperties.getTitle())
-				.description(configProperties.getDescription())
-				.version(configProperties.getVersion())
+				.title(docs.title())
+				.description(docs.description())
+				.version(docs.version())
 				.contact(getContact())
 				.license(getLicense());
 	}
 
 	private License getLicense() {
 		return new License()
-				.name(configProperties.getLicense().getType())
-				.url(configProperties.getLicense().getUrl());
+				.name(docs.license().type())
+				.url(docs.license().url());
 	}
-	
+
 	private Contact getContact() {
 		return new Contact()
-				.name(configProperties.getContact().getAuthor())
-				.email(configProperties.getContact().getEmail());
+				.name(docs.contact().author())
+				.email(docs.contact().email());
 	}
 
 	private void addSecurity(OpenAPI openApi) {

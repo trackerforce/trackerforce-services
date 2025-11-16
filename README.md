@@ -42,8 +42,8 @@ For the Global Service:
 
 **Requirements**
 - MongoDB
-- Java 21
-- Maven 3.9
+- Java 25
+- Maven 3.11
 
 Run the services indicated by the module name:
 ```
