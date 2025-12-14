@@ -1,10 +1,9 @@
 spring:
   application:
     name: trackerforce-management-service
-  data:
-    mongodb:
-      database: tfm
-      uri: mongodb://localhost:27017
+  mongodb:
+    database: tfm
+    uri: mongodb://localhost:27017
 
 management:
   endpoints:

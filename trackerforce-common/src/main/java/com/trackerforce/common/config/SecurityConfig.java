@@ -3,6 +3,7 @@ package com.trackerforce.common.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
@@ -23,9 +24,14 @@ public abstract class SecurityConfig {
 	@Autowired
 	protected JwtRequestFilter jwtRequestFilter;
 
-	protected AuthorizationDecision authorize(Supplier<Authentication> authentication, RequestAuthorizationContext object) {
-		final var remoteAddress = object.getRequest().getRemoteAddr();
-		var decision = new AuthorizationDecision(authentication.get().isAuthenticated());
+	protected AuthorizationResult authorize(Supplier<? extends Authentication> supplier, RequestAuthorizationContext requestAuthorizationContext) {
+		final var authentication = supplier.get();
+
+		if (authentication == null || !authentication.isAuthenticated()) {
+			return new AuthorizationDecision(false);
+		}
+
+		final var remoteAddress = requestAuthorizationContext.getRequest().getRemoteAddr();
 
 		boolean isAllowed = false;
 		for (String address : allowedAddresses) {
@@ -37,10 +43,9 @@ public abstract class SecurityConfig {
 		}
 
 		if (!isAllowed) {
-			decision = new AuthorizationDecision(false);
+			return new AuthorizationDecision(false);
 		}
 
-		return decision;
+		return new AuthorizationDecision(true);
 	}
-
 }

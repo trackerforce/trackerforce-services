@@ -22,8 +22,8 @@ public class MultitenantMongoDbConfiguration {
 	private final HttpServletRequest request;
 
 	public MultitenantMongoDbConfiguration(
-			@Value("${spring.data.mongodb.uri}") String connectionString,
-			@Value("${spring.data.mongodb.tenant-prefix:${spring.data.mongodb.database}}-") String databasePrefix,
+			@Value("${spring.mongodb.uri}") String connectionString,
+			@Value("${spring.mongodb.tenant-prefix:${spring.mongodb.database}}-") String databasePrefix,
 			HttpServletRequest request) {
 		this.connectionString = connectionString;
 		this.databasePrefix = databasePrefix;

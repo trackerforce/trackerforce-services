@@ -20,7 +20,7 @@ import org.springframework.web.filter.CorsFilter;
 public class MultiTenantSecurityConfig extends SecurityConfig {
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http) {
 		http.authorizeHttpRequests(auth ->
 				auth.requestMatchers(allowedEndpoint).permitAll()
 					.anyRequest().access(this::authorize));

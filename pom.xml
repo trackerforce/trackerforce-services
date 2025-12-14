@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.7</version>
+		<version>4.0.0</version>
 		<relativePath />
 	</parent>
 	
@@ -32,10 +32,10 @@
 		<java.version>25</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<commons-lang3.version>3.19.0</commons-lang3.version>
+		<commons-lang3.version>3.20.0</commons-lang3.version>
 
 		<!-- Test-->
-		<flapdoodle.embed.mongo.version>4.21.0</flapdoodle.embed.mongo.version>
+		<flapdoodle.embed.mongo.version>4.22.0</flapdoodle.embed.mongo.version>
 
 		<!-- Plugins -->
 		<maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>

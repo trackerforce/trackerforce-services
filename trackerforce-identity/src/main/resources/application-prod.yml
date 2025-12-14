@@ -1,10 +1,9 @@
 spring:
   application:
     name: trackerforce-identity-service
-  data:
-    mongodb:
-      database: trackerforce
-      uri: ${MONGODB_URL}
+  mongodb:
+    database: trackerforce
+    uri: ${MONGODB_URL}
 
 management:
   endpoints:

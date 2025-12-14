@@ -1,10 +1,9 @@
 spring:
   application:
     name: trackerforce-session-service
-  data:
-    mongodb:
-      database: tfs
-      uri: mongodb://localhost:27017
+  mongodb:
+    database: tfs
+    uri: mongodb://localhost:27017
 
 management:
   endpoints:

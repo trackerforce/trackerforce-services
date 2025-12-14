@@ -19,7 +19,7 @@
 
 	<properties>
 		<trackerforce-common-tenancy.version>0.0.2-SNAPSHOT</trackerforce-common-tenancy.version>
-		<switcher-client.version>2.5.1</switcher-client.version>
+		<switcher-client.version>2.5.2</switcher-client.version>
 	</properties>
 	
 	<profiles>
@@ -62,7 +62,7 @@
 		<!-- Test -->
 		<dependency>
 			<groupId>de.flapdoodle.embed</groupId>
-			<artifactId>de.flapdoodle.embed.mongo.spring3x</artifactId>
+			<artifactId>de.flapdoodle.embed.mongo.spring4x</artifactId>
 			<version>${flapdoodle.embed.mongo.version}</version>
 			<scope>test</scope>
 		</dependency>
